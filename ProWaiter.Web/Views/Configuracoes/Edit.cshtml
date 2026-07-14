@@ -1,0 +1,141 @@
+﻿@model ProWaiter.Web.Models.ConfiguracoesViewModel
+
+@{
+    ViewBag.Title = AppResources.StringEditar;
+}
+
+@section css{
+    <style type="text/css">
+        .borda {
+            border: 1px solid #DDD;
+            padding: 0px;
+        }
+    </style>
+}
+
+<h2>@AppResources.StringEditar</h2>
+
+@if (!string.IsNullOrWhiteSpace(ViewBag.Mensagem))
+{
+    string classeCSS = ViewBag.EhErro ? "danger" : "success";
+    <div class="alert alert-@classeCSS alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        @ViewBag.Mensagem
+    </div>
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Configurações</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            @Html.CheckBoxFor(model => model.UtilizaComanda)
+            @Html.LabelFor(model => model.UtilizaComanda, htmlAttributes: new { @class = "control-label" })
+        </div>
+        <div class="form-group">
+            @Html.CheckBoxFor(model => model.RequerObservacaoAoAbrirPedidoInterno)
+            @Html.LabelFor(model => model.RequerObservacaoAoAbrirPedidoInterno, htmlAttributes: new { @class = "control-label" })
+        </div>
+        <div class="form-group">
+            @Html.CheckBoxFor(model => model.ImprimirNomeGarcomTicket)
+            @Html.LabelFor(model => model.ImprimirNomeGarcomTicket, htmlAttributes: new { @class = "control-label" })
+        </div>
+        <div class="form-group">
+            @Html.CheckBoxFor(model => model.ImprimirLanchesPedidoExterno)
+            @Html.LabelFor(model => model.ImprimirLanchesPedidoExterno, htmlAttributes: new { @class = "control-label" })
+        </div>
+        <div class="form-group">
+            @Html.CheckBoxFor(model => model.ImprimirCopiaFechamentoImpressoraEntrega)
+            @Html.LabelFor(model => model.ImprimirCopiaFechamentoImpressoraEntrega, htmlAttributes: new { @class = "control-label" })
+        </div>
+        <div class="form-group">
+            @Html.CheckBoxFor(model => model.ImprimirSequencialFechamentoPedidoEntrega)
+            @Html.LabelFor(model => model.ImprimirSequencialFechamentoPedidoEntrega, htmlAttributes: new { @class = "control-label" })
+        </div>
+        <div class="form-group">
+            @Html.CheckBoxFor(model => model.ImprimirHorarioGrandePedidoEntrega)
+            @Html.LabelFor(model => model.ImprimirHorarioGrandePedidoEntrega, htmlAttributes: new { @class = "control-label" })
+        </div>
+        <div class="form-group">
+            @Html.CheckBoxFor(model => model.ExibirAdicionaisMolhosPedidoEntrega)
+            @Html.LabelFor(model => model.ExibirAdicionaisMolhosPedidoEntrega, htmlAttributes: new { @class = "control-label" })
+        </div>
+        <div class="form-group">
+            <div class="form-group col-md-12">
+
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group borda col-md-7">
+                    <div class="panel">
+                        <div class="panel-heading bg-info">
+                            <label class="control-label">Cidade padrão para cadastro de clientes</label>
+                        </div>
+                        <div class="panel-body">
+                            <label class="control-label">Estado</label>
+                            @Html.DropDownList("Estados", Model.ListaEstados, new { @class = "form-control", @id = "ddlEstados", @onchange = "PopularCidades();" })
+                            @Html.LabelFor(model => model.CodCidade, htmlAttributes: new { @class = "control-label" })
+                            @Html.DropDownListFor(model => model.CodCidade, Model.ListaCidade, new { @class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group borda col-md-12">
+                    <div class="panel">
+                        <div class="panel-heading bg-info">
+                            <label class="control-label">Texto final cupom de fechamento</label>
+                        </div>
+                        <div class="panel-body col-md-12">
+                            <div class="form-group col-md-12">
+                                @Html.TextBoxFor(model => model.TextoFinalCupomFechamento, htmlAttributes: new { @class = "col-md-12 form-control", @style = "max-width:100%" })
+                            </div>
+                            <div class="form-group col-md-12">
+                                @Html.CheckBoxFor(model => model.ImprimirTextoCupomFechamentoInterno)
+                                @Html.LabelFor(model => model.ImprimirTextoCupomFechamentoInterno, htmlAttributes: new { @class = "control-label" })
+                            </div>
+                            <div class="form-group col-md-12">
+                                @Html.CheckBoxFor(model => model.ImprimirTextoCupomFechamentoTeleEntrega)
+                                @Html.LabelFor(model => model.ImprimirTextoCupomFechamentoTeleEntrega, htmlAttributes: new { @class = "control-label" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Partial("_botaoSalvar")
+        </div>
+    </div>
+}
+
+@section scripts{
+    <script type="text/javascript">
+
+        function PopularCidades() {
+            var stateId = $('#ddlEstados').val();
+            $.ajax({
+                url: '@Url.Action("CarregarCidades", "Configuracoes")',
+                type: "POST",
+                dataType: "JSON",
+                data: { uf: stateId },
+                success: function (cities) {
+                    $("#CodCidade").html(""); // clear before appending new list
+                    $.each(cities, function (i, city) {
+                        $("#CodCidade").append(
+                            $('<option></option>').val(city.Value).html(city.Text));
+                    });
+                }
+            });
+        }
+    </script>
+}

@@ -1,0 +1,241 @@
+﻿@model ProWaiter.Web.Models.RefeicaoDoCardapioViewModel
+
+@{
+    ViewBag.Title = "Refeição do Cardápio";
+}
+
+<h2>@AppResources.StringCriar</h2>
+
+@{
+    string componentesVisiveis = string.Empty;
+    bool valorAtivo = true;
+    if (Model.DeComposicao)
+    {
+        componentesVisiveis = "visibility:visible";
+        valorAtivo = false;
+    }
+    else
+    {
+        componentesVisiveis = "visibility:collapse";
+    }
+}
+
+@using (Html.BeginForm("Create", "RefeicoesDoCardapio", null, FormMethod.Post, htmlAttributes: new { @Id = "frmCriarRefeicaoDoCardapio" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>@ViewBag.Title</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.CodRefeicao, "Refeição", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("CodRefeicao", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CodRefeicao, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CodTamanho, "Tamanho", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("CodTamanho", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CodTamanho, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Valor, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @{
+                    if (valorAtivo)
+                    {
+                        @Html.EditorFor(model => model.Valor, new { htmlAttributes = new { @class = "form-control" } })
+                    }
+                    else
+                    {
+                        Model.Valor = 0;
+                        @Html.EditorFor(model => model.Valor, new { htmlAttributes = new { @class = "form-control", @disabled = "disabled" } })
+                    }
+                }
+
+                @Html.ValidationMessageFor(model => model.Valor, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Ativo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.Ativo)
+                    @Html.ValidationMessageFor(model => model.Ativo, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CodImpressora, "Impressora", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("CodImpressora", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CodImpressora, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.PercDesconto, "Perc. de desconto (%)", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PercDesconto, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PercDesconto, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CodBarras, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(m => m.CodBarras, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.CodBarras, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DeComposicao, "De composição", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="checkbox">
+                    @Html.EditorFor(m => m.DeComposicao)
+                    @Html.ValidationMessageFor(model => model.DeComposicao, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12" style="@componentesVisiveis" id="listaComponentes">
+            <div class="form-group form-inline">
+                <label class="control-label col-md-2">Carregar dados</label>
+                <div class="col-md-10">
+                    <div class="form-inline">
+                        @Html.DropDownListFor(m => m.RefeicaoParaCargaSelecionada, Model.RefeicoesJaCadastradas, "Selecionar", htmlAttributes: new { @class = "form-control", @id = "ddlCarga" })
+                        <button class="btn btn-info" type="submit">Carregar dados já cadastrados</button>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group form-inline">
+                <label class="control-label col-md-2">Ad. mesmo valor</label>
+                <div class="col-md-10">
+                    <div class="form-inline">
+                        <input type="text" class="form-control" id="valorIgualTodos" />
+                        <a class="btn btn-info" onclick="CarregarMesmoValorParaTodosComponentes();">Carregar valores em ativos</a>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-condensed table-bordered" id="tbComponentes" style="margin-top:10px;">
+                <thead>
+                    <tr>
+                        <th>Ativo</th>
+                        <th>Componente</th>
+                        <th>Valor inteiro</th>
+                        <th>Cálculo proporcional</th>
+                        <th>Unidade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        for (var i = 0; i < Model.ComponentesDeComposicao.Count; i++)
+                        {
+                            string classeDestaque = Model.ComponentesDeComposicao[i].Ativo ? "bg-info" : "";
+                            string trID = "tr_" + i.ToString();
+
+                            <tr class="@classeDestaque" id="@trID">
+                                <td style="text-align:center;">
+                                    @Html.EditorFor(m => m.ComponentesDeComposicao[i].Ativo, new { htmlAttributes = new { @class = "itemAtivo", @indice = i.ToString() } })
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(m => m.ComponentesDeComposicao[i].NomeComponente)
+                                    @Html.HiddenFor(m => m.ComponentesDeComposicao[i].CodComponente)
+                                </td>
+                                <td>
+                                    @Html.EditorFor(m => m.ComponentesDeComposicao[i].Valor, new { htmlAttributes = new { @class = "form-control valorItem", @id = "valor_" + i.ToString() } })
+                                </td>
+                                <td>
+                                    @Html.EditorFor(m => m.ComponentesDeComposicao[i].CalculoProporcional)
+                                </td>
+                                <td>
+                                    @Html.DropDownListFor(m => m.ComponentesDeComposicao[i].CodUnidade, Model.ComponentesDeComposicao[i].ListaUnidades, "Sem unidade", htmlAttributes: new { @class = "form-control" })
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                @Html.Partial("_botaoCadastrar")
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.Partial("_botaoVoltarParaLista")
+</div>
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            BloquearSumitComEnter("frmCriarRefeicaoDoCardapio");
+
+            $('#CodRefeicao').focus();
+
+            $('.valorItem').each(function () {
+                $(this).click(function () {
+                    $(this).select();
+                });
+            });
+
+            $('#DeComposicao').click(function () {
+                var lista = $("#listaComponentes");
+                var valor = $("#Valor");
+                if ($(this).prop("checked") == true) {
+                    lista.css("visibility", "visible");
+                    valor.val(parseFloat(0, 00).toFixed(2).replace(".", ","));
+                    valor.prop("disabled", true);
+                }
+                else {
+                    lista.css("visibility", "collapse");
+                    valor.prop("disabled", false);
+                }
+
+            });
+
+            $('.itemAtivo').each(function () {
+                $(this).click(function () {
+                    var indice = $(this).attr("indice");
+                    var valor = $('#valor_' + indice);
+                    var tr = $("#tr_" + indice);
+                    if ($(this).prop("checked") == true) {
+                        valor.focus();
+                        valor.select();
+                        tr.addClass("bg-info");
+                    }
+                    else {
+                        valor.val(parseFloat(0).toFixed(2).replace(".", ","));
+                        tr.removeClass("bg-info");
+                    }
+                });
+            });
+
+        })
+
+        function CarregarMesmoValorParaTodosComponentes() {
+            var valor = $("#valorIgualTodos").val();
+            var trs = $("#tbComponentes > tbody > tr")
+            for (i = 0; i < trs.length; i++) {
+                tds = $(trs[i]).find("> td");
+                if ($(tds[0]).find("input").prop("checked") == true) {
+                    $(tds[2]).find("input").val(valor);
+                }
+            }
+
+        }
+    </script>
+}                        

@@ -1,0 +1,213 @@
+﻿@model ProWaiter.Web.Models.Entidades.Pedido
+
+
+<dt>
+    @Html.DisplayNameFor(model => model.DataInicio)
+</dt>
+
+<dd>
+    @Html.DisplayFor(model => model.DataInicio)
+</dd>
+
+<dt>
+    @Html.DisplayNameFor(model => model.DataTermino)
+</dt>
+
+<dd>
+    @Html.DisplayFor(model => model.DataTermino)
+</dd>
+
+<dt>
+    @Html.DisplayNameFor(model => model.NomeUsuario)
+</dt>
+
+<dd>
+    @Html.DisplayFor(model => model.NomeUsuario)
+</dd>
+
+<dt>
+    @Html.DisplayNameFor(model => model.Observacoes)
+</dt>
+<dd>
+    @Html.DisplayFor(model => model.Observacoes)
+</dd>
+
+<dt>
+    @Html.DisplayNameFor(model => model.ValorRefeicoes)
+</dt>
+
+<dd>
+    @Html.DisplayFor(model => model.ValorRefeicoes)
+</dd>
+
+<dt>
+    @Html.DisplayNameFor(model => model.RefeicoesDoPedido)
+</dt>
+<dd>
+    <div class="col-md-4 list-group">
+        @{
+            int i = 0;
+        }
+        @foreach (var refeicao in Model.RefeicoesDoPedido.GroupBy(r => r.RefeicaoDoCardapio.Refeicao.Nome, (key, g) => new { Nome = key, Qtd = g.Count() }))
+        {
+            <div class="list-group-item">
+                <div data-toggle="collapse" data-target="#@i" style="display:inline" class="itemRefeicao">
+                    <div class="glyphicon glyphicon-chevron-right" id="gi_@i">
+                        @refeicao.Nome
+                    </div>
+                </div>
+                <span class="badge">@refeicao.Qtd</span>
+            </div>
+            <div id="@i" class="collapse row">
+                <ul>
+                    @foreach (var refeDet in Model.RefeicoesDoPedido)
+                    {
+                        if (refeDet.RefeicaoDoCardapio.Refeicao.Nome != refeicao.Nome)
+                        {
+                            continue;
+                        }
+
+                        <li class="list-group-item col-md-12">
+                            <div class="col-md-11" style="padding:0px;">
+                                @refeDet.NomeUsuario
+
+                                @{
+                                    string hora = refeDet.DataHora.HasValue ? refeDet.DataHora.Value.ToShortTimeString() : string.Empty;
+                                }
+
+                                @hora
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+            i++;
+        }
+    </div>
+</dd>
+
+<dt>
+    @Html.DisplayNameFor(model => model.ValorBebidas)
+</dt>
+
+<dd>
+    @Html.DisplayFor(model => model.ValorBebidas)
+</dd>
+
+
+<dt>
+    @Html.DisplayNameFor(model => model.BebidasDoPedido)
+</dt>
+
+<dd>
+    <div class="col-md-4 list-group">
+        @foreach (var bebida in Model.BebidasDoPedido.GroupBy(b => b.Bebida.Nome, (key, g) => new { Nome = key, Qtd = g.Count() }))
+        {
+            <div class="list-group-item">
+                <div data-toggle="collapse" data-target="#@i" style="display:inline" class="itemRefeicao">
+                    <div class="glyphicon glyphicon-chevron-right" id="gi_@i">
+                        @bebida.Nome
+                    </div>
+                </div>
+
+                <span class="badge">@bebida.Qtd</span>
+            </div>
+            <div id="@i" class="collapse row">
+                <ul>
+                    @foreach (var bebDet in Model.BebidasDoPedido)
+                    {
+                        if (bebDet.Bebida.Nome != bebida.Nome)
+                        {
+                            continue;
+                        }
+
+                        <li class="list-group-item col-md-12">
+                            <div class="col-md-11" style="padding:0px;">
+                                @bebDet.NomeUsuario
+
+                                @{
+                                    string hora = bebDet.DataHora.HasValue ? bebDet.DataHora.Value.ToShortTimeString() : string.Empty;
+                                }
+
+                                @hora
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+            i++;
+        }
+    </div>
+</dd>
+
+
+<dt>
+    @Html.DisplayNameFor(model => model.ValorItensDeBalcao)
+</dt>
+
+<dd>
+    @Html.DisplayFor(model => model.ValorItensDeBalcao)
+</dd>
+
+
+<dt>
+    @Html.DisplayNameFor(model => model.ItensBalcaoDoPedido)
+</dt>
+
+<dd>
+    <div class="col-md-4 list-group">
+        @foreach (var item in Model.ItensBalcaoDoPedido.GroupBy(b => b.ItemBalcao.Nome, (key, g) => new { Nome = key, Qtd = g.Count() }))
+        {
+            <div class="list-group-item">
+                <div data-toggle="collapse" data-target="#@i" style="display:inline" class="itemRefeicao">
+                    <div class="glyphicon glyphicon-chevron-right" id="gi_@i">
+                        @item.Nome
+                    </div>
+                </div>
+
+                <span class="badge">@item.Qtd</span>
+            </div>
+            <div id="@i" class="collapse row">
+                <ul>
+                    @foreach (var itemDet in Model.ItensBalcaoDoPedido)
+                    {
+                        if (itemDet.ItemBalcao.Nome != item.Nome)
+                        {
+                            continue;
+                        }
+
+                        <li class="list-group-item col-md-12">
+                            <div class="col-md-11" style="padding:0px;">
+                                @itemDet.NomeUsuario
+
+                                @{
+                                    string hora = itemDet.DataHora.ToShortTimeString();
+                                }
+
+                                @hora
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+            i++;
+        }
+    </div>
+</dd>
+
+<dt>
+    @Html.DisplayNameFor(model => model.Acrescimos)
+</dt>
+
+<dd>
+    @Html.DisplayFor(model => model.Acrescimos)
+</dd>
+
+<dt>
+    @Html.DisplayNameFor(model => model.Descontos)
+</dt>
+
+<dd>
+    @Html.DisplayFor(model => model.Descontos)
+</dd>
+

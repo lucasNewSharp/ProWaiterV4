@@ -1,0 +1,112 @@
+﻿@page "/ConfirmEmail"
+@inject NavigationManager navManager
+@inject IAuthService AuthService
+@inject HttpClient http
+@using Microsoft.AspNetCore.WebUtilities
+
+<AlertError Message="@msgExErro"></AlertError>
+
+
+@if (showWaitComponent)
+{
+    <WaitComponent Texto="Executando a confirmação do email..."></WaitComponent>
+}
+else
+{
+    <h3>Confirmação de e-mail</h3>
+
+    @if (showErrors)
+    {
+        <div class="alert alert-danger" role="alert">
+            @foreach (var error in errors)
+            {
+                <p>@error</p>
+            }
+        </div>
+    }
+
+    @if (executando)
+    {
+        <div>Executando...</div>
+    }
+
+    @if (success)
+    {
+        <div class="alert alert-success" role="alert">
+            <p>Email confirmado com sucesso</p>
+            <p>Clique <a href="javascript:void(0)" @onclick="IrPaginaLogin">aqui</a> para fazer o login</p>
+        </div>
+    }
+}
+
+
+@code {
+
+    public string userId { get; set; }
+    public string codigo { get; set; }
+
+    private bool showErrors = false;
+    private bool success = false;
+    private bool executando = true;
+    private IEnumerable<string> errors;
+    private bool showWaitComponent;
+    private string msgExErro;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ConfirmarEmail();
+    }
+
+    private async Task ConfirmarEmail()
+    {
+        try
+        {
+
+            showWaitComponent = true;
+            msgExErro = string.Empty;
+            executando = true;
+
+            var uri = navManager.ToAbsoluteUri(navManager.Uri);
+
+            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("userId", out var uId))
+            {
+                userId = uId.First();
+            }
+
+            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("code", out var c))
+            {
+                codigo = c.First();
+            }
+
+            var confEmail = new ConfirmEmailModel()
+            {
+                UserId = userId,
+                Code = codigo
+            };
+
+            var result = await AuthService.ConfirmEmail(confEmail);
+
+            executando = false;
+            if (!result.Successful)
+            {
+                errors = result.Errors;
+                showErrors = true;
+            }
+            else
+            {
+                success = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            msgExErro = ex.ToString();
+        }
+        finally { showWaitComponent = false; }
+    }
+
+    private void IrPaginaLogin()
+    {
+        navManager.NavigateTo("/Login");
+    }
+}
+

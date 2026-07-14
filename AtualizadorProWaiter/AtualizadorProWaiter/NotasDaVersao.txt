@@ -1,0 +1,37 @@
+﻿[+] - Novo recurso
+[*] - Modificação, melhoria
+[-] - Correção de Bug
+
+Versão 2.1
+
+[+] - Adicionado o valor total do pedido na tela de detalhes do aplicativo
+[+] - Adicionada opção de inclusão de itens nos pedidos pelo código de barras
+[+] - Implementado o cadastro de itens de balcão com código de barras, adicionado codigo de barra nas bebidas e refeições
+[+] - Incluída opção para adicionar mais de um endereço para cada cliente
+		->Cadastro e edição de endereços na edição do cliente
+		->Cadastro e edição de endereços na criação do pedido externo
+		->Cadastro e edição de endereços na tela de dados do pedido externo
+[+] - Incluída configuração para imprimir uma cópia do ticket de fechamento na impressora de Entrega, com opção de escolha no fechamento do pedido de entrega.
+[+] - Incluída configuração para imprimir um número sequencial do dia no ticket de fechamento de pedidos de entrega
+	- O Filtro da janela de listagem de pedidos inclui a sequência na consulta
+	- A sequência é exibida na frente do nome do cliente na listagem de pedidos
+[+] - Incluída configuração para exibir a escolha de molhos para entrega no fechamento de pedido de entrega, imprimindo no ticket de fechamento.
+[+] - Implementada integração com ICBox, com o monitor de porta serial "ProWaiter.ICBox"
+[*] - Adicionada edição da observação do pedido na tela de fechamento.
+[*] - Adicionado código de barras nas bebidas
+[*] - Adicionado código de barras nas refeições do cardapio.
+[*] - Corrigido bug na Edição de bebida, ao editar uma bebida e tentar colocar um nome já existente.
+[*] - Ajustados botões de manutenção de usuários
+
+Versão 2.0
+
+Criadas funcionalidade:
+[+]	- Criação de modelo de pedido com desconto
+[+]	- Possibilidade de adicionar desconto percentual a intens individuais
+[+]	- Melhorias de interface gráfica no sistema
+[+]	- Reimplementação do APP para Android, com melhor compatibilidade com versões mais antigas e melhorias de desempenho
+
+Versão 1.1
+
+[+] Adicionada configuração para imprimir uma frase ao final do cupom de fechamento
+

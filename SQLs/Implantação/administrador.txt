@@ -1,0 +1,2 @@
+usuário: administrador
+senha:   OpwEmb@10

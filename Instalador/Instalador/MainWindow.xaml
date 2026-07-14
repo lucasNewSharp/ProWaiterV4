@@ -1,0 +1,39 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Instalador"
+        xmlns:Controles="clr-namespace:Instalador.Controles" x:Class="Instalador.MainWindow"
+        mc:Ignorable="d"
+        Title="Instalação do ProWaiter" Height="500" Width="700" MinWidth="700" 
+        WindowStartupLocation="CenterScreen" Closing="Window_Closing">
+    <Grid Background="#f0f0f0" Name="grid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="205" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="72*"/>
+            <RowDefinition Height="347*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Background="AliceBlue" Grid.ColumnSpan="2">
+            <Label Margin="20,20,0,0" FontSize="18" FontWeight="Bold" Content="Instalação do ProWaiter"/>
+        </Grid>
+        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Vertical" Margin="10,10,0,0">
+            <Label Name="lblTermosLicenca" FontWeight="Bold" Content="Termos de Licença"/>
+            <Label Name="lblPreRequisitos" Content="Verificação dos pré-requisitos"/>
+            <Label Name="lblComponentesDoWindows" Content="Componentes do Windows"/>
+            <Label Name="lblSqlServer" Content="Instalação do SQL Server 2019"/>
+            <Label Name="lblConfiguracaoSQL" Content="Configuração do banco de dados"/>
+        </StackPanel>
+        <Controles:UCTermosDeLicenca x:Name="ucTermosELicenca" Grid.Row="1" Grid.Column="1" AoClicarAceito="ucTermosELicenca_AoClicarAceito" Margin="8,0,8,0" Visibility="Visible"/>
+        <Controles:UCInstalacao x:Name="ucInstalacao" Grid.Row="1" Grid.Column="1" Margin="8,5" Visibility="Hidden" Height="Auto" Width="auto"/>
+        <Controles:UCFinalizar x:Name="ucFinalizar" Grid.Row="1" Grid.Column="1" Margin="8,5" Visibility="Hidden" Height="Auto" Width="auto"/>
+        <StackPanel Orientation="Horizontal" FlowDirection="RightToLeft" Grid.Row="2" Grid.Column="1">
+            <Button x:Name="btnCancelar" Content="Cancelar" Click="btnCancelar_Click" Width="75" Margin="15,12,3,12"></Button>
+            <Button x:Name="btnAvancar" Content="&lt; Avançar" Click="btnAvancar_Click" IsEnabled="False" Width="75" Margin="3,12,3,12"></Button>
+        </StackPanel>
+    </Grid>
+</Window>

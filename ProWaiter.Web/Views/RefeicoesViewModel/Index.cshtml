@@ -1,0 +1,55 @@
+﻿@model IEnumerable<ProWaiter.Web.Models.RefeicaoViewModel>
+
+@{
+    ViewBag.Title = "Refeições";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<p>
+    @Html.Partial("_botaoCriarNovo")
+</p>
+@Html.Partial("_pesquisarnaTabelaClient")
+<table class="table table-hover" id="tabela">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Codigo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Nome)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NomeTipo)
+        </th>
+        <th style="text-align:center;">Ações</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Codigo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NomeTipo)
+            </td>
+            <td width="150px">
+                @Html.Partial("_botoesAcaoIndex", new { Id = item.Codigo })
+            </td>
+        </tr>
+    }
+
+</table>
+@section scripts{
+    <script src="~/Scripts/PesquisarNaTabela.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var txt = $("#txtFiltro");
+            txt.focus();
+            txt.keyup(function () { PesquisarNaTabela('tabela', $(this).val()) });
+        });
+    </script>
+}

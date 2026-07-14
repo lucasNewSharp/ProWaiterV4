@@ -1,0 +1,82 @@
+********************************************************************************
+K&N Carlos Barbosa:
+********************************************************************************
+Usuário PC: ?
+Senha PC: ?
+WIFI: ?
+SA: Nossas
+
+App
+Usuário: cristiano
+Senha:   Kn@2017
+
+IP servidor: 192.168.1.2
+Imp Caixa  : 192.168.1.12:9100
+Imp Bar    : 192.168.1.13:9100
+Imp Lanches: 192.168.1.11:9100
+Imp Pratos : 192.168.1.14:9100
+
+AnyDesk: 197772768
+Requer confirmação de conexão por parte do cliente
+  
+
+********************************************************************************
+MC Glula Garibaldi:
+********************************************************************************
+
+Usuario PC: ?
+Senha PC: mcgula
+WIFI: ?
+SA: ?
+
+App
+Usuário: cristiano
+Senha:   Kn@2017
+
+IP servidor: 10.0.0.51
+Imp Bar    : 10.0.0.150:9100
+Imp Caixa  : 10.0.0.151:9100
+Imp Cozinha: 10.0.0.152:9100
+
+AnyDesk: Não instalado 
+Requer confirmação de conexão por parte do cliente
+
+
+********************************************************************************
+Charás Cervejaria barão
+********************************************************************************
+Usuário do PC: charas
+Senha do PC: daiana94
+WIFI: @#$charas010203 alterado para charasdiliz
+SA: Minos2020
+
+APP
+usuario: garcom
+senha: Charas*
+
+IP Máquina: 192.168.0.210
+IP Impressora bar: 192.168.0.211:9100
+IP Impressora caixa: 192.168.0.212:9100
+IP Impressora Cozinha: 192.168.0.213:9100
+Endereço Site: http://192.168.0.210/prowaiter/
+
+AnyDesk: 943833367 
+Requer confirmação de conexão por parte do cliente
+
+
+********************************************************************************
+Diego Diliz - Delivery Barbosa
+********************************************************************************
+SA: Minos2020
+PC: Particular
+IP: Máquina (DHCP)
+IP Impressora: 10.0.0.31:9100
+Endereço Site: http://localhost/ProWaiter
+OBS: Não usa o APP, utiliza somente para Delivery
+
+
+
+
+
+
+   

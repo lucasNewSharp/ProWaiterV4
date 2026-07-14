@@ -1,0 +1,418 @@
+﻿@model ProWaiter.Web.Models.ConfiguracaoDescontosViewModel
+@using ProWaiter.Web.Util
+
+
+
+@{
+    ViewBag.Title = "Configuração de descontos";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div class="alert alert-info">
+    <p>ATENÇÃO, ao salvar todos os itens são salvos e não apenas os selecionados, a checkbox serve de auxilio para aplicar um valor a um grupo de itens</p>
+</div>
+<hr />
+
+<div class="form-inline">
+    <label class="control-label" for="txtFiltro">Filtro</label>
+    <input type="text" id="txtFiltro" class="form-control" placeholder="Digite o filtro" />
+    <div class="form-group mx-sm-3 mb-2" style="margin-left:15px;">
+        <input class="form-control" id="valParaTodos" placeholder="Valor (%) exemplo: 15,5">
+    </div>
+    <button class="btn btn-primary mb-2" id="btnAplicarParaTodosSelecionados">Aplicar para selecionados</button>
+</div>
+@using (Html.BeginForm("Salvar", "ConfiguracaoDescontos", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div id="divScroll" style="overflow-y:scroll">
+        <table class="table table-hover" id="tabelaRef">
+            <caption><h3>Refeições</h3></caption>
+            <thead>
+                <tr style="text-align:center;">
+                    <th>
+                        <input id="ckbSelecionarTodasRefeicoes" type="checkbox" />
+                        Selecionado
+                    </th>
+                    <th>Nome</th>
+                    <th>Tamanho</th>
+                    <th>Valor</th>
+                    <th>Perc. desconto (%)</th>
+                    <th>Valor final</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (var i = 0; i < Model.Refeicoes.Count; i++)
+                    {
+                        string bgInfo = Model.Refeicoes[i].Checked ? "bg-info" : "";
+                        string trID = "trRef_" + i.ToString();
+                        <tr id="@trID" class="trRef @bgInfo">
+                            <td>
+                                @Html.EditorFor(m => m.Refeicoes[i].Checked, new { htmlAttributes = new { @class = "ckbRefeicao ativarItem", @indice = i.ToString(), @id = "ref_" + i.ToString() } })
+                                @Html.HiddenFor(m => m.Refeicoes[i].CodRefeicao)
+                                @Html.HiddenFor(m => m.Refeicoes[i].CodTamanho)
+                            </td>
+                            <td>@Html.DisplayFor(m => m.Refeicoes[i].Nome)</td>
+                            <td>@Html.DisplayFor(m => m.Refeicoes[i].NomeTamanho)</td>
+                            <td id="valRef_@i.ToString()">R$ @Html.DisplayFor(m => m.Refeicoes[i].Valor)</td>
+                            <td>@Html.EditorFor(m => m.Refeicoes[i].PercDesconto, new { htmlAttributes = new { @class = "form-control refPercDesc", @id = "valPercRef_" + i.ToString() } })</td>
+                            <td id="valFinRef_@i.ToString()" class="@Model.Refeicoes[i].CSSDestaqueValorFinal">R$ @Html.DisplayFor(m => m.Refeicoes[i].ValorFinal, new { htmlAttributes = new { @class = "form-control refPercDesc", @id = "valPercRef_" + i.ToString() } })</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        <h2>Bebidas</h2>
+        <table class="table table-hover" id="tabelaBeb">
+            <caption><h3>Bebidas</h3></caption>
+            <thead>
+                <tr style="text-align:center;">
+                    <th>
+                        <input id="ckbSelecionarTodasBebidas" type="checkbox" />
+                        Selecionado
+                    </th>
+                    <th>Nome</th>
+                    <th>Valor</th>
+                    <th>Perc. desconto (%)</th>
+                    <th>Valor final</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (var i = 0; i < Model.Bebidas.Count; i++)
+                    {
+                        string bgInfo = Model.Bebidas[i].Checked ? "bg-info" : "";
+                        string trID = "trBeb_" + i.ToString();
+                        <tr id="@trID" class="trBeb @bgInfo">
+                            <td>
+                                @Html.EditorFor(m => m.Bebidas[i].Checked, new { htmlAttributes = new { @class = "ckbBebida ativarItem", @indice = i.ToString(), @id = "beb_" + i.ToString() } })
+                                @Html.HiddenFor(m => m.Bebidas[i].Codigo)
+                            </td>
+                            <td>@Html.DisplayFor(m => m.Bebidas[i].Nome)</td>
+                            <td id="valBeb_@i.ToString()">R$ @Html.DisplayFor(m => m.Bebidas[i].Valor)</td>
+                            <td>@Html.EditorFor(m => m.Bebidas[i].PercDesconto, new { htmlAttributes = new { @class = "form-control bebPercDesc", @id = "valPercBeb_" + i.ToString() } })</td>
+                            <td id="valFinBeb_@i.ToString()" class="@Model.Bebidas[i].CSSDestaqueValorFinal">R$ @Html.DisplayFor(m => m.Bebidas[i].ValorFinal)</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        <h2>Itens de balcão</h2>
+        <table class="table table-hover" id="tabelaItensBalcao">
+            <caption><h3>Itens de balcão</h3></caption>
+            <thead>
+                <tr style="text-align:center;">
+                    <th>
+                        <input id="ckbSelecionarTodosItensBalcao" type="checkbox" />
+                        Selecionado
+                    </th>
+                    <th>Nome</th>
+                    <th>Valor</th>
+                    <th>Perc. desconto (%)</th>
+                    <th>Valor final</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (var i = 0; i < Model.ItensBalcao.Count; i++)
+                    {
+                        string bgInfo = Model.ItensBalcao[i].Checked ? "bg-info" : "";
+                        string trID = "trItemBalcao_" + i.ToString();
+                        <tr id="@trID" class="trItemBalcao @bgInfo">
+                            <td>
+                                @Html.EditorFor(m => m.ItensBalcao[i].Checked, new { htmlAttributes = new { @class = "ckbItemBalcao ativarItem", @indice = i.ToString(), @id = "itemBalcao_" + i.ToString() } })
+                                @Html.HiddenFor(m => m.ItensBalcao[i].Codigo)
+                            </td>
+                            <td>@Html.DisplayFor(m => m.ItensBalcao[i].Nome)</td>
+                            <td id="valItemBalcao_@i.ToString()">R$ @Html.DisplayFor(m => m.ItensBalcao[i].Valor)</td>
+                            <td>@Html.EditorFor(m => m.ItensBalcao[i].PercDesconto, new { htmlAttributes = new { @class = "form-control itemBalcaoPercDesc", @id = "valPercItemBalcao_" + i.ToString() } })</td>
+                            <td id="valFinItemBalcao_@i.ToString()" class="@Model.ItensBalcao[i].CSSDestaqueValorFinal">R$ @Html.DisplayFor(m => m.ItensBalcao[i].ValorFinal)</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+    <hr />
+    <div class="form-group" style="margin-bottom:50px;">
+        <div class="col-md-12">
+            @Html.Partial("_botaoSalvar")
+        </div>
+    </div>
+}
+
+@section scripts{
+    <script src="~/Scripts/PesquisarNaTabela.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            //calculo do tamanho da div com scroll
+            setarTamnhoDivScroll();
+
+            $(window).resize(function () {
+                this.setarTamnhoDivScroll();
+            });
+
+            //pesquisa na tabela
+            var txt = $("#txtFiltro");
+            txt.focus();
+            txt.keyup(function () {
+                PesquisarNaTabela('tabelaRef', $(this).val());
+                PesquisarNaTabela('tabelaBeb', $(this).val());
+                PesquisarNaTabela('tabelaItensBalcao', $(this).val())
+                limparSelecao();
+            });
+
+            //selecionar todos
+            $('#ckbSelecionarTodasRefeicoes').click(function () {
+                checarTodos($(this), "ckbRefeicao");
+            });
+
+            //selecionar todos
+            $('#ckbSelecionarTodasBebidas').click(function () {
+                checarTodos($(this), "ckbBebida");
+            });
+
+            //selectionr todos            
+            $('#ckbSelecionarTodosItensBalcao').click(function () {
+                checarTodos($(this), "ckbItemBalcao");
+            });
+
+            //Aplicar valor para selecionados
+            $('#btnAplicarParaTodosSelecionados').click(function () {
+                var valor = $('#valParaTodos').val();
+                var testeValor = valor.replace(",", ".");                
+                if (!isNaN(testeValor)) {
+                    if (valor > 100 || valor < 0) {
+                        alert("O valor deve ser entre 0 e 100");
+                        return;
+                    }
+                    $('.ckbRefeicao').each(function () {
+                        var indice = $(this).attr("indice");
+                        var ckb = $('#ref_' + indice);
+                        if (ckb.prop("checked") == true) {
+                            $('#valPercRef_' + indice).val(valor);
+                            setarValorFinal($('#valPercRef_' + indice), "Ref");
+                        }
+                    });
+
+                    $('.ckbBebida').each(function () {
+                        var indice = $(this).attr("indice");
+                        var ckb = $('#beb_' + indice);
+                        if (ckb.prop("checked") == true) {
+                            $('#valPercBeb_' + indice).val(valor);
+                            setarValorFinal($('#valPercBeb_' + indice), "Beb");
+                        }
+                    });
+
+                    $('.ckbItemBalcao').each(function () {
+                        var indice = $(this).attr("indice");
+                        var ckb = $('#itemBalcao_' + indice);
+                        if (ckb.prop("checked") == true) {
+                            $('#valPercItemBalcao_' + indice).val(valor);
+                            setarValorFinal($('#valPercItemBalcao_' + indice), "ItemBalcao");
+                        }
+                    });
+                }
+            });
+
+            //Calcular valor final para exibição
+            $('.refPercDesc').each(function () {
+                $(this).keyup(function () {
+                    setarValorFinal($(this), "Ref");
+                });
+            });
+
+            //Calcular valor final para exibição
+            $('.bebPercDesc').each(function () {
+                $(this).keyup(function () {
+                    setarValorFinal($(this), "Beb");
+                });
+            });
+
+            //Calcular valor final para exibição
+            $('.itemBalcaoPercDesc').each(function () {
+                $(this).keyup(function () {
+                    setarValorFinal($(this), "ItemBalcao");
+                });
+            });
+
+            //destaque e foco
+            $('.ativarItem').each(function () {
+                $(this).click(function () {
+                    var indice = $(this).attr("indice");
+
+                    var ehRefeicao = $(this).hasClass("ckbRefeicao");
+                    var ehBebida = $(this).hasClass("ckbBebida");
+
+                    var tr;
+                    var val;
+                    if (ehRefeicao) {
+                        tr = $('#trRef_' + indice.toString());
+                        val = $('#valPercRef_' + indice.toString());
+                    }
+                    else if (ehBebida) {
+                        tr = $('#trBeb_' + indice.toString());
+                        val = $('#valPercBeb_' + indice.toString());
+                    }
+                    else {
+                        tr = $('#trItemBalcao_' + indice.toString());
+                        val = $('#valPercItemBalcao_' + indice.toString());
+                    }
+
+                    if ($(this).prop("checked") == true) {
+                        val.focus();
+                        val.select();
+                        tr.addClass("bg-info");
+                    }
+                    else {
+                        tr.removeClass("bg-info");
+                    }
+                });
+            });
+        });
+
+        function limparSelecao() {
+            $('#ckbSelecionarTodasRefeicoes').prop("checked", "");
+            $('.ckbRefeicao').each(function () {
+                $(this).prop("checked", "");
+            });
+            $('.trRef').each(function () {
+                $(this).removeClass("bg-info");
+            });
+
+            $('#ckbSelecionarTodasBebidas').prop("checked", "");
+            $('.ckbBebida').each(function () {
+                $(this).prop("checked", "");
+            });
+            $('.trBeb').each(function () {
+                $(this).removeClass("bg-info");
+            });
+
+            $('#ckbSelecionarTodosItensBalcao').prop("checked", "");
+            $('.ckbItemBalcao').each(function () {
+                $(this).prop("checked", "");
+            });
+            $('.trItemBalcao').each(function () {
+                $(this).removeClass("bg-info");
+            });
+        }
+
+        function checarTodos(ckbPrincipal, classeCheckBoxes) {
+            var checked = $(ckbPrincipal).prop("checked") == true;
+
+            $('.' + classeCheckBoxes).each(function () {
+                var visivel = $(this).is(":visible"); //checkbox da linha
+                if (visivel) {
+                    console.log("esta visivel");
+                    $(this).prop("checked", checked)
+
+                    var ehRefeicao = classeCheckBoxes == "ckbRefeicao";
+                    var ehBebida = classeCheckBoxes == "ckbBebida";
+
+                    if (ehRefeicao) {
+
+
+                        if (checked) {
+                            $('.trRef').each(function () {
+                                if ($(this).is(":visible")) { //tr da refeicao
+                                    $(this).addClass("bg-info");
+                                }
+                            });
+                        } else {
+
+                            $('.trRef').each(function () {
+                                if ($(this).is(":visible")) {
+                                    $(this).removeClass("bg-info");
+                                }
+                            });
+
+                        }
+
+                    } else if (ehBebida) {
+
+                        if (checked) {
+
+                            $('.trBeb').each(function () {
+                                if ($(this).is(":visible")) { //tr da bebida
+                                    $(this).addClass("bg-info");
+                                }
+                            });
+
+                        } else {
+                            $('.trBeb').each(function () {
+                                if ($(this).is(":visible")) {
+                                    $(this).removeClass("bg-info");
+                                }
+                            });
+
+                        }
+                    } else {
+                        if (checked) {
+
+                            $('.trItemBalcao').each(function () {
+                                if ($(this).is(":visible")) { //tr da bebida
+                                    $(this).addClass("bg-info");
+                                }
+                            });
+
+                        } else {
+                            $('.trItemBalcao').each(function () {
+                                if ($(this).is(":visible")) {
+                                    $(this).removeClass("bg-info");
+                                }
+                            });
+
+                        }
+                    }
+                }
+            });
+        }
+
+
+        //Setar valor final
+        function setarValorFinal(inputPrecDesconto, tipoID) {
+            var indice = inputPrecDesconto.attr("id").replace("valPerc" + tipoID + "_", "");
+            var perc = inputPrecDesconto.val();
+            var val = $('#val' + tipoID + '_' + indice).html().replace("R$ ", "").replace(",", ".");
+            var tdValFinal = $('#valFin' + tipoID + '_' + indice);
+            var valFinal = val - (val * (perc / 100));
+            if (!isNaN(valFinal)) {
+                var texto = "R$ " + valFinal.toFixed(2).toString().replace(".", ",");
+                tdValFinal.html(texto);
+                if (val != valFinal) {
+                    $(tdValFinal).addClass("bg-info");
+                }
+                else {
+                    $(tdValFinal).removeClass("bg-info");
+                }
+            }
+            else {
+                tdValFinal.html("");
+            }
+        }
+
+        //calcula o tamanho da div de scroll conforme o tamanho da tela
+        function setarTamnhoDivScroll() {
+            var valorInicial = 0.8;
+            var valorDecremento = 0.05;
+            while (true) {
+                var altura = Math.trunc(document.documentElement.clientHeight * valorInicial);
+                var divScroll = $('#divScroll');
+                divScroll.css({ "height": altura.toString() + "px" });
+                if ($(document).height() > $(window).height()) {
+                    valorInicial -= valorDecremento;
+                }
+                else {
+                    console.log("nnn");
+                    break;
+                }
+            }
+        }
+
+    </script>
+}

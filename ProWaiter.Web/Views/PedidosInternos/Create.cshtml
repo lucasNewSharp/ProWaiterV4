@@ -1,0 +1,69 @@
+﻿@using ProWaiter.Web.Util;
+@model ProWaiter.Web.Models.Entidades.PedidoInterno
+
+@{
+    ViewBag.Title = "Pedido Interno";
+    ViewBag.ReturnUrl = Request.RawUrl;
+}
+
+<h2>@AppResources.StringCriar</h2>
+
+@if (!string.IsNullOrWhiteSpace(ViewBag.MensagemErro))
+{
+    <div class="alert alert-danger alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        @ViewBag.MensagemErro
+    </div>
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>@ViewBag.Title</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            <label class="control-label col-md-2">@Configuracoes.ObterInstancia().StringTipoLocalEntrega</label>
+            <div class="col-md-10">
+                @Html.DropDownList("CodMesa", (SelectList)ViewBag.Mesas, new { @class = "form-control" })
+                @Html.ValidationMessage("CodMesa", "", new { @class = "text-danger" })
+            </div>
+        </div>
+        @if (Configuracoes.ObterInstancia().UtilizaComanda)
+        {
+            <div class="form-group">
+                <label class="control-label col-md-2">Local entrega</label>
+                <div class="col-md-10">
+                    @Html.DropDownList("CodLocalInterno", (SelectList)ViewBag.LocaisInternos, new { @class = "form-control" })
+                    @Html.ValidationMessage("CodLocalInterno", "", new { @class = "text-danger" })
+                </div>
+            </div>
+        }
+        <div class="form-group">
+            @Html.LabelFor(model => model.Observacoes, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Observacoes, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Observacoes, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                @Html.Partial("_botaoCadastrar")
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.Partial("_botaoVoltarParaLista")
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        $("#CodMesa").focus();
+    </script>
+}

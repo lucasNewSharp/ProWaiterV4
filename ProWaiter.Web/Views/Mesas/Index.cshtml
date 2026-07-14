@@ -1,0 +1,50 @@
+﻿@using ProWaiter.Web.Util;
+@model IEnumerable<ProWaiter.Web.Models.Entidades.Mesa>
+
+@{
+    ViewBag.Title = Configuracoes.ObterInstancia().StringTipoLocalEntrega;
+}
+
+<h2>@ViewBag.Title</h2>
+
+<p>
+    @Html.Partial("_botaoCriarNovo")
+</p>
+@Html.Partial("_pesquisarnaTabelaClient")
+<table class="table-sm table-condensed table-hover table-bordered" id="tabela">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Descricao)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CodUltimoPedido)
+        </th>
+        <th style="text-align:center;">Ações</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Descricao)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CodUltimoPedido)
+            </td>
+            <td>
+                @Html.Partial("_botoesAcaoIndex", new { id = item.Codigo })
+            </td>
+        </tr>
+    }
+
+</table>
+@section scripts{
+    <script src="~/Scripts/PesquisarNaTabela.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var txt = $("#txtFiltro");
+            txt.focus();
+            txt.keyup(function () { PesquisarNaTabela('tabela', $(this).val()) });
+        });
+    </script>
+}

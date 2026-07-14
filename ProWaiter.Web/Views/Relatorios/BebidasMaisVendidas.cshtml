@@ -1,0 +1,114 @@
+﻿@model IEnumerable<ProWaiter.Web.Models.Entidades.BebidaMaisVendidaDTO>
+@{
+    ViewBag.Title = "Bebidas Mais Vendidas";
+}
+
+@section css{
+    <style type="text/css">
+        td, th {
+            text-align: right;
+        }
+
+        .linDado {
+        }
+
+        .linTotal {
+            font-weight: bold;
+        }
+    </style>
+}
+
+<h2>@ViewBag.Title</h2>
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "formulario" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-inline">
+        <div class="row">
+            <div class="form-group col-md-4">
+                @Html.Label("Data Inicial", htmlAttributes: new { @class = "control-label" })
+                <input type="date" id="dataInicial" name="dataInicial" class="form-control" value="@ViewBag.DataInicial" />
+            </div>
+            <div class="form-group col-md-4">
+                @Html.Label("Data Final", htmlAttributes: new { @class = "control-label" })
+                <input type="date" id="dataFinal" name="dataFinal" class="form-control" value="@ViewBag.DataFinal" />
+            </div>            
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-default" data-toggle="tooltip" title="Filtrar">
+                    <div class="glyphicon glyphicon-search"></div>
+                </button>
+                <button type="button" class="btn btn-default" data-toggle="tooltip" title="Limpar Filtros" onclick="LimparFiltros()">
+                    <div class="glyphicon glyphicon-erase"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+<br /><br />
+<table class="table" id="tabela">
+    <tr>
+        <th></th>
+        <th>
+            @Html.DisplayNameFor(model => model.Tipo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Bebida)
+        </th>        
+        <th>
+            @Html.DisplayNameFor(model => model.Quantidade)
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr class="@item.ClasseCSS">
+            <td>
+                @Html.DisplayFor(modelItem => item.Rank)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Tipo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Bebida)
+            </td>            
+            <td>
+                @Html.DisplayFor(modelItem => item.Quantidade)
+            </td>
+        </tr>
+    }
+
+</table>
+@section scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $("#dataInicial").keyup(function (e) {
+                if (e.keyCode == 27)
+                    LimparFiltros();
+            });
+
+            $("#dataFinal").keyup(function (e) {
+                if (e.keyCode == 27)
+                    LimparFiltros();
+            });
+
+            $("#unificarRefeicoes").change(function (e) {
+                $("#formulario").submit();
+            });
+
+            $("#exibirPedidosFechados").change(function (e) {
+                $("#formulario").submit();
+            });
+        });
+
+        function LimparFiltros() {
+            $("#dataInicial").val("@ViewBag.DataInicial");
+            $("#dataFinal").val("@ViewBag.DataFinal");
+            $("#formulario").submit();
+        }
+
+    </script>
+
+}

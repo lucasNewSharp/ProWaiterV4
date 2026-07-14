@@ -1,0 +1,1602 @@
+﻿@model ProWaiter.Web.Models.Entidades.Pedido
+@using ProWaiter.Web.Models.Entidades
+@using ProWaiter.Web.Util
+
+@{
+    if (Model is PedidoInterno)
+    {
+        ViewBag.Title = "Pedido Interno";
+    }
+    else if (Model is PedidoExterno)
+    {
+        ViewBag.Title = "Pedido Para Entrega";
+    }
+    else
+    {
+        ViewBag.Title = "Pedido Para Levar";
+    }
+
+}
+
+@section css {
+    <link href="~/Content/statusEnviado.css" rel="stylesheet" />
+    <style type="text/css">
+        #listaCodComponentes {
+            max-height: 330px;
+            overflow-y: scroll;
+        }
+
+        .txtDinheiro {
+            width: 140px;
+        }
+    </style>
+}
+
+<h2>@AppResources.StringEditar</h2>
+
+@if (!string.IsNullOrWhiteSpace(ViewBag.ErrosImpressao))
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewBag.ErrosImpressao
+    </div>
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>@ViewBag.Title</h4>
+        <a class="btn btn-primary" data-toggle="modal" data-target="#modalAdicionarItensModelo">Adicionar itens a partir de modelo</a>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.Codigo)
+
+        @{
+            if (Model is PedidoInterno)
+            {
+                <div class="form-group">
+                    @Html.Label("DescricaoMesa", Configuracoes.ObterInstancia().StringTipoLocalEntrega, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <input type="text" class="form-control text-box single-line" readonly="readonly" value="@ViewBag.DescricaoMesa" />
+                    </div>
+                </div>
+                if (Configuracoes.ObterInstancia().UtilizaComanda)
+                {
+                    <div class="form-group">
+                        @Html.LabelFor(model => ((PedidoInterno)model).LocalInterno, "Local entrega", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.DropDownList("CodLocalInterno", null, htmlAttributes: new { @class = "form-control", @id = "ddlLocaisInternos" })
+                            @Html.ValidationMessageFor(model => ((PedidoInterno)model).LocalInterno, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="form-group">
+                    @Html.Label("NomeCliente", "Cliente", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        <input type="text" class="form-control text-box single-line" readonly="readonly" value="@ViewBag.NomeCliente" />
+                    </div>
+                </div>
+
+                if (Model is PedidoExterno pedExterno)
+                {
+                    @Html.HiddenFor(p => pedExterno.CodCliente);
+                    <div class="form-group">
+                        @Html.Label("ValorEntrega", "Valor entrega: R$", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            <input name="ValorEntrega" id="ValorEntrega" class="form-control col-md-4" value="@ViewBag.ValorEntrega" />
+                            <div style="padding-right:0; display:inline" class="col-md-1">
+                                <div class="glyphicon glyphicon-floppy-disk btn btn-primary btn-lg" id="btnSalvarValorEntrega" data-toggle="tooltip" data-placement="right" title="Salva o valor de entrega" onclick="SalvarValorEntrega('@Model.Codigo')"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.Label("CodEndereco", "Endereço entrega", htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.DropDownList("EnderecosEntrega", null, htmlAttributes: new { @class = "form-control col-md-8", @id = "ddlEnderecos", @onchange = "AtualizarEnderecoEntregaPedido()" })
+                            <div class="col-md-1" style="width:10px; height:20px; align-content:center;"><span class="glyphicon glyphicon-info-sign" id="tooltipDadosEndereco" data-toggle="tooltip" data-placement="right" data-html="true" data-original-title=""></span></div>
+                            <div class="btn btn-default glyphicon glyphicon-plus btnCadastrarEndereco col-md-1" onclick="ModalCadastroEndereco()" title="Cadastrar novo..." style="margin-left:10px; width:50px;"></div>
+                            <div class="btn btn-default glyphicon glyphicon-edit btnEditarEndereco col-md-1" onclick="ModalEditarEndereco()" title="Editar selecionado..." style="margin-left:10px; width:50px;"></div>
+
+                        </div>
+
+                    </div>
+                }
+
+            }
+        }
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Observacoes, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Observacoes, new { htmlAttributes = new { @class = "form-control col-md-4", @id = "txtObservacoesPedido" } })
+                @Html.ValidationMessageFor(model => model.Observacoes, "", new { @class = "text-danger" })
+
+                <div style="padding-right:0; display:inline" class="col-md-1">
+                    <div class="glyphicon glyphicon-floppy-disk btn btn-primary btn-lg" id="btnSalvarObsPedido" data-toggle="tooltip" data-placement="right" title="Salva as observações" onclick="SalvarObsPedido('@Model.Codigo')"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DataInicio, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.DataInicio, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.DataInicio, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NomeUsuario, "Usuário", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.NomeUsuario, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NomeUsuario, "Valor atual", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <p class="form-control-static" id="valorAtualPedido">R$&nbsp;@Html.DisplayFor(model => model.ValorTotal)</p>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Cod. Barras</label>
+            <div class="col-md-10">
+                <input id="qtdItemCodBarras" class="form-control col-md-2" value="1" style="width:60px; margin-right:5px;" title="Quantidade" />
+                <input id="txtCodBarras" class="form-control col-md-6" />
+                <div class="btn btn-default glyphicon glyphicon-plus btnAddItemCodBarras col-md-1" onclick="AdicionarItemCodBarras()" title="Adicionar item pelo codigo de barras" style="margin-left:10px; width:50px;"></div>
+                <div class="col-md-3">
+                    @{
+                        string ck = ViewBag.MarcarCodBarrasComoEnviada ? "checked" : "";
+                    }
+                    <input id="ckbMarcarCodBarrasComoEnviado" @ck type="checkbox" />
+                    <span for="ckbMarcarCodBarrasComoEnviado">Marcar como enviado</span>
+                </div>
+            </div>
+        </div>
+
+        @* http://stackoverflow.com/questions/32322775/how-to-remove-a-list-item-border-in-bootstrap-list-group *@
+        <div class="form-group">
+            @Html.LabelFor(model => model.RefeicoesDoPedido, "Refeições", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-1">
+                <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalAdicionarRefeicao">
+                    <div class="glyphicon glyphicon-plus"></div>
+                </button>
+            </div>
+            <div class="col-md-6">
+                <div class="list-group">
+                    @foreach (var refeicao in Model.RefeicoesDoPedido)
+                    {
+                        <script type="text/javascript">
+                            var textoToolTipComp = "";
+                        </script>
+
+                        string id = "ref_" + refeicao.Codigo.ToString();
+                        string idToolTipComp = "toolTip_" + refeicao.Codigo.ToString();
+                        <div class="row">
+                            <div class="list-group-item row col-md-9">
+                                <div class="cursor-pointer itemRefeicao col-md-7" data-toggle="collapse" data-target="#@id" style="padding:0px;">
+                                    <div class="glyphicon glyphicon-chevron-right" id="gi_@id"></div>
+
+                                    @if (refeicao.RefeicaoDoCardapio.DeComposicao)
+                                    {
+                                        <span class="glyphicon glyphicon-info-sign toolTipComponentesCompostosClass" id="@idToolTipComp" data-toggle="tooltip" data-placement="right" data-html="true" data-original-title="">
+                                        </span>
+                                    }
+
+                                    @refeicao.RefeicaoDoCardapio.Refeicao.Nome (@refeicao.RefeicaoDoCardapio.TamanhoRefeicao.Nome)
+                                </div>
+                                <div class="col-md-4">
+                                    @if (refeicao.Enviado)
+                                    {
+                                        <span class="label label-enviado">Item enviado</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="label label-naoEnviado">Item à enviar</span>
+                                    }
+                                </div>
+                                <span class="col-md-1" style="padding:0px;">
+                                    <a class="btn btn-xs btn-danger" onclick="javascript: PedirConfirmacao('@Url.Action("RemoverRefeicao", "Pedidos", new { codRefeicaoDoPedido = refeicao.Codigo })')">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </a>
+                                </span>
+                            </div>
+                            @if (!string.IsNullOrWhiteSpace(refeicao.NomeUsuario))
+                            {
+                                <div style="display:inline; align-content:center; margin-left:17px; margin-top:8px;" class="col-md-2 badge">
+                                    <span style="vertical-align:central">@refeicao.NomeUsuario</span><br />
+                                    @{
+                                        string data = refeicao.DataHora.HasValue ? refeicao.DataHora.Value.ToShortTimeString() : string.Empty;
+                                    }
+                                    <span style="vertical-align:central">@data</span>
+                                </div>
+                            }
+                        </div>
+
+                        <div id="@id" class="collapse row">
+                            <ul>
+                                @if (refeicao.RefeicaoDoCardapio.DeComposicao)
+                                {
+                                    foreach (var componenteRefeicao in refeicao.RefeicaoDoCardapio.ComponentesComposicaoRefeicao.OrderBy(c => c.ComponenteRefeicao.Nome))
+                                    {
+                                        string idComponente = refeicao.Codigo.ToString() + "_" + componenteRefeicao.CodComponente.ToString();
+                                        <li class="list-group-item col-md-12">
+                                            <div class="col-md-9" style="padding:0px;">
+                                                @componenteRefeicao.ComponenteRefeicao.Nome
+                                            </div>
+
+
+                                            @{
+                                                string checado = "";
+
+                                                if (refeicao.ComponentesRefeicaoPedido.Select(c => c.ComponenteRefeicao).Contains(componenteRefeicao.ComponenteRefeicao))
+                                                {
+                                                    checado = "checked";
+
+                                                    var compProporcional = refeicao.ComponentesRefeicaoPedido.Where(c => c.CodComponente == componenteRefeicao.CodComponente).Single();
+
+                                                    if (string.IsNullOrWhiteSpace(componenteRefeicao.CodUnidade))
+                                                    {
+                                                        <script type="text/javascript">
+                                                            textoToolTipComp += '@componenteRefeicao.ComponenteRefeicao.Nome' + "<br />";
+                                                        </script>
+                                                    }
+                                                    else
+                                                    {
+                                                        <script type="text/javascript">
+                                                            textoToolTipComp += '@componenteRefeicao.ComponenteRefeicao.Nome' + "(" + '@compProporcional.Quantidade.ToString()' + ")<br />";
+                                                        </script>
+                                                    }
+                                                }
+                                                <span class="col-md-1" style="padding:0px;">
+                                                    <input type="checkbox" id="@idComponente" @checado onclick="AtualizarComponente(this, '@refeicao.Codigo', '@componenteRefeicao.CodComponente', true)" />
+                                                </span>
+
+                                                if (!string.IsNullOrWhiteSpace(componenteRefeicao.CodUnidade))
+                                                {
+                                                    string desabilitado = "";
+                                                    string quantidade = "";
+
+                                                    if (string.IsNullOrWhiteSpace(checado))
+                                                    {
+                                                        desabilitado = "disabled";
+                                                    }
+                                                    else
+                                                    {
+                                                        var compProporcional = refeicao.ComponentesRefeicaoPedido.Where(c => c.CodComponente == componenteRefeicao.CodComponente).Single();
+                                                        quantidade = compProporcional.Quantidade.ToString();
+                                                    }
+
+                                                    <span class="col-md-2" style="padding:0px;">
+                                                        @{
+                                                            string idNud = "nud_" + refeicao.Codigo + "_" + componenteRefeicao.CodComponente.ToString();
+                                                        }
+                                                        <input type="number" onchange="AtualizarComponente(null, '@refeicao.Codigo', '@componenteRefeicao.CodComponente', false)" id="@idNud" class="form-control" @desabilitado value="@quantidade" />
+                                                    </span>
+                                                }
+                                                <script type="text/javascript">
+                                                    var txt = "<div>" + textoToolTipComp + "</div>";
+                                                    document.getElementById('@idToolTipComp').setAttribute("data-original-title", txt);
+                                                </script>
+                                            }
+
+                                        </li>
+                                    }
+                                }
+                                else
+                                {
+                                    foreach (var componenteRefeicao in refeicao.RefeicaoDoCardapio.Refeicao.ComponentesRefeicao.OrderBy(c => c.Nome))
+                                    {
+                                        string idComponente = refeicao.Codigo.ToString() + "_" + componenteRefeicao.Codigo.ToString();
+                                        <li class="list-group-item col-md-12">
+                                            <div class="col-md-11" style="padding:0px;">
+                                                @componenteRefeicao.Nome
+                                            </div>
+                                            <span class="col-md-1" style="padding:0px;">
+                                                @if (refeicao.ComponentesRefeicaoPedido.Select(c => c.ComponenteRefeicao).Contains(componenteRefeicao))
+                                                {
+                                                    <input type="checkbox" id="@idComponente" checked onclick="AtualizarComponente(this, '@refeicao.Codigo', '@componenteRefeicao.Codigo', false)" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="checkbox" id="@idComponente" onclick="AtualizarComponente(this, '@refeicao.Codigo', '@componenteRefeicao.Codigo', false)" />
+                                                }
+                                            </span>
+
+                                        </li>
+                                    }
+                                }
+                                <li class="list-group-item col-md-12 liObservacoes">
+                                    <div class="col-md-9" style="padding:0;">
+                                        <textarea class="form-control" id="obsRef_@refeicao.Codigo">@refeicao.Observacoes</textarea>
+                                    </div>
+                                    <div class="col-md-3" style="padding-right:0;">
+                                        <div class="glyphicon glyphicon-floppy-disk btn btn-primary btn-lg" onclick="SalvarObsRefs('obsRef_@refeicao.Codigo')"></div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.BebidasDoPedido, "Bebidas", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-1">
+            </div>
+            <div class="col-md-6">
+                <div class="list-group">
+                    @foreach (var bebida in Model.BebidasDoPedido)
+                    {
+                        string id = "beb_" + bebida.Codigo.ToString();
+                        <div class="row">
+                            <div class="list-group-item row col-md-9">
+                                <div class="col-md-7 itemRefeicao" style="padding:0;" data-toggle="collapse" data-target="#@id">
+                                    <div class="glyphicon glyphicon-chevron-right" id="gi_@id"></div>
+                                    @bebida.Bebida.Nome
+                                </div>
+                                <div class="col-md-4">
+                                    @if (bebida.Enviado)
+                                    {
+                                        <span class="label label-enviado">Item enviado</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="label label-naoEnviado">Item à enviar</span>
+                                    }
+                                </div>
+                                <span class="col-md-1" style="padding:0">
+                                    <a class="btn btn-xs btn-danger" onclick="javascript: PedirConfirmacao('@Url.Action("RemoverBebida", "Pedidos", new { codBebidaDoPedido = bebida.Codigo })')">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </a>
+                                </span>
+                            </div>
+                            @if (!string.IsNullOrWhiteSpace(bebida.NomeUsuario))
+                            {
+                                <div style="display:inline; align-content:center; margin-left:17px; margin-top:8px;" class="col-md-2 badge">
+                                    <span style="vertical-align:central">@bebida.NomeUsuario</span><br />
+                                    @{
+                                        string data = bebida.DataHora.HasValue ? bebida.DataHora.Value.ToShortTimeString() : string.Empty;
+                                    }
+                                    <span style="vertical-align:central">@data</span>
+                                </div>
+                            }
+                        </div>
+                        <div id="@id" class="collapse row">
+                            <div class="list-group-item col-md-12 liObservacoes">
+                                <div class="col-md-9" style="padding:0;">
+                                    <textarea class="form-control" id="obsBeb_@bebida.Codigo">@bebida.Observacoes</textarea>
+                                </div>
+                                <div class="col-md-3" style="padding-right:0;">
+                                    <div class="glyphicon glyphicon-floppy-disk btn btn-primary btn-lg disabled" onclick="SalvarObsBebs('obsBeb_@bebida.Codigo')"></div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ItensBalcaoDoPedido, "Itens de balcão", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-7">
+                <input id="qtdItemBalcao" class="form-control col-md-2" value="1" style="width:60px; margin-right:5px;" title="Quantidade" />
+                @Html.DropDownList("ddlItensBalcao", (SelectList)ViewBag.CodItensBalcao, htmlAttributes: new { @class = "form-control col-md-9" })
+                <div class="btn btn-default glyphicon glyphicon-plus btnAdicionarItemBalcao col-md-1" onclick="AdicionarItemBalcao()" title="Adicionar item de balcão" style="margin-left:10px; width:50px;"></div>
+                <div class="col-md-3">
+                    @{
+                        string ckbSomenteItensSemCodBarrasChecked = ViewBag.ExibirSomenteItensBalcaoSemCodBarras ? "checked" : "";
+                    }
+                    <input id="ckbSomenteItensSemCodBarras" @ckbSomenteItensSemCodBarrasChecked type="checkbox" title="Exibe somente itens de balção sem codigo de barras" />
+                    <span for="ckbSomenteItensSemCodBarras">Sem cod. barras</span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            @foreach (var itemBalcaoPedido in Model.ItensBalcaoDoPedido)
+            {
+                string id = "itemBalcaoPedido_" + itemBalcaoPedido.Codigo.ToString();
+                <div class="row" style="margin-left:15px;">
+                    <div class="col-md-2"></div>
+                    <div class="list-group-item col-md-4">
+                        <div class="col-md-11" style="padding:0;">
+                            @itemBalcaoPedido.ItemBalcao.Nome
+                        </div>
+                        <span class="col-md-1" style="padding:0">
+                            <a class="btn btn-xs btn-danger" onclick="javascript: PedirConfirmacao('@Url.Action("RemoverItemBalcao", "Pedidos", new { codItemBalcaoPedido = itemBalcaoPedido.Codigo })'); AtualizarInterfaceComValorAtualPedido()">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </a>
+                        </span>
+                    </div>
+                    <div style="display:inline; align-content:center; margin-left:17px; margin-top:8px;" class="col-md-1 badge">
+                        <span style="vertical-align:central">@itemBalcaoPedido.NomeUsuario</span><br />
+                        @{
+                            string data = itemBalcaoPedido.DataHora.ToShortTimeString();
+                        }
+                        <span style="vertical-align:central">@data</span>
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+
+                @{
+                    bool imprimirLanchesPedidoExterno = Configuracoes.ObterInstancia().ImprimirLanchesPedidoExterno;
+                    if (Model is PedidoExterno && !imprimirLanchesPedidoExterno)
+                    {
+                        <span id="toolTipoBotaoEnviarCozinha" title="Impressão de pedido externo desabilitado nas configurações">
+                            <a type="button" id="btnEnviarCozinha" class="btn btn-primary disabled" href="#">Enviar à Cozinha</a>
+                        </span>
+                    }
+                    else
+                    {
+                        <a type="button" class="btn btn-primary@(Model.TodosItensEnviados ? " disabled" : "")" href="@Url.Action("EnviarItensACozinha", "Pedidos", new { Id = Model.Codigo })">Enviar à Cozinha</a>
+                    }
+                }
+
+                <input type="button" class="btn btn-warning" value="Fechar Pedido" data-toggle="modal" data-target="#modalFecharPedido" />
+            </div>
+        </div>
+    </div>
+
+
+}
+
+<div id="modalAdicionarRefeicao" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Adicionar Item</h4>
+            </div>
+            <div class="modal-body">
+
+                <ul class="nav nav-tabs">
+                    <li id="tabRefeicoes" class="active"><a data-toggle="tab" href="#menuRefeicoes">Refeições</a></li>
+                    <li id="tabBebidas"><a data-toggle="tab" href="#menuBebidas">Bebidas</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div id="menuRefeicoes" class="tab-pane fade active in" style="margin-top:20px">
+                        <div class="row">
+                            <label class="control-label col-md-2">Tipo</label>
+                            @Html.DropDownList("ddlTipoRefeicao", (SelectList)ViewBag.CodTipoRefeicao, new { @id = "ddlCodTipoRefeicao", @class = "form-control col-md-4" })
+                            <label class="control-label col-md-2">Quantidade</label>
+                            <input class="form-control text-box single-line col-md-4" data-val="true" data-val-number="A quantidade deve ser um valor numérico." data-val-required="O campo quantidade é obrigatório." id="quantidadeRef" type="number" value="1" min="1">
+                        </div><br />
+                        <div class="row">
+                            <label class="control-label col-md-2">Filtro</label>
+                            <input class="form-control text-box single-line col-md-4" id="filtroRefeicao" type="text">
+                            <label class="control-label col-md-2">Observação</label>
+                            <input class="form-control text-box single-line col-md-4" id="observacao" type="text">
+                        </div><br />
+                        <div class="row">
+                            <label class="control-label col-md-2">Refeição</label>
+                            @Html.DropDownList("CodRefeicao", (SelectList)ViewBag.CodTipoRefeicao, new { @id = "listaCodRefeicoes", @class = "form-control col-md-4", @size = "15" })
+                            <label class="control-label col-md-2">
+                                Componentes
+                                <span class="glyphicon glyphicon-info-sign" id="toolTipSaboresEscolhidosAddRefeicao" data-toggle="tooltip" data-placement="right" data-html="true" data-original-title="">
+                                </span>
+                            </label>
+                            <ul id="listaCodComponentes" class="list-group col-md-4"></ul>
+                        </div><br />
+                        <div class="row">
+                            <div class="col-md-12 alert alert-success hidden" id="msgAddRef">Refeição(ões) adicionada(s) com êxito!</div>
+                        </div>
+                        <div class="row">
+                        </div>
+                    </div>
+                    <div id="menuBebidas" class="tab-pane fade" style="margin-top:20px">
+                        <div class="row">
+                            <label class="control-label col-md-2">Tipo</label>
+                            @Html.DropDownList("ddlTipoBebida", (SelectList)ViewBag.CodTipoBebida, new { @id = "ddlCodTipoBebida", @class = "form-control col-md-10" })
+                        </div><br />
+                        <div class="row">
+                            <label class="control-label col-md-2">Filtro</label>
+                            <input class="form-control text-box single-line col-md-10" id="filtroBebida" type="text">
+                        </div><br />
+                        <div class="row">
+                            <label class="control-label col-md-2">Bebida</label>
+                            @Html.DropDownList("CodBebida", (SelectList)ViewBag.CodBebida, new { @id = "listaCodBebidas", @class = "form-control col-md-10", @size = "10" })
+                        </div><br />
+                        <div class="row">
+                            <label class="control-label col-md-2">Quantidade</label>
+                            <input class="form-control text-box single-line col-md-10" data-val="true" data-val-number="A quantidade deve ser um valor numérico." data-val-required="O campo quantidade é obrigatório." id="quantidadeBeb" type="number" value="1" min="1">
+                        </div>
+                        <br />
+                        <div class="row">
+                            <label class="control-label col-md-2">Observação</label>
+                            <input class="form-control text-box single-line col-md-10" data-val="true" id="observacaoBeb" type="text">
+                        </div><br />
+                        <div class="row">
+                            <div class="col-md-12 alert alert-success hidden" id="msgAddBeb">Bebida(s) adicionada(s) com êxito!</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button id="btnAdicionarItem" class="btn btn-primary">Adicionar</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="javascript: location.reload();">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="modalFecharPedido" class="modal fade" role="dialog">
+    <div class="modal-dialog @(ViewBag.RefeicoesCustomizadas.Count > 0 ? "modal-lg" : "")">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Fechar Pedido</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    @if (ViewBag.RefeicoesCustomizadas.Count > 0)
+                    {
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <label class="control-label col-md-12">Refeições Customizadas (Acréscimos)</label>
+                                <div class="col-md-12 pre-scrollable">
+                                    @foreach (var refCustomizada in ViewBag.RefeicoesCustomizadas)
+                                    {
+                                        <div class="col-md-8 input-group">
+                                            <div><b>@refCustomizada.RefeicaoDoCardapio.Refeicao.Nome</b></div>
+                                            <div>@refCustomizada.Observacoes</div>
+                                            <div class="input-group txtDinheiro">
+                                                <span class="input-group-addon">R$</span>
+                                                <input type="text" class="form-control txtAcrRefCust controleParaFecharPedido" onfocus="this.select();" id='@String.Format("acr-{0}", refCustomizada.Codigo)' title="Acréscimo em R$" value="0,00" />
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="@(ViewBag.RefeicoesCustomizadas.Count > 0 ? "col-lg-6" : "col-lg-12")">
+                        <div class="row">
+                            <label class="control-label col-md-4">@Html.DisplayNameFor(p => p.ValorBebidas)</label>
+                            <label class="col-md-8">@Html.DisplayFor(p => p.ValorBebidas)</label>
+                        </div><br />
+                        <div class="row">
+                            <label class="control-label col-md-4">@Html.DisplayNameFor(p => p.ValorRefeicoes)</label>
+                            <label class="col-md-8">@Html.DisplayFor(p => p.ValorRefeicoes)</label>
+                        </div><br />
+                        <div class="row">
+                            <label class="control-label col-md-4">@Html.DisplayNameFor(p => p.ValorItensDeBalcao)</label>
+                            <label class="col-md-8">@Html.DisplayFor(p => p.ValorItensDeBalcao)</label>
+                        </div><br />
+
+                        @{
+                            if (Model is PedidoExterno)
+                            {
+                                <div class="row">
+                                    <label class="control-label col-md-4">Valor entrega</label>
+                                    <label class="col-md-8" id="lblValorEntrega">@ViewBag.ValorEntrega</label>
+                                </div><br />
+                            }
+                        }
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="control-label">@Html.DisplayNameFor(p => p.Observacoes)</label>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="input-group">
+                                    <input class="form-control controleParaFecharPedido" id="txtObservacoesFechamentoPedido" value="@Model.Observacoes" />
+                                </div>
+                            </div>
+                        </div><br />
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="control-label">@Html.DisplayNameFor(p => p.Acrescimos)</label><button onclick='$("#acrescimos").val("@(String.Format("{0:N2}", (Model.ValorRefeicoes + Model.ValorBebidas) * 0.1M))"); ConfigurarLinkFecharPedido();' class="btn btn-sm">+10%</button>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="input-group txtDinheiro">
+                                    <span class="input-group-addon">R$</span>
+                                    @Html.EditorFor(p => p.Acrescimos, new { htmlAttributes = new { @id = "acrescimos", @class = "form-control controleParaFecharPedido" } })
+                                </div>
+                            </div>
+                        </div><br />
+                        <div class="row">
+                            <label class="control-label col-md-4">@Html.DisplayNameFor(p => p.Descontos)</label>
+                            <div class="col-md-8">
+                                <div class="input-group txtDinheiro">
+                                    <span class="input-group-addon">R$</span>
+                                    @Html.EditorFor(p => p.Descontos, new { htmlAttributes = new { @id = "descontos", @class = "form-control controleParaFecharPedido" } })
+                                </div>
+                            </div>
+                        </div><br />
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="control-label">Valor recebido</label>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="input-group txtDinheiro">
+                                    <span class="input-group-addon">R$</span>
+                                    <input class="form-control controleParaFecharPedido" id="valorRecebido" />
+                                </div>
+                            </div>
+                        </div><br />
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label class="control-label">Troco</label>
+                            </div>
+                            <div class="col-md-8">
+                                <div class="input-group txtDinheiro">
+                                    <span class="input-group-addon">R$</span>
+                                    <input readonly class="form-control controleParaFecharPedido" id="troco" />
+                                </div>
+                            </div>
+                        </div><br />
+
+
+                        <div class="row">
+                            <label class="control-label col-md-4">@Html.DisplayNameFor(p => p.ValorTotal)</label>
+                            <label id="lblValorTotal" class="col-md-8">@Html.DisplayFor(p => p.ValorTotal)</label>
+                        </div>
+
+                        @{
+                            if (Model is PedidoExterno pedidoExterno)
+                            {
+                                if (ViewBag.ExibirAdicionaisMolhosPedidoEntrega)
+                                {
+                                    <br />
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            @if (!pedidoExterno.Maionese.HasValue) //Se um não tem valor é pq nunca foi setado
+                                            {
+                                                <input type="checkbox" id="ckbMaionese" checked />
+                                                <label class="control-label" style="margin-right:10px" for="ckbMaionese">Maionese</label>
+                                                <input type="checkbox" id="ckbCatchup" />
+                                                <label class="control-label" style="margin-right:10px" for="ckbCatchup">Catchup</label>
+                                                <input type="checkbox" id="ckbMostarda" />
+                                                <label class="control-label" for="ckbMostarda">Mostarda</label>
+                                            }
+                                            else
+                                            {
+                                                string maioneseChecked = pedidoExterno.Maionese.Value ? "checked" : "";
+                                                string catchupChecked = pedidoExterno.Catchup.Value ? "checked" : "";
+                                                string mostardaChecked = pedidoExterno.Mostarda.Value ? "checked" : "";
+                                                <input type="checkbox" id="ckbMaionese" @maioneseChecked />
+                                                <label class="control-label" style="margin-right:10px" for="ckbMaionese">Maionese</label>
+                                                <input type="checkbox" id="ckbCatchup" @catchupChecked />
+                                                <label class="control-label" style="margin-right:10px" for="ckbCatchup">Catchup</label>
+                                                <input type="checkbox" id="ckbMostarda" @mostardaChecked />
+                                                <label class="control-label" for="ckbMostarda">Mostarda</label>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                                <br />
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        @{
+                                            if (ViewBag.ImprimirCopiaImpressoraEntrega)
+                                            {
+                                                <input type="checkbox" id="ckbImprimirCopiaFechamentoImprEntrega" checked />
+                                            }
+                                            else
+                                            {
+                                                <input type="checkbox" id="ckbImprimirCopiaFechamentoImprEntrega" />
+                                            }
+                                        }
+                                        <label class="control-label">Imprimir cópia na impressora de entrega</label>
+                                    </div>
+                                </div><br />
+                            }
+                        }
+                        <br />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a id="btnCadastrarComoModelo" class="btn btn-primary pull-left" data-toggle="modal" data-target="#modalCadastrarComoModelo">Cadastrar como modelo</a>
+                <a id="hrefFecharPedido" class="btn btn-primary controleParaFecharPedido">Fechar Pedido</a>
+                <button type="button" class="btn btn-default" data-dismiss="modal" id="btnCancelarFecharPedido" onclick="limparLinkFecharPedido()">Cancelar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="modalCadastrarComoModelo" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Cadastrar como modelo</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <label class="control-label col-md-2">Nome</label>
+                    <input type="text" class="col-md-10 form-control" id="txtNomeModelo" />
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="checkbox" id="ckbExcluirPedido" />
+                        <label class="control-label">Excluir pedido após cadastro do modelo</label>
+                    </div>
+                </div>
+                <br />
+            </div>
+            <div class="modal-footer">
+                <a id="hrefCadastrarModelo" class="btn btn-primary controleParaCadastrarModelo">Cadastrar</a>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="modalAdicionarItensModelo" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Modelos</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row" style="padding:5px;">
+                    <div class="list-group col-md-12" style="max-height: 200px; margin-bottom:10px; overflow-y:scroll; -webkit-overflow-scrolling: touch">
+                        @{
+                            foreach (var mod in ViewBag.Modelos)
+                            {
+                                <a id="id_@mod.Codigo" href="#" class="modelo list-group-item list-group-item-action">
+                                    @mod.Descricao
+                                </a>
+                            }
+                        }
+                    </div>
+                </div>
+                <br />
+            </div>
+            <div class="modal-footer">
+                <button id="btnAdicionarItensModelo" class="btn btn-primary">Adicionar</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Canclear</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="modalEndereco" class="modal">
+</div>
+
+@{
+    string msg = string.Empty;
+}
+
+<div>
+    @Html.Partial("_botaoVoltarParaLista")
+</div>
+
+@Html.Partial("_janelaConfirmaExclusao")
+
+@section scripts{
+    <script src="~/Scripts/PesquisarNaTabela.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $(".modelo").on("click", function () {
+                var $this = $(this);
+                $('.active').removeClass('active');
+                $this.toggleClass('active')
+            });
+
+            $("#toolTipSaboresEscolhidosAddRefeicao").tooltip({ html: true, container: 'body' });
+            $("#tooltipDadosEndereco").tooltip({ html: true, container: 'body' });
+
+            //Tooltip itens selecionados na tela de listagem
+            $(".toolTipComponentesCompostosClass").each(function () {
+                $(this).tooltip({ html: true, container: 'body' });
+            });
+
+            $("#btnSalvarObsPedido").tooltip({ container: 'body' });
+            $("#btnSalvarValorEntrega").tooltip({ container: 'body' });
+            $("#toolTipoBotaoEnviarCozinha").tooltip({ container: 'body' });
+
+            $("#txtObservacoesPedido").on("keypress", function (e) {
+                var botao = $("#btnSalvarObsPedido");
+                $("#txtObservacoesPedido").addClass("alert-danger").removeClass("alert-success");
+            });
+
+
+            var txtFiltroRefeicao = $("#filtroRefeicao");
+            txtFiltroRefeicao.focus();
+            txtFiltroRefeicao.keyup(function () { PesquisarNaSelectList('listaCodRefeicoes', $(this).val()) });
+
+            var txtFiltroBebida = $("#filtroBebida");
+            txtFiltroBebida.focus();
+            txtFiltroBebida.keyup(function () { PesquisarNaSelectList('listaCodBebidas', $(this).val()) });
+
+            $(".itemRefeicao").each(function (index) {
+                var id = $(this).attr("data-target")
+                var idBotao = "gi_" + id.replace('#', '');
+
+                $(id).on("hide.bs.collapse", function (f) {
+                    $('#' + idBotao).removeClass('glyphicon glyphicon-chevron-down').addClass('glyphicon glyphicon-chevron-right');
+                });
+                $(id).on("show.bs.collapse", function (f) {
+                    $('#' + idBotao).removeClass('glyphicon glyphicon-chevron-right').addClass('glyphicon glyphicon-chevron-down');
+                });
+            });
+
+            $(".liObservacoes").each(function (index, container) {
+                var txtArea = $(container).find("textarea");
+                txtArea.on("keypress", function (e) {
+                    var liElement = $(e.target).closest(".liObservacoes");
+                    var botao = liElement.find(".glyphicon-floppy-disk");
+                    botao.removeClass("disabled");
+                    txtArea.addClass("alert-danger").removeClass("alert-success");
+                });
+            });
+
+            $("#ddlCodTipoRefeicao").on("change", PopularRefeicoes);
+            $("#listaCodRefeicoes").on("change", PopularComponentes);
+            $("#listaCodBebidas").on("change", ValidarAdicaoBebidas);
+            $("#quantidadeBeb").on("keyup", ValidarAdicaoBebidas);
+
+            $("#btnAdicionarItem").on("click", AdicionarItem);
+
+            $("#btnAdicionarItensModelo").on("click", AdicionarItensModelo);
+
+            $("#ddlCodTipoBebida").on("change", PopularBebidas);
+
+            $("#ddlLocaisInternos").on("change", AtualizarLocalEntregaPedidoInterno);
+
+            $(".controleParaFecharPedido").on("click", ConfigurarLinkFecharPedido);
+            $(".controleParaFecharPedido").on("keyup", ConfigurarLinkFecharPedido);
+            $(".controleParaCadastrarModelo").on("click", ConfigurarLinkCadastrarModelo);
+            $(".controleParaCadastrarModelo").on("keyup", ConfigurarLinkCadastrarModelo);
+
+            $("#valorRecebido").on("keyup", CalcularTroco);
+
+            PopularBebidas();
+            PopularRefeicoes();
+
+            var modalAberta = '@ViewBag.NomeModalAberta';
+            if (modalAberta != '') {
+                $('#' + modalAberta).modal();
+            }
+
+            $('#acrescimos').on("focus", function () {
+                this.select();
+            });
+            $('#descontos').on("focus", function () {
+                this.select();
+            });
+
+            $("#valorRecebido").on("focus", function () {
+                this.select();
+            });
+
+            $("#troco").val("0,00");
+            $("#troco").on("focus", function () {
+                this.select();
+            });
+
+            $("#qtdItemBalcao").on("focus", function () {
+                this.select();
+            });
+
+            $("#qtdItemCodBarras").on("focus", function () {
+                this.select();
+            });
+            //Chamamos aqui, pois ao criar um novo endereço a pagina é recarregada, então salvamos o endereço selecionado no pedido
+            AtualizarEnderecoEntregaPedido();
+
+            $("#txtCodBarras").focus();
+            $("#txtCodBarras").on("keyup", function (e) {
+                var keyCode = e.keyCode || e.which;
+                if (keyCode === 13) {
+                    AdicionarItemCodBarras();
+                }
+            });
+
+
+            $("#ckbMarcarCodBarrasComoEnviado").on("change", function () {
+                SalvarCoockies();
+                $("#txtCodBarras").focus();
+            })
+
+            $("#ckbSomenteItensSemCodBarras").on("change", function () {
+                SalvarCoockies();
+                CarregarItensBalcao(this.checked);
+            });
+
+
+        });
+
+         function limparLinkFecharPedido() {
+                window.history.replaceState({}, document.title, "/ProWaiter/Pedidos/Edit/@Model.Codigo");
+         }
+
+        function CalcularTroco() {
+            var valorTotal = parseFloat($("#lblValorTotal").text().replace(',', '.'));
+            var valorRecebido = parseFloat($("#valorRecebido").val().replace(',', '.'));
+            var troco = (parseFloat(valorRecebido) - parseFloat(valorTotal)).toFixed(2);
+
+            if (isNaN(troco))
+                $("#troco").val("");
+            else
+                $("#troco").val(troco.toString().replace('.', ','));
+        }
+
+        function PedirConfirmacao(href) {
+            $("#hrefJanelaConfirmarExclusao").attr('href', href);
+            $("#confirm-delete").modal();
+            AtualizarInterfaceComValorAtualPedido();
+        }
+
+        function PopularRefeicoes() {
+            var codTipoRefeicao = $('#ddlCodTipoRefeicao').val();
+            $.ajax({
+                url: '@Url.Action("ObterRefeicoes", "Pedidos")',
+                type: "POST",
+                dataType: "JSON",
+                data: { codTipoRefeicao: codTipoRefeicao },
+                success: function (refeicoes) {
+                    $("#listaCodComponentes").html("");
+                    $("#listaCodRefeicoes").html(""); // clear before appending new list
+                    $.each(refeicoes, function (i, refeicao) {
+                        $("#listaCodRefeicoes").append(
+                            $('<option></option>').val(refeicao.Value).html(refeicao.Text));
+                    });
+                }
+            });
+        }
+
+        var listaTotalComponentes = [];
+        function PopularComponentes() {
+            $("#msgAddRef").addClass("hidden");
+            var itemSelecionado = $("#listaCodRefeicoes").find(":selected");
+            var valores = itemSelecionado.attr("value").split(';');
+            listaTotalComponentes = [];
+            $.ajax({
+                url: '@Url.Action("ObterComponentes", "Pedidos")',
+                type: "POST",
+                dataType: "JSON",
+                data: { codRefeicao: valores[0], codTamanho: valores[1] },
+                success: function (componentes) {
+                    $("#listaCodComponentes").html(""); // clear before appending new list
+                    var checked = ""
+                    if (componentes.DeComposicao == false) {
+                        $.each(componentes.lista, function (i, componente) {
+                            var elemento = $("<li class='list-group-item col-md-12'></li>").html("<div class='col-md-11' style='padding:0px;'>" + componente.Nome + "</div><span class='col-md-1' style='padding:0px;'><input type='checkbox' class='chkAddComponente' checked='checked' value='" + componente.Codigo + "' /></span>");
+                            $("#listaCodComponentes").append(elemento);
+                            listaTotalComponentes.push(elemento);
+                        });
+                    } else {
+                        $("#listaCodComponentes").append("<div class='form-group has-feedback col-md-12'><input type='text' id='inputFiltroComponentes' class='form-control' onkeyup='FiltrarComponentesComposicao(this)' /><i class='glyphicon glyphicon-search form-control-feedback' style='margin-right:15px;' /></div>");
+                        $.each(componentes.lista, function (i, componente) {
+                            var htmlQuantidade = "";
+                            var idNud = "nudQtd_" + componente.Codigo;
+                            var idTexto = "comp_" + componente.Codigo;
+                            if (componente.PossuiUnidade) {
+                                htmlQuantidade ="<span class='col-md-3' style='padding:0px;'>" +
+                                                    "<input type='number' id='" + idNud +"' idDivTexto='"+ idTexto +"' class='form-control' disabled onchange='AtualizarToolTipSaboresSelecionadosAddRefeicao()'  />" +
+                                                    "</span>";
+                            }
+
+                            var elemento = $("<li class='list-group-item col-md-12' style='vertical-align:central;'></li>")
+                                .html("<div class='col-md-8 textoItemComponenteComposto' style='padding:0px; vertical-align:central;' id='" + idTexto + "'>" + componente.Nome + "</div>" +
+                                "<span class='col-md-1' style='padding:0px;'>" +
+                                "<input type='checkbox' class='chkAddComponente' style='vertical-align:central;' onclick='HabilitarQuantidade(this);' idNud='"+idNud+"' value='" + componente.Codigo + "' />" +
+                                    "</span>" + htmlQuantidade)
+                            $("#listaCodComponentes").append(elemento);
+                            listaTotalComponentes.push(elemento);
+                        });
+                    }
+                }
+            });
+        }
+
+        function FiltrarComponentesComposicao(elemento) {
+            //pegamos a referencia para a div que contem os componentes
+            var lista = $("#listaCodComponentes");
+
+            //obtemos o texto do filtro
+            var textoFiltro = "";
+            if(elemento != null)
+                textoFiltro = $(elemento).val().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+            //limpamos os componentes da div
+            lista.find(".list-group-item").remove();
+
+            //iteramos sobre os itens adicionando na pagina somente o que bate com o texto
+            for (i = 0; i < listaTotalComponentes.length; i++) {
+                var el = $(listaTotalComponentes[i]).find(".textoItemComponenteComposto");
+                var texto = el.text().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                if (textoFiltro == "" || texto.includes(textoFiltro)) {
+                    lista.append(listaTotalComponentes[i]);
+                }
+            }
+
+        }
+
+        function HabilitarQuantidade(checkbox) {
+
+            var idNud = $(checkbox).attr("idNud");
+            var nud = $('#' + idNud);
+
+            if ($(checkbox).prop("checked") == true) {
+                nud.removeAttr("disabled");
+                nud.val(1);
+            }
+            else {
+                nud.attr("disabled", "disabled");
+                nud.val("");
+            }
+            AtualizarToolTipSaboresSelecionadosAddRefeicao();
+        }
+
+        function AtualizarToolTipSaboresSelecionadosAddRefeicao() {
+
+            var divConteudo = "<div>";
+            var htmlConteudo = "";
+
+            var listaSaboresSelecionados = $("#toolTipSaboresEscolhidosAddRefeicao");
+            for (i = 0; i < listaTotalComponentes.length; i++) {
+
+                var checkbox = $($(listaTotalComponentes[i]).find("input:checkbox"));
+                if (checkbox.prop("checked") == true) {
+                    var nomeComponente = $(listaTotalComponentes[i]).find("div").html();
+                    var quantidade = $($(listaTotalComponentes[i]).find(":input[type='number']")).val();
+
+                    if (!isNaN(quantidade)) {
+                        nomeComponente += " (" + quantidade + ")"
+                    }
+
+                    htmlConteudo += nomeComponente + "<br />";
+                }
+            }
+
+            divConteudo += htmlConteudo + "</div>"
+            listaSaboresSelecionados.attr("data-original-title", divConteudo);
+        }
+
+        function AdicionarItem() {
+            if ($('#tabRefeicoes').hasClass("active")) {
+                AdicionarRefeicao();
+            }
+            else {
+                AdicionarBebida();
+            }
+        }
+
+        function AdicionarRefeicao() {
+            FiltrarComponentesComposicao(null); //para listar todos os elemento
+            $("#msgAddRef").addClass("hidden");
+            var codPedido = @Model.Codigo;
+            var selecionados = $("#listaCodRefeicoes").find(":selected");
+            if (selecionados.length == 0) {
+                return;
+            }
+            var valoresRef = selecionados.attr("value").split(';');
+            var codRefeicao = valoresRef[0];
+            var codTamanho = valoresRef[1];
+            var quantidade = $("#quantidadeRef").val();
+            var observacoes = $("#observacao").val();
+            var componentes = $(".chkAddComponente:checked").map(function () {
+                var checkbox = $(this);
+                var codigo = checkbox.val();
+
+                var idNud = checkbox.attr("idNud");
+                var nud = $('#' + idNud);
+                var qtd = 0;
+                if (nud != "undefined") {
+                    qtd = nud.val();
+                }
+                if (isNaN(qtd))
+                    qtd = 1;
+
+                return { Codigo: codigo, Quantidade: qtd };
+            }).get();
+
+            var lista = [];
+            for (i = 0; i < componentes.length; i++) {
+                lista[i] = { CodComponente: componentes[i].Codigo, CodRefeicaoPedido:0, Quantidade: componentes[i].Quantidade };
+            }
+            $.ajax({
+                url: '@Url.Action("AdicionarRefeicao", "Pedidos")',
+                type: "POST",
+                dataType: "JSON",
+                data: { codPedido: codPedido, codRefeicao: codRefeicao, codTamanho: codTamanho, quantidade: quantidade, codComponentes:lista, observacao: observacoes },
+                success: function () {
+                    PopularRefeicoes();
+                    $("#quantidadeRef").val(1);
+                    $("#observacao").val("");
+                    $("#msgAddRef").removeClass("hidden");
+                    AtualizarInterfaceComValorAtualPedido();
+                }
+            });
+        }
+
+        function PopularBebidas() {
+            var codTipoBebida = $('#ddlCodTipoBebida').val();
+            $.ajax({
+                url: '@Url.Action("ObterBebidas", "Pedidos")',
+                type: "POST",
+                dataType: "JSON",
+                data: { codTipoBebida: codTipoBebida },
+                success: function (bebidas) {
+                    $("#listaCodBebidas").html(""); // clear before appending new list
+                    $.each(bebidas, function (i, bebida) {
+                        $("#listaCodBebidas").append(
+                            $('<option></option>').val(bebida.Value).html(bebida.Text));
+                    });
+                }
+            });
+        }
+
+        function ValidarAdicaoBebidas() {
+            if ($("#listaCodBebidas").find(":selected").length != 1) {
+                ExibirMensagemBebida(true, "Você deve selecionar uma bebida!");
+                return false;
+            }
+            else if ($("#quantidadeBeb").val() < 1) {
+                ExibirMensagemBebida(true, "A quantidade de ser maior ou igual a 1 unidade!");
+                return false;
+            }
+            else {
+                $("#msgAddBeb").addClass("hidden");
+                return true;
+            }
+        }
+
+        function AdicionarBebida() {
+            $("#msgAddBeb").addClass("hidden");
+            var codPedido = @Model.Codigo;
+            var codBebida = $("#listaCodBebidas").find(":selected").val();
+            var quantidade = $("#quantidadeBeb").val();
+            var observacoes = $("#observacaoBeb").val();
+            if (ValidarAdicaoBebidas()) {
+                $.ajax({
+                    url: '@Url.Action("AdicionarBebida", "Pedidos")',
+                    type: "POST",
+                    dataType: "JSON",
+                    data: { codPedido: codPedido, codBebida: codBebida, quantidade: quantidade, observacoes: observacoes },
+                    success: function () {
+                        PopularBebidas();
+                        $("#quantidadeBeb").val(1);
+                        $("#observacao").val("");
+                        AtualizarInterfaceComValorAtualPedido();
+                        ExibirMensagemBebida(false, "Bebida(s) adicionada(s) com sucesso!");
+                    },
+                    error: function () {
+                        ExibirMensagemBebida(true, "Erro ao Adicionar Bebida(s)!");
+                    }
+                });
+            }
+        }
+
+        function AtualizarLocalEntregaPedidoInterno() {
+            var codPedido = @Model.Codigo;
+            var codLocalInterno = $("#ddlLocaisInternos").find(":selected").val();
+            $.ajax({
+                url: '@Url.Action("AtualizarLocalEntregaPedidoInterno", "Pedidos")',
+                type: "POST",
+                dataType: "JSON",
+                data: { codPedido: codPedido, codLocalInterno: codLocalInterno },
+                success: function () {
+                },
+                error: function () {
+                    alert("Erro ao tentar atualizar o local de entrega");
+                }
+            });
+        }
+
+        function ExibirMensagemBebida(ehErro, mensagem) {
+            var msg = $("#msgAddBeb");
+            msg.html(mensagem);
+            if (ehErro) {
+                msg.removeClass("alert-success hidden");
+                msg.addClass("alert-danger");
+            } else {
+                msg.removeClass("alert-danger hidden");
+                msg.addClass("alert-success");
+            }
+        }
+
+        function ConfigurarLinkFecharPedido() {
+            var botao = $("#hrefFecharPedido");
+
+            var valor = 0;
+            var acrRefCust = "";
+            $(".txtAcrRefCust").each(function (i, e) {
+                var txt = $("#" + e.id);
+                acrRefCust += ";" + e.id.replace("acr-", "") + ":" + txt.val().replace(',', '.');
+                valor += parseFloat(txt.val().replace(',', '.'));
+            })
+            if (acrRefCust.length > 0) {
+                acrRefCust = acrRefCust.substring(1);
+            }
+
+            var imprimirCopiaFechamentoImprEntrega = false;
+            var ckbImprimirCopiaFechamentoImprEntrega = $('#ckbImprimirCopiaFechamentoImprEntrega');
+            if (ckbImprimirCopiaFechamentoImprEntrega != null) {
+                imprimirCopiaFechamentoImprEntrega = ckbImprimirCopiaFechamentoImprEntrega.is(":checked");
+            }
+
+            var observacoes = $('#txtObservacoesFechamentoPedido').val();
+            var maionese = false;
+            var catchup = false;
+            var mostarda = false;
+
+            if ($('#ckbMaionese') != null)
+                maionese = $('#ckbMaionese').is(":checked");
+
+            if ($('#ckbCatchup') != null)
+                catchup = $('#ckbCatchup').is(":checked");
+
+            if ($('#ckbMostarda') != null)
+                mostarda = $('#ckbMostarda').is(":checked");
+
+
+
+            botao.attr("href", "@Url.Action("FecharPedido", "Pedidos", new { Codigo = Model.Codigo })" +
+                "&acrecimos=" + $("#acrescimos").val().replace(',', '.') +
+                "&descontos=" + $('#descontos').val().replace(',', '.') +
+                "&acrescimosRefCustomizadas=" + acrRefCust +
+                "&valorRecebido=" + parseFloat($("#valorRecebido").val().replace(',', '.')) +
+                "&imprimirCopiaFechamentoImprEntrega=" + imprimirCopiaFechamentoImprEntrega +
+                "&observacoes=" + observacoes +
+                "&maionese=" + maionese +
+                "&catchup=" + catchup +
+                "&mostarda=" + mostarda
+            );
+
+            var lblValorTotal = $("#lblValorTotal");
+
+            var valor = parseFloat('@Model.ValorRefeicoes'.replace(',','.')) + parseFloat('@Model.ValorBebidas'.replace(',','.'));
+
+            if ($("#acrescimos").val() != "") {
+                valor += parseFloat($("#acrescimos").val().replace(',', '.'));
+            }
+            if ($("#descontos").val() != "") {
+                valor -= parseFloat($("#descontos").val().replace(',', '.'));
+            }
+
+            var valorEntrega = $("#lblValorEntrega").html();
+            var valorComEntrega = valor;
+            if (typeof valorEntrega !== 'undefined') {
+                var valorEntrega = parseFloat(valorEntrega.replace(",", "."));
+                valorComEntrega += valorEntrega;
+            }
+
+
+            lblValorTotal.html(valorComEntrega.toFixed(2).replace('.', ','));
+            CalcularTroco();
+
+            if (isNaN(valorComEntrega)) {
+                botao.attr("href", "javascript:alert('Você tem valores inválidos digitados!')");
+            }
+
+            ConfigurarLinkCadastrarModelo();
+        }
+
+        function ConfigurarLinkCadastrarModelo() {
+
+            var botao = $("#hrefCadastrarModelo");
+            botao.attr("href", "@Url.Action("CadastrarModelo", "Pedidos", new { Codigo = Model.Codigo })" +
+                "&acrecimos=" + $("#acrescimos").val().replace(',', '.') +
+                "&descontos=" + $('#descontos').val().replace(',', '.') +
+                "&nomeModelo=" + $('#txtNomeModelo').val() +
+                "&excluirPedido=" + $('#ckbExcluirPedido').is(":checked").toString());
+        }
+
+        function AdicionarItensModelo() {
+            var item = $('.modelo.list-group-item.list-group-item-action.active');
+            var id = item.attr("id").replace("id_", "");
+            $.ajax({
+                url: '@Url.Action("AdicionarItensDoModelo", "Pedidos")',
+                type: "POST",
+                dataType: "JSON",
+                data: { Codigo: '@Model.Codigo', codModelo: id },
+                success: function () {
+                    AtualizarInterfaceComValorAtualPedido();
+                    location.reload();
+                },
+                error: function () {
+                    ExibirMensagemBebida(true, "Erro ao Itens do Modelo!");
+                }
+            });
+        }
+
+        function replaceLast(find, replace, string) {
+            var lastIndex = string.lastIndexOf(find);
+
+            if (lastIndex === -1) {
+                return string;
+            }
+
+            var beginString = string.substring(0, lastIndex);
+            var endString = string.substring(lastIndex + find.length);
+
+            return beginString + replace + endString;
+        }
+
+        function AtualizarComponente(checkbox, codRefeicaoPedido, codComponente, alterarNud) {
+            var adicionar = true;
+
+            if(checkbox != null)
+                adicionar = $(checkbox).prop("checked") == true;
+
+            var nudId = "nud_" + codRefeicaoPedido.toString() + "_" + codComponente.toString();
+            var nud = $("#" + nudId);
+
+            if (alterarNud) {
+                if (adicionar) {
+                    nud.removeAttr("disabled")
+                    nud.val(1);
+                }
+                else {
+                    nud.attr("disabled", "disabled")
+                    nud.val("");
+                }
+            }
+
+            var qtd = nud.val();
+            if (isNaN(qtd))
+                qtd = 1;
+
+            var componente = { CodComponente: codComponente, CodRefeicaoPedido: codRefeicaoPedido, Quantidade: qtd };
+
+            $.ajax({
+                url: '@Url.Action("AtualizarComponente", "Pedidos")',
+                type: "POST",
+                dataType: "JSON",
+                data: { codRefeicaoPedido: codRefeicaoPedido, componente: componente, adicionar: adicionar },
+                success: function () {
+                    AtualizarInterfaceComValorAtualPedido();
+                    AtualizarToolTipSaboresSelecionadosListagemRefeicao(codRefeicaoPedido);
+                }
+            });
+        }
+
+        function AtualizarToolTipSaboresSelecionadosListagemRefeicao(codRefeicaoPedido) {
+
+                var divConteudo = "<div>";
+                var htmlConteudo = "";
+                var idToolTip = "toolTip_" + codRefeicaoPedido;
+
+                 $.ajax({
+                    url: '@Url.Action("ObterStringToolTipComponentesSelecionados", "Pedidos")',
+                    type: "POST",
+                    dataType: "JSON",
+                    data: { codRefeicaoPedido: codRefeicaoPedido },
+                    success: function (texto) {
+                        divConteudo += texto + "</div>";
+                        $("#" + idToolTip).attr("data-original-title", divConteudo);
+                    }
+                });
+            }
+
+        function SalvarObsRefs(id) {
+            var texto = $("#" + id).val();
+            var codRef = id.replace('obsRef_', '');
+            $.ajax({
+                url: '@Url.Action("AtualizarObservacaoRefeicaoPedido", "Pedidos")',
+                type: "POST",
+                dataType: "JSON",
+                data: { codRefeicaoPedido: codRef, observacao: texto },
+                success: function () {
+                    var liObs = $("#" + id).closest(".liObservacoes");
+                    var botao = liObs.find(".glyphicon-floppy-disk");
+                    $("#" + id).addClass("alert-success").removeClass("alert-danger");
+                    location.reload();
+                }
+            });
+        }
+
+        function SalvarObsBebs(id) {
+            var texto = $("#" + id).val();
+            var codRef = id.replace('obsBeb_', '');
+            $.ajax({
+                url: '@Url.Action("AtualizarObservacaoBebidaPedido", "Pedidos")',
+                type: "POST",
+                dataType: "JSON",
+                data: { codBebidaPedido: codRef, observacao: texto },
+                success: function () {
+                    var liObs = $("#" + id).closest(".liObservacoes");
+                    var botao = liObs.find(".glyphicon-floppy-disk");
+                    $("#" + id).addClass("alert-success").removeClass("alert-danger");
+                    location.reload();
+                }
+            });
+        }
+
+        function SalvarValorEntrega(codPedido) {
+            var id = "#ValorEntrega";
+            var texto = $(id).val();
+            $.ajax({
+                url: '@Url.Action("AtualizarValorEntrega", "Pedidos")',
+                type: "POST",
+                dataType: "JSON",
+                data: { codPedido: codPedido, valorEntrega: texto },
+                success: function () {
+                    var botao = $("#btnSalvarValorEntrega")
+                    botao.addClass("disabled");
+                    $(id).addClass("alert-success").removeClass("alert-danger");
+                    location.reload();
+                }
+            });
+        }
+
+        function SalvarObsPedido(codPedido) {
+            var id = "#txtObservacoesPedido";
+            var texto = $(id).val();
+            $.ajax({
+                url: '@Url.Action("AtualizarObservacaoPedido", "Pedidos")',
+                type: "POST",
+                dataType: "JSON",
+                data: { codPedido: codPedido, observacoes: texto },
+                success: function () {
+                    var txtObs = $(id).closest(".liObservacoes");
+                    var botao = $("#btnSalvarObsPedido")
+                    botao.addClass("disabled");
+                    $(id).addClass("alert-success").removeClass("alert-danger");
+                }
+            });
+        }
+
+        function AtualizarInterfaceComValorAtualPedido() {
+            $.ajax({
+                 url: '@Url.Action("ObterValorAtualPedido", "Pedidos")',
+                type: "POST",
+                dataType: "JSON",
+                data: { codPedido: '@Model.Codigo' }, //O Model.Codigo é o codigo do pedido
+                success: function (valor) {
+                    $('#valorAtualPedido').html("R$ " + valor);
+                }
+            });
+        }
+
+        function ModalCadastroEndereco() {
+            var codCliente = $("#pedExterno_CodCliente").val()
+            $("#modalEndereco").load("@Url.Action("Create", "EnderecosClientes")?codCliente=" + codCliente + "&codCidade=0" + "&returnUrl=@Url.Encode(Request.RawUrl)", function () {
+                $("#modalEndereco").modal();
+                $("#Endereco").focus();
+                $.validator.unobtrusive.parse("#formCadastroEnderecoCliente");
+            });
+        }
+
+        function ModalEditarEndereco(codEndereco) {
+            var codEndereco = $("#ddlEnderecos").val();
+            $("#modalEndereco").load("@Url.Action("Edit", "EnderecosClientes")?id=" + codEndereco + "&returnUrl=@Url.Encode(Request.RawUrl)", function () {
+                $("#modalEndereco").modal();
+                $("#Endereco").focus();
+                $.validator.unobtrusive.parse("#formEditarEnderecoCliente");
+            });
+        }
+
+        function AtualizarEnderecoEntregaPedido() {
+            var codEndereco = $("#ddlEnderecos").val();
+            var tooltip = $("#tooltipDadosEndereco");
+
+            if (codEndereco == null) { //quando não é de entrega
+                return;
+            }
+            $.ajax({
+                url: '@Url.Action("AtualizarEnderecoEntregaPedido", "Pedidos")',
+                type: "POST",
+                dataType: "JSON",
+                data: { codPedido: '@Model.Codigo', codEndereco: codEndereco },
+                success: function (retorno) {
+                    if (!retorno.ok) {
+                        alert("Erro ao tentar atualizar o endereço de entrega");
+                        tooltip.attr("data-original-title", "");
+                    }
+                    else {
+
+                        var html = '<div style="justify-content:left;">'
+                        + "<div>Endereço: " + retorno.Endereco
+                            + "</br>Bairro: " + retorno.Bairro
+                            + "</br>Cidade: " + retorno.Cidade
+                            + "</div>";
+
+                        $("#ValorEntrega").val(retorno.ValorEntregaPadrao.toFixed(2).replace(".",","));
+                        $("#txtObservacoesPedido").val(retorno.ObservacoesPadrao);
+
+
+                        tooltip.attr("data-original-title", html);
+                    }
+                }
+            });
+        }
+
+        function AdicionarItemBalcao() {
+            var codItemBalcao = $("#ddlItensBalcao").val();
+            var quantidade = $("#qtdItemBalcao").val();
+            var codPedido = @Model.Codigo;
+             $.ajax({
+                url: '@Url.Action("AdicionarItemBalcao", "Pedidos")',
+                type: "POST",
+                dataType: "JSON",
+                 data: { codPedido: codPedido, codItemBalcao: codItemBalcao, quantidade: quantidade },
+                success: function () {
+                    AtualizarInterfaceComValorAtualPedido();
+                    location.reload();
+                }
+            });
+        }
+
+        function AdicionarItemCodBarras() {
+            var marcarCodBarrasEnviado = $("#ckbMarcarCodBarrasComoEnviado").is(":checked");
+            var codBarras = $("#txtCodBarras").val();
+
+            if (codBarras == '')
+                return;
+
+            var quantidade = $("#qtdItemCodBarras").val();
+            var codPedido = @Model.Codigo;
+             $.ajax({
+                url: '@Url.Action("AdicionarItemCodBarras", "Pedidos")',
+                type: "POST",
+                dataType: "JSON",
+                 data: { codPedido: codPedido, codBarras: codBarras, quantidade: quantidade, marcarCodBarrasEnviado : marcarCodBarrasEnviado },
+                 success: function (retorno) {
+                     if (retorno.ok) {
+                         AtualizarInterfaceComValorAtualPedido();
+                         location.reload();
+                     }
+                     else {
+                         alert("Não foi possível encontrar o item");
+                         $("#txtCodBarras").focus();
+                         $("#txtCodBarras").select();
+                     }
+                }
+            });
+        }
+
+        function SalvarCoockies() {
+            var marcarCodBarrasEnviado = $("#ckbMarcarCodBarrasComoEnviado").is(":checked");
+            var exibirSomenteItensBalcaoSemCodBarras = $("#ckbSomenteItensSemCodBarras").is(":checked");
+
+            $.ajax({
+                url: '@Url.Action("SalvarCoockieEditarPedido", "Pedidos")',
+                type: "POST",
+                dataType: "JSON",
+                data: { marcarCodBarrasEnviado: marcarCodBarrasEnviado, exibirSomenteItensBalcaoSemCodBarras: exibirSomenteItensBalcaoSemCodBarras },
+                success: function () {
+                }
+            });
+
+        }
+
+        function CarregarItensBalcao(somenteItensBalcaoSemCodBarras) {
+            $.ajax({
+                url: '@Url.Action("ObterItensBalcao", "Pedidos")',
+                type: "POST",
+                dataType: "JSON",
+                data: { somenteItensBalcaoSemCodBarras: somenteItensBalcaoSemCodBarras },
+                success: function (itensBalcao) {
+                    var ddl = $("#ddlItensBalcao");
+                    ddl.html(""); // clear before appending new list
+                    $.each(itensBalcao, function (i, item) {
+                        ddl.append(
+                            $('<option></option>').val(item.Value).html(item.Text));
+                    });
+                }
+            });
+        }
+
+    </script>
+}

@@ -1,0 +1,111 @@
+﻿@page "/Identity/Index"
+@using PortalRevendedorProWaiter.Shared
+@inject HttpClient http;
+@inject IAuthService AuthService
+@inject IModalService  ModalService
+
+<h3>Usuários</h3>
+
+<AlertError Message="@msgExeption"></AlertError>
+
+<div>
+    <a href="Identity/Register" class="btn btn-primary">
+        Criar
+    </a>
+</div>
+
+<div>
+    @if (usuarios == null)
+    {
+        <text>Carregando usuarios...</text>
+    }
+    else if (usuarios.Count == 0)
+    {
+        <text>Não existem usuarios cadastrados no sistema.</text>
+    }
+    else
+    {
+        <table class="table table-responsive table-hover">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Razão Social</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var usuario in usuarios)
+                {
+                    <tr>
+                        <td>@usuario.Email</td>
+                        <td>@usuario.RazaoSocialRevendedor</td>
+                        <td><a class="btn btn-primary" href="Identity/Edit/@usuario.Id">Editar</a></td>
+                        <td><button class="btn btn-danger" @onclick="@(() => ConfirmDelete(usuario.Id))">Excluir</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@code {
+    private string msgExeption;
+    private List<UsuarioIndexViewModel> usuarios;
+    private string idDelecaoAtual { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        await CarregarUsuarios();
+    }
+
+    private async Task CarregarUsuarios()
+    {
+        try
+        {
+            usuarios = await http.GetJsonAsync<List<UsuarioIndexViewModel>>("api/accounts");
+        }
+        catch (Exception ex)
+        {
+            msgExeption = ex.ToString();
+        }
+    }
+
+    private void ConfirmDelete(string id)
+    {
+        idDelecaoAtual = id;
+        ModalParameters mp = new ModalParameters();
+        mp.Add("Message", "Tem certeza que deseja deletar o usuário?");
+        ModalService.OnClose += ModalClose;
+        ModalService.Show<DeleteConfirm>("Confirmação", mp);
+    }
+
+    private async void ModalClose(ModalResult result)
+    {
+        if (!result.Cancelled)
+        {
+            await Excluir(idDelecaoAtual);
+            StateHasChanged();
+        }
+        ModalService.OnClose -= ModalClose;
+    }
+
+    private async Task Excluir(string id)
+    {
+        try
+        {
+            var result = await http.DeleteAsync($"api/Accounts/{id}");
+
+            if (!result.IsSuccessStatusCode)
+            {
+                msgExeption = await result.RequestMessage.Content.ReadAsStringAsync();
+            }
+
+            await CarregarUsuarios();
+        }
+        catch (Exception ex)
+        {
+            msgExeption = ex.ToString();
+        }
+    }
+}

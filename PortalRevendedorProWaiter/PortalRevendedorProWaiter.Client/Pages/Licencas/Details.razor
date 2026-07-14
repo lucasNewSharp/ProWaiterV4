@@ -1,0 +1,131 @@
+﻿@page "/Licencas/Details/{CodLicenca:int}"
+@using PortalRevendedorProWaiter.Shared
+@inject HttpClient http
+
+<AlertError Message="@msgException"></AlertError>
+
+@if (model == null)
+{
+    <text>Carregando dados...</text>
+}
+else
+{
+    <h1>Licença</h1>
+    <div class="card">
+        <div class="card-header">
+            <h5>Detalhes da licença</h5>
+        </div>
+        <div class="card-body">
+            <div class="form-group row">
+                <label class="col-2 font-weight-bold">Nome</label>
+                <label class="col-10">@model?.Nome</label>
+            </div>
+            <div class="form-group row">
+                <label class="col-2 font-weight-bold">Cidade</label>
+                <label class="col-10">@model?.Cidade</label>
+            </div>
+            <div class="form-group row">
+                <label class="col-2 font-weight-bold">Endereço</label>
+                <label class="col-10">@model?.Endereco</label>
+            </div>
+            <div class="form-group row">
+                <label class="col-2 font-weight-bold">Data de ativação</label>
+                <label class="col-10">@model.DataAtivacao?.ToString("dd/MM/yyy")</label>
+            </div>
+            <div class="form-group row">
+                <label class="col-2 font-weight-bold">Data de validação</label>
+                <label class="col-10">@model.DataValidacao?.ToString("dd/MM/yyy")</label>
+            </div>
+            <div class="form-group row @cssDestaque">
+                <label class="col-2 font-weight-bold">Nº de ativações</label>
+                <label class="col-10">@model.QuantidadeAtivacoes</label>
+            </div>
+            <AuthorizeView Roles="@AppRolesConstants.Administrador">
+                <div class="form-group row">
+                    <label class="col-2 font-weight-bold">Revendedor</label>
+                    <label class="col-10">@model.Revendedor</label>
+                </div>
+            </AuthorizeView>
+            <div class="form-group row">
+                <label class="col-2 font-weight-bold">Segredo</label>
+                <label class="col-10">@model.Segredo</label>
+            </div>
+            <div class="form-group row">
+                <label class="col-2 font-weight-bold">Versão ProWaiter</label>
+                <label class="col-10">@model.VersaoProWaiter</label>
+            </div>
+            <div class="form-group row">
+                <label class="col-2 font-weight-bold">Versão APP</label>
+                <label class="col-10">@model.VersaoAPP</label>
+            </div>
+            <div class="form-group row">
+                <label class="col-2 font-weight-bold">ID processador</label>
+                <label class="col-10">@model.ProcessorID</label>
+            </div>
+            <div class="form-group row">
+                @if (model.Ativo)
+                {
+                    <div class="alert alert-success col-2" role="alert">
+                        Licença ativa
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-danger col-2" role="alert">
+                        Licença inativa
+                    </div>
+                }
+
+                <div class="col-10">
+                    @if (model.Ativo)
+                    {
+                        <button type="button" class="btn btn-danger ml-2" @onclick="(() => AtivarLicenca(false))">Desativar</button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-success ml-2" @onclick="(() => AtivarLicenca(true))">Ativar</button>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+}
+
+@code {
+
+    [Parameter] public int CodLicenca { get; set; }
+
+    private LicencaDetailsViewModel model;
+    private string msgException;
+    private string cssDestaque = "";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            model = await http.GetJsonAsync<LicencaDetailsViewModel>($"api/Licencas/{CodLicenca}");
+            if (model.QuantidadeAtivacoes > 5)
+                cssDestaque = "alert-danger";
+        }
+        catch (Exception e)
+        {
+            msgException = e.ToString();
+        }
+    }
+
+    private async Task AtivarLicenca(bool ativar)
+    {
+        try
+        {
+            model.Ativo = ativar;
+            await http.PutJsonAsync("/api/Licencas/AtualizarLicencaAtiva/", model);            
+        }
+        catch (Exception e)
+        {
+            msgException = e.ToString();
+        }
+    }
+
+}

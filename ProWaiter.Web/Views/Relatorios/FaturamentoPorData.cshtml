@@ -1,0 +1,137 @@
+﻿@model IEnumerable<ProWaiter.Web.Models.Entidades.FaturamentoNaDataDTO>
+@{
+    ViewBag.Title = "Faturamento por Data";
+}
+
+@section css{
+    <style type="text/css">
+        td, th {
+            text-align: right;
+        }
+
+        .linDado {
+        }
+
+        .linTotal {
+            font-weight: bold;
+        }
+    </style>
+}
+
+<h2>@ViewBag.Title</h2>
+@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "formulario" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-inline">
+        <div class="row">
+            <div class="form-group col-md-5">
+                @Html.Label("Data Inicial", htmlAttributes: new { @class = "control-label" })
+                <input type="date" id="dataInicial" name="dataInicial" class="form-control" value="@ViewBag.DataInicial" />
+            </div>
+            <div class="form-group col-md-5">
+                @Html.Label("Data Final", htmlAttributes: new { @class = "control-label" })
+                <input type="date" id="dataFinal" name="dataFinal" class="form-control" value="@ViewBag.DataFinal" />
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-default" data-toggle="tooltip" title="Filtrar">
+                    <div class="glyphicon glyphicon-search"></div>
+                </button>
+                <button type="button" class="btn btn-default" data-toggle="tooltip" title="Limpar Filtros" onclick="LimparFiltros()">
+                    <div class="glyphicon glyphicon-erase"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+<br />
+<br />
+<table class="table" id="tabela">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Data)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ValorRefeicoes)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ValorBebidas)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ValorItensBalcao)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Acrescimos)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Descontos)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Entregas)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Total)
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr class="@item.ClasseCSS">
+            <td>
+                @Html.DisplayFor(modelItem => item.Data)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ValorRefeicoes)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ValorBebidas)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ValorItensBalcao)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Acrescimos)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Descontos)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Entregas)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Total)
+            </td>
+        </tr>
+    }
+
+</table>
+@section scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $("#dataInicial").keyup(function (e) {
+                if (e.keyCode == 27)
+                    LimparFiltros();
+            });
+
+            $("#dataFinal").keyup(function (e) {
+                if (e.keyCode == 27)
+                    LimparFiltros();
+            });
+
+            $("#exibirPedidosFechados").change(function (e) {
+                $("#formulario").submit();
+            });
+        });
+
+        function LimparFiltros() {
+            $("#dataInicial").val("@ViewBag.DataInicial");
+            $("#dataFinal").val("@ViewBag.DataFinal");
+            $("#formulario").submit();
+        }
+
+    </script>
+
+}

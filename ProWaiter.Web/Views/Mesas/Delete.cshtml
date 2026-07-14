@@ -1,0 +1,42 @@
+﻿@model ProWaiter.Web.Models.Entidades.Mesa
+@using ProWaiter.Web.Util
+
+@{
+    ViewBag.Title = Configuracoes.ObterInstancia().UtilizaComanda ? "Comanda" : "Mesa";
+}
+
+<h2>@AppResources.StringExcluir</h2>
+
+<h3>@AppResources.StringPerguntaExclusao</h3>
+<div>
+    <h4>@ViewBag.Title</h4>
+    <hr />
+    @Html.ValidationSummary(true, string.Empty, new { @class = "text-danger" })
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Descricao)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Descricao)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CodUltimoPedido)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CodUltimoPedido)
+        </dd>
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            @Html.Partial("_botaoVoltarParaLista")
+            @Html.Partial("_botaoExcluir")
+        </div>
+    }
+</div>

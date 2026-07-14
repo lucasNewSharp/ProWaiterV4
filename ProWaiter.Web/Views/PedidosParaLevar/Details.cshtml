@@ -1,0 +1,57 @@
+﻿@model ProWaiter.Web.Models.Entidades.PedidoParaLevar
+
+@{
+    ViewBag.Title = "Pedidos Para Levar";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (!string.IsNullOrWhiteSpace(ViewBag.ErrosImpressao))
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewBag.ErrosImpressao
+    </div>
+}
+
+<div>
+    <h4>Pedido Para Levar</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        
+
+        @Html.Partial("../Pedidos/_detalhesPedidoComum", Model)
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ValorTotal)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ValorTotal)
+        </dd>
+    </dl>
+</div>
+<p>
+    @Html.Partial("../Pedidos/_botoesAcaoDetalhesPedido", new ViewDataDictionary { { "id", Model.Codigo } })
+</p>
+
+
+@section scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $(".itemRefeicao").each(function (index) {
+                var id = $(this).attr("data-target")
+                var idBotao = "gi_" + id.replace('#', '');
+
+                $(id).on("hide.bs.collapse", function (f) {
+                    $('#' + idBotao).removeClass('glyphicon glyphicon-chevron-down').addClass('glyphicon glyphicon-chevron-right');
+                });
+                $(id).on("show.bs.collapse", function (f) {
+                    $('#' + idBotao).removeClass('glyphicon glyphicon-chevron-right').addClass('glyphicon glyphicon-chevron-down');
+                });
+            });
+        });
+    </script>
+}

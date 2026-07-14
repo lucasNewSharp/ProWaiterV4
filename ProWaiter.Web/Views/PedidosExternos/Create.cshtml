@@ -1,0 +1,302 @@
+﻿@model ProWaiter.Web.Models.Entidades.PedidoExterno
+@using ProWaiter.Web.Models.Entidades
+
+@{
+    ViewBag.Title = "Pedido Para Entrega";
+    ViewBag.ReturnUrl = Request.RawUrl;
+}
+
+<h2>@AppResources.StringCriar</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>@ViewBag.Title</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="txtFiltro">Filtro</label>
+            <div class="col-md-10">
+                <div class="col-md-4">
+                    <input type="text" id="txtFiltro" class="form-control" placeholder="Digite o filtro" />
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.CodCliente, "Cliente", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="col-md-4">
+                    @Html.DropDownList("CodCliente", null, htmlAttributes: new { @class = "form-control", @id = "ddlClientes", @onchange = "PopularDadosCliente();" })
+                </div>
+                <div class="col-md-8">
+                    <div class="btn btn-default glyphicon glyphicon-plus btnCadastrarCliente" title="Cadastra novo..." ></div>
+                    <div class="btn btn-default glyphicon glyphicon-edit btnEditarCliente" title="Editar selecionado..." style="margin-left:10px;"></div>
+                </div>
+                @Html.ValidationMessageFor(model => model.CodCliente, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Observacoes, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="col-md-4">
+                    @Html.EditorFor(model => model.Observacoes, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Observacoes, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ValorEntrega, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <div class="col-md-4">
+                    @Html.EditorFor(model => model.ValorEntrega, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.ValorEntrega, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                @Html.Partial("_botaoCadastrar")
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading"><b>Informações do Cliente</b></div>
+                    <div class="panel-body">
+                        <ul class="list-group" id="ulInfoCliente">
+                            @{
+                                var c = Model.Cliente as Cliente;
+                                if (c != null)
+                                {
+                                    <li class="list-group-item"><b>Nome:</b> @c.Nome</li>
+                                    <li class="list-group-item"><b>Telefone 1:</b> @c.Telefone1</li>
+                                    <li class="list-group-item"><b>Telefone 2:</b> @c.Telefone2</li>
+                                    <li class="list-group-item">
+                                        <div class="form-group">
+                                            <b><label class="control-label col-md-2">Endereços:</label></b>
+                                            <div class="input-group col-md-10">                                                
+                                                @Html.DropDownList("CodEnderecoEntrega", null, htmlAttributes: new { @class = "form-control", @id = "cmbEnderecos", @onchange = "PopularEnderecoCliente();" })
+                                                <div class="input-group-append">
+                                                    <div class="btn btn-default glyphicon glyphicon-plus btnCadastrarEndereco" onclick="ModalCadastroEndereco()" title="Cadastrar novo..." style="margin-left:10px;"></div>
+                                                    <div class="btn btn-default glyphicon glyphicon-edit btnEditarEndereco" onclick="ModalEdicaoEndereco()" title="Editar selecionado..." style="margin-left:10px;"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+
+                                    EnderecoCliente endereco = Model.EnderecoCliente;
+                                    var ender = "";
+                                    var bairro = "";
+                                    var cidade = "";
+                                    var valEntr = "";
+                                    var obs = "";
+                                    if (endereco != null)
+                                    {
+                                        ender = endereco.Endereco;
+                                        bairro = endereco.Bairro;
+                                        cidade = endereco?.Cidade.Nome;
+                                        obs = endereco.ObservacoesPadrao;
+                                        valEntr = endereco.ValorEntregaPadrao.ToString();
+                                        @Html.Hidden("CodCidade", endereco.CodCidade);
+                                    }
+
+
+                                    <li class="list-group-item" id="enderCliente"><b>Endereço:</b> @ender</li>
+                                    <li class="list-group-item" id="bairroEnderCliente"><b>Bairro:</b> @bairro</li>
+                                    <li class="list-group-item" id="cidadeEnderCliente"><b>Cidade:</b> @cidade</li>
+
+                                    <li class="list-group-item" id="valorPadraoEntregaEnderCliente"><b>Valor padrão de entrega: R$ </b> @valEntr</li>
+                                    <li class="list-group-item" id="obsPadraoEnderCliente"><b>Observações padrão:</b> @obs</li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+}
+
+<div>
+    @Html.Partial("_botaoVoltarParaLista")
+</div>
+
+<div id="modal" class="modal ">
+</div>
+
+@* http://www.linhadecodigo.com.br/artigo/3686/aspnet-mvc-e-bootstrap-exibindo-views-modais.aspx#ixzz4KMsUwIIF *@
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            //Adicionar validação para o form de cadastro de clientes            
+
+            $(".btnCadastrarCliente").click(function () {
+                $("#modal").load("@Url.Action("Create", "Clientes", new { Modal = true })&returnUrl=@Url.Encode(Request.RawUrl)", function () {
+                    $("#modal").modal();
+                    $("#Nome").focus();
+                    $.validator.unobtrusive.parse("#formCadastroCliente");
+                });
+            });
+
+            $(".btnEditarCliente").click(function () {
+                var codCliente = $('#ddlClientes').val();
+                $("#modal").load("@Url.Action("Edit", "Clientes")?id=" + codCliente + "&modal=true&returnUrl=@Url.Encode(Request.RawUrl)", function () {
+                    $("#modal").modal();
+                    $("#Nome").focus();
+                });
+            });
+
+            var txt = $("#txtFiltro");
+            txt.focus();
+            txt.keyup(function () { PopularClientes($(this).val()) });
+
+            var novoCadastro = '@ViewBag.NovoTelefoneCadastro';
+            if (novoCadastro != '') {
+                $("#modal").load("@Url.Action("Create", "Clientes", new { Modal = true })&returnUrl=@Url.Encode(Request.RawUrl)", function () {
+                    $("#modal").modal();
+                    $("#Nome").focus();
+                    $("#Telefone1").val(novoCadastro);
+                });
+            }
+        });
+
+        function ModalCadastroEndereco() {
+            var codCliente = $('#ddlClientes').val();
+            var codCidade = $("#CodCidade").val();
+            $("#modal").load("@Url.Action("Create", "EnderecosClientes")?codCliente=" + codCliente + "&codCidade=" + codCidade + "&returnUrl=@Url.Encode(Request.RawUrl)", function () {
+                $("#modal").modal();
+                $("#Endereco").focus();
+                $.validator.unobtrusive.parse("#formCadastroEnderecoCliente");
+            });
+        }
+
+        function ModalEdicaoEndereco() {
+            var id = $('#cmbEnderecos').val();
+            $("#modal").load("@Url.Action("Edit", "EnderecosClientes")?id=" + id + "&returnUrl=@Url.Encode(Request.RawUrl)", function () {
+                $("#modal").modal();
+                $("#Endereco").focus();
+                $.validator.unobtrusive.parse("#formEditarEnderecoCliente");                
+            });
+        }
+
+        function PopularClientes(filtro) {
+            $.ajax({
+                url: '@Url.Action("FiltrarClientes", "PedidosExternos")',
+                type: "POST",
+                dataType: "JSON",
+                data: { filtro: filtro },
+                success: function (clientes) {
+                    $("#ddlClientes").html(""); // clear before appending new list
+                    $.each(clientes, function (i, cliente) {
+                        $("#ddlClientes").append(
+                            $('<option></option>').val(cliente.Codigo).html(cliente.Nome));
+                    });
+                    PopularDadosCliente();
+                }
+            });
+        }
+
+        function PopularCidades() {
+            var stateId = $('#ddlEstados').val();
+            $.ajax({
+                url: '@Url.Action("LoadCidades", "Clientes")',
+                type: "POST",
+                dataType: "JSON",
+                data: { uf: stateId },
+                success: function (cities) {
+                    $("#ddlCidades").html(""); // clear before appending new list
+                    $.each(cities, function (i, city) {
+                        $("#ddlCidades").append(
+                            $('<option></option>').val(city.Value).html(city.Text));
+                    });
+                }
+            });
+        }
+
+        function PopularDadosCliente() {
+            var clienteID = $('#ddlClientes').val();
+            $.ajax({
+                url: '@Url.Action("LoadDadosCliente", "PedidosExternos")',
+                type: "POST",
+                dataType: "JSON",
+                data: { codCliente: clienteID },
+                success: function (cliente) {
+                    $("#ulInfoCliente").html(""); // clear before appending new list
+                    $("#ulInfoCliente").append($('<li class="list-group-item"><b>Nome:</b> ' + cliente.Nome + '</li>'));
+                    $("#ulInfoCliente").append($('<li class="list-group-item"><b>Telefone 1:</b>  ' + (cliente.Telefone1 == null ? "" : cliente.Telefone1) + '</li>'));
+                    $("#ulInfoCliente").append($('<li class="list-group-item"><b>Telefone 2:</b>  ' + (cliente.Telefone2 == null ? "" : cliente.Telefone2) + '</li>'));
+
+                    var htmlSelect =
+                        '<li class="list-group-item">' +
+                            '<div class="form-group">' +
+                                '<b><label class="control-label col-md-2">Endereços:</label></b>' +
+                                '<div class="input-group col-md-10">' +
+                                        '<select class="form-control id="cmbEnderecos" onchange="PopularEnderecoCliente()" name="CodEnderecoEntrega">'
+                        ;
+
+
+                    for (var i = 0; i < cliente.Enderecos.length; i++) {
+                        htmlSelect += '<option id="cmbEnderecos" value="' + cliente.Enderecos[i].Key + '">' + cliente.Enderecos[i].Value + '</option>';
+                    }
+                    htmlSelect += '</select><div class="input-group-append">' +
+                        '<div class="btn btn-default glyphicon glyphicon-plus" onclick="ModalCadastroEndereco()" title="Cadastrar novo..." style="margin-left:10px;"></div>' +
+                        '<div class="btn btn-default glyphicon glyphicon-edit" onclick="ModalEditarEndereco()" title="Editar selecionado..." style="margin-left:10px;"></div>'
+                        '</div></div></div></li>';
+
+                    console.log(htmlSelect);
+
+                    $("#ulInfoCliente").append($(htmlSelect));
+
+                    $("#ulInfoCliente").append($('<li id="enderCliente" class="list-group-item"><b>Endereço:</b>  ' + (cliente.Endereco == null ? "" : cliente.Endereco) + '</li>'));
+                    $("#ulInfoCliente").append($('<li id="bairroEnderCliente" class="list-group-item"><b>Bairro:</b>  ' + (cliente.Bairro == null ? "" : cliente.Bairro) + '</li>'));
+                    $("#ulInfoCliente").append($('<li id="cidadeEnderCliente" class="list-group-item"><b>Cidade:</b>  ' + (cliente.Cidade == null ? "" : cliente.Cidade) + '</li>'));
+
+                    $("#ulInfoCliente").append('<input id="CodCidade" name="CodCidade" type="hidden" value="' + (cliente.CodCidade == null ? "" : cliente.CodCidade) + '">');
+                    
+
+
+
+                    var valorEntrega = cliente.ValorEntregaPadrao == null ? "0,00" : parseFloat(cliente.ValorEntregaPadrao).toFixed(2).replace(".", ",");
+                    $("#ulInfoCliente").append($('<li id="valorPadraoEntregaEnderCliente" class="list-group-item"><b>Valor padrão de entrega:</b>  R$ ' + (cliente.ValorEntregaPadrao == null ? "0,00" : valorEntrega + '</li>')));
+                    $("#ValorEntrega").val(valorEntrega);
+                    $("#ulInfoCliente").append($('<li id="obsPadraoEnderCliente" class="list-group-item"><b>Observações padrão:</b>  ' + (cliente.ObservacoesPadrao == null ? "" : cliente.ObservacoesPadrao) + '</li>'));
+                    $("#Observacoes").val(cliente.ObservacoesPadrao)
+                }
+            });
+        }
+
+        function PopularEnderecoCliente() {
+            var clienteID = $('#ddlClientes').val();
+            var codEndereco = $("#cmbEnderecos").val();
+            $.ajax({
+                url: '@Url.Action("LoadEnderecoCliente", "PedidosExternos")',
+                type: "POST",
+                dataType: "JSON",
+                data: { codCliente: clienteID, codEndereco : codEndereco },
+                success: function (endereco) {
+                    $("#enderCliente").html("").append('<b>Endereço:</b> ' + (endereco.Endereco == null ? "" : endereco.Endereco));
+                    $("#bairroEnderCliente").html("").append('<b>Bairro:</b> ' + (endereco.Bairro == null ? "" : endereco.Bairro));
+                    $("#cidadeEnderCliente").html("").append('<b>Cidade:</b>  ' + (endereco.Cidade == null ? "" : endereco.Cidade));
+                    $("#CodCidade").val(endereco.CodCidade == null ? "" : endereco.CodCidade);
+
+                    var valorEntrega = endereco.ValorEntregaPadrao == null ? "0,00" : parseFloat(endereco.ValorEntregaPadrao).toFixed(2).replace(".", ",");
+                    $("#valorPadraoEntregaEnderCliente").html("").append('<b>Valor padrão de entrega:</b>  R$ ' + (endereco.ValorEntregaPadrao == null ? "0,00" : valorEntrega));
+                    $("#ValorEntrega").val(valorEntrega);
+                    $("#obsPadraoEnderCliente").html("").append('<b>Observações padrão:</b>  ' + (endereco.ObservacoesPadrao == null ? "" : endereco.ObservacoesPadrao));
+                    $("#Observacoes").val(endereco.ObservacoesPadrao)
+                }
+            });
+        }
+    </script>
+}

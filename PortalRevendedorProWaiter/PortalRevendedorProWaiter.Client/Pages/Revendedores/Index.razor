@@ -1,0 +1,112 @@
+﻿@page "/Revendedores/Index"
+@inject HttpClient http;
+@inject IAuthService AuthService
+@inject IModalService  ModalService
+
+<h3>Revendedores</h3>
+
+<AlertError Message="@msgExeption"></AlertError>
+
+<div>
+    <a href="revendedores/create" class="btn btn-primary">
+        Criar
+    </a>
+</div>
+
+<div>
+    @if (revendedores == null)
+    {
+        <text>Carregando revendedores...</text>
+    }
+    else if (revendedores.Count == 0)
+    {
+        <text>Não existem revendedores cadastrados no sistema.</text>
+    }
+    else
+    {
+        <table class="table table-responsive table-hover">
+            <thead>
+                <tr>
+                    <th>CNPJ</th>
+                    <th>Razão Social</th>
+                    <th>Responsável</th>
+                    <th>Telefone 1</th>
+                    <th>Telefone 2</th>
+                    <th>Ativo</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var revendedor in revendedores)
+                {
+                    <tr>
+                        <td>@revendedor.CNPJ</td>
+                        <td>@revendedor.RazaoSocial</td>
+                        <td>@revendedor.Responsavel</td>
+                        <td>@revendedor.Telefone1</td>
+                        <td>@revendedor.Telefone2</td>
+                        <td><input type="checkbox" @bind="@revendedor.Ativo" onclick="return false;" /></td>
+                        <td><a class="btn btn-primary" href="Revendedores/Edit/@revendedor.Codigo">Editar</a></td>
+                        <td><button class="btn btn-danger" @onclick="@(() => ConfirmDelete(revendedor.Codigo))">Excluir</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@code {
+    private string msgExeption;
+    private List<RevendedorIndexViewModel> revendedores;
+    private int codigoDelecaoAtual;
+
+    protected async override Task OnInitializedAsync()
+    {
+        await CarregarRevendedores();
+    }
+
+    private async Task CarregarRevendedores()
+    {
+        try
+        {
+            revendedores = await http.GetJsonAsync<List<RevendedorIndexViewModel>>("api/Revendedores");
+        }
+        catch (Exception ex)
+        {
+            msgExeption = ex.ToString();
+        }
+    }
+
+    private void ConfirmDelete(int id)
+    {
+        codigoDelecaoAtual = id;
+        ModalParameters mp = new ModalParameters();
+        mp.Add("Message", "Tem certeza que deseja deletar o revendedor?");
+        ModalService.OnClose += ModalClose;
+        ModalService.Show<DeleteConfirm>("Confirmação", mp);
+    }
+
+    private async void ModalClose(ModalResult result)
+    {
+        if (!result.Cancelled)
+        {
+            await Excluir(codigoDelecaoAtual);
+            StateHasChanged();
+        }
+        ModalService.OnClose -= ModalClose;
+    }
+
+    private async Task Excluir(int id)
+    {
+        try
+        {
+            await http.DeleteAsync($"api/Revendedores/{id}");
+            await CarregarRevendedores();
+        }
+        catch (Exception ex)
+        {
+            msgExeption = ex.ToString();
+        }
+    }
+}

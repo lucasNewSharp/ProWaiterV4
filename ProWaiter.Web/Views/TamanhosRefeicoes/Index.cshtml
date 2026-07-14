@@ -1,0 +1,115 @@
+﻿@model IEnumerable<ProWaiter.Web.Models.Entidades.TamanhoRefeicao>
+
+@{
+    ViewBag.Title = "Tamanhos das Refeições";
+}
+
+@section css {
+    <style type="text/css">
+        #sortable li:hover {
+            cursor: move;
+        }
+    </style>
+}
+
+<h2>@ViewBag.Title</h2>
+
+<p>
+    @Html.Partial("_botaoCriarNovo")
+</p>
+
+<table class="table-sm table-condensed table-hover table-bordered" id="tabela">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Nome)
+        </th>
+        <th style="text-align:center;">Ações</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nome)
+            </td>
+            <td>
+                @Html.Partial("_botoesAcaoIndex", new { id = item.Codigo })
+            </td>
+        </tr>
+    }
+
+</table>
+
+<div class="alert alert-info" style="margin-top:15px;">Arraste o nome do Tamanho para configurar a posição que ele irá aparecer no aplicativo. Lembre-se de clicar em "Salvar" após realizar a alteração</div>
+@{
+    if (ViewBag.PosicoesSalvas != null)
+    {
+        string alerta = string.IsNullOrWhiteSpace(ViewBag.MsgSucesso) ? "alert alert-danger" : "alert alert-success";
+        <div class="@alerta">
+            @ViewBag.MsgSucesso
+            @ViewBag.MsgErro
+        </div>
+    }
+}
+<div class="col-md-12">
+    <div class="col-md-1">
+        <ul>
+            @{
+                int i = 1;
+            }
+            @foreach (var item in Model)
+            {
+                <li class="list-group-item row ui-state-default">
+                    <div class="col-md-8">
+                        @i.ToString()
+                        @{
+                            i = i + 1;
+                        }
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+
+    @using (Html.BeginForm("SalvarPosicao", "TamanhosRefeicoes", FormMethod.Post))
+    {
+        <div class="col-md-4">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <ul class="list-group" id="sortable">
+                @foreach (var item in Model.OrderBy(m => m.Posicao))
+                {
+                    <li id="@item.Codigo" class="list-group-item row ui-state-default">
+                        <div class="col-md-8">
+                            @item.Nome
+                            <input type="hidden" name="ids" value="@item.Codigo" />
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+        <div class="col-md-12" style="padding:10px;">
+            <input type="submit" class="btn btn-default" value="Salvar" />
+        </div>
+    }
+</div>
+
+
+
+@section scripts{
+    <script src="~/Scripts/PesquisarNaTabela.js"></script>
+    <script src="~/Scripts/jquery-ui-1.12.1.min.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $("#sortable").sortable();
+            $("#sortable").disableSelection();
+
+            var txt = $("#txtFiltro");
+            txt.focus();
+            txt.keyup(function () { PesquisarNaTabela('tabela', $(this).val()) });
+
+
+        });
+    </script>
+}

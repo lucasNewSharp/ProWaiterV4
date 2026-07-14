@@ -1,0 +1,13 @@
+1º) No .project do studio colocar a seguinte linha para publicar todas as dependencias:
+
+<PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
+</PropertyGroup>
+
+
+
+
+
+
+

@@ -1,0 +1,58 @@
+﻿
+<EditForm Model="Model" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-row">
+        <div class="col">
+            <label for="CNPJ">CNPJ</label>
+            <InputText Id="CNPJ" class="form-control" @bind-Value="Model.CNPJ" maxlength="@RevendedorCrudViewModel.MaxLengthCNPJ" />
+            <ValidationMessage For="@(() => Model.CNPJ)" />
+        </div>
+        <div class="col">
+            <label for="RazaoSocial">Razão Social</label>
+            <InputText Id="RazaoSocial" class="form-control" @bind-Value="Model.RazaoSocial" />
+            <ValidationMessage For="@(() => Model.RazaoSocial)" />
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            <label for="Endereco">Endereço</label>
+            <InputText Id="Endereco" class="form-control" @bind-Value="Model.Endereco" />
+            <ValidationMessage For="@(() => Model.Endereco)" />
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            <label for="Responsavel">Responsável</label>
+            <InputText Id="Responsavel" class="form-control" @bind-Value="Model.Responsavel" />
+            <ValidationMessage For="@(() => Model.Responsavel)" />
+        </div>
+        <div class="col">
+            <label for="Telefone1">Telefone 1</label>
+            <InputText Id="Telefone1" class="form-control" @bind-Value="Model.Telefone1" maxlength="@RevendedorCrudViewModel.MaxLengthTelefone" />
+            <ValidationMessage For="@(() => Model.Telefone1)" />
+        </div>
+        <div class="col">
+            <label for="Telefone2">Telefone 2</label>
+            <InputText Id="Telefone2" class="form-control" @bind-Value="Model.Telefone2" maxlength="@RevendedorCrudViewModel.MaxLengthTelefone" />
+            <ValidationMessage For="@(() => Model.Telefone2)" />
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            <label for="Ativo">Ativo</label>
+            <InputCheckbox Id="Ativo" @bind-Value="Model.Ativo" />
+            <ValidationMessage For="@(() => Model.Ativo)" />
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">@SubmitText</button>
+</EditForm>
+
+@code {
+    [Parameter] public RevendedorCrudViewModel Model { get; set; }
+    [Parameter] public string SubmitText { get; set; }
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+
+
+
+}

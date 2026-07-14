@@ -1,0 +1,115 @@
+﻿@page "/Identity/Edit/{id}"
+@inject NavigationManager NavigationManager
+@inject HttpClient http
+@using PortalRevendedorProWaiter.Shared
+
+
+<AlertError Message="@msgExErro"></AlertError>
+
+@if (showWaitComponent)
+{
+    <WaitComponent Texto=@textWaitComponent></WaitComponent>
+}
+else
+{
+    <h1>Edição de Usuário</h1>
+
+    @if (showErrors)
+    {
+        <div class="alert alert-danger" role="alert">
+            @foreach (var error in errors)
+            {
+                <p>@error</p>
+            }
+        </div>
+    }
+
+    <div class="d-flex justify-content-center">
+        <div class="card col-md-6">
+            <div class="card-body">
+                <h5 class="card-title">Dados do usuário</h5>
+                <EditForm Model="usuarioEditViewModel" OnValidSubmit="HandleEdit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <label class="form-control">@usuarioEditViewModel.Email</label>
+                    </div>
+                    <div class="form-group">
+                        <label for="Revendedor">Revendedor</label>
+                        <InputSelect Id="CodRevendedor" class="form-control" @bind-Value="usuarioEditViewModel.CodRevendedor">
+                            <option value="">Selecione o revendedor ...</option>
+                            @foreach (var rev in Revendedores)
+                            {
+                                <option value="@rev.Codigo">@rev.RazaoSocial</option>
+                            }
+                        </InputSelect>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </EditForm>
+            </div>
+        </div>
+    </div>    
+}
+
+
+@code {
+
+    [Parameter]
+    public string id { get; set; }
+
+    private UsuarioEditViewModel usuarioEditViewModel = new UsuarioEditViewModel();
+    private List<Revendedor> Revendedores = new List<Revendedor>();
+
+    private bool showErrors;
+    private IEnumerable<string> errors;
+    private string textWaitComponent = string.Empty;
+    private bool showWaitComponent = false;
+    private string msgExErro = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            Revendedores = await http.GetJsonAsync<List<Revendedor>>("api/Revendedores/");
+            usuarioEditViewModel = await http.GetJsonAsync<UsuarioEditViewModel>($"api/accounts/{id}");
+        }
+        catch (Exception ex)
+        {
+            msgExErro = ex.ToString();
+        }
+    }
+
+    private async Task HandleEdit()
+    {
+        try
+        {
+            textWaitComponent = "Salvando o cadastro...";
+            showErrors = false;
+            showWaitComponent = true;
+            msgExErro = string.Empty;
+
+            var result = await http.PutJsonAsync<DefaultRequestResult>($"api/accounts/", usuarioEditViewModel);
+
+
+            if (!result.Successful)
+            {
+                errors = result.Errors;
+                showErrors = true;
+            }
+            else
+            {
+                NavigationManager.NavigateTo("Identity/Index");
+            }
+        }
+        catch (Exception ex)
+        {
+            msgExErro = ex.Message;
+        }
+        finally
+        {
+            showWaitComponent = false;
+        }
+    }
+}

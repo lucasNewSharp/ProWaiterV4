@@ -1,0 +1,190 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|n:\\src\\newsharp\\prowaiter\\prowaiter.web\\models\\entidades\\tamanhorefeicao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|solutionrelative:models\\entidades\\tamanhorefeicao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\Models\\Entidades\\RefeicaoDoCardapio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|solutionrelative:Models\\Entidades\\RefeicaoDoCardapio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\APIs\\TamanhosRefeicaoController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|solutionrelative:APIs\\TamanhosRefeicaoController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\APIs\\ComponentesRefeicaoController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|solutionrelative:APIs\\ComponentesRefeicaoController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\APIs\\MesasController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|solutionrelative:APIs\\MesasController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\Controllers\\MesasController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|solutionrelative:Controllers\\MesasController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\Controllers\\AccountController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|solutionrelative:Controllers\\AccountController.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\Views\\Account\\Login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|solutionrelative:Views\\Account\\Login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\Web.Debug.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|solutionrelative:Web.Debug.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\Web.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|solutionrelative:Web.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 2,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "TamanhoRefeicao.cs",
+              "DocumentMoniker": "N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\Models\\Entidades\\TamanhoRefeicao.cs",
+              "RelativeDocumentMoniker": "Models\\Entidades\\TamanhoRefeicao.cs",
+              "ToolTip": "N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\Models\\Entidades\\TamanhoRefeicao.cs",
+              "RelativeToolTip": "Models\\Entidades\\TamanhoRefeicao.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T19:25:34.113Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "RefeicaoDoCardapio.cs",
+              "DocumentMoniker": "N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\Models\\Entidades\\RefeicaoDoCardapio.cs",
+              "RelativeDocumentMoniker": "Models\\Entidades\\RefeicaoDoCardapio.cs",
+              "ToolTip": "N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\Models\\Entidades\\RefeicaoDoCardapio.cs",
+              "RelativeToolTip": "Models\\Entidades\\RefeicaoDoCardapio.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T19:23:53.955Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "TamanhosRefeicaoController.cs",
+              "DocumentMoniker": "N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\APIs\\TamanhosRefeicaoController.cs",
+              "RelativeDocumentMoniker": "APIs\\TamanhosRefeicaoController.cs",
+              "ToolTip": "N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\APIs\\TamanhosRefeicaoController.cs",
+              "RelativeToolTip": "APIs\\TamanhosRefeicaoController.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAABgAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T19:20:21.252Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ComponentesRefeicaoController.cs",
+              "DocumentMoniker": "N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\APIs\\ComponentesRefeicaoController.cs",
+              "RelativeDocumentMoniker": "APIs\\ComponentesRefeicaoController.cs",
+              "ToolTip": "N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\APIs\\ComponentesRefeicaoController.cs",
+              "RelativeToolTip": "APIs\\ComponentesRefeicaoController.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAABcAAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T19:18:50.081Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "MesasController.cs",
+              "DocumentMoniker": "N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\APIs\\MesasController.cs",
+              "RelativeDocumentMoniker": "APIs\\MesasController.cs",
+              "ToolTip": "N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\APIs\\MesasController.cs",
+              "RelativeToolTip": "APIs\\MesasController.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAAAC0AAAAhAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T17:56:48.552Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "MesasController.cs",
+              "DocumentMoniker": "N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\Controllers\\MesasController.cs",
+              "RelativeDocumentMoniker": "Controllers\\MesasController.cs",
+              "ToolTip": "N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\Controllers\\MesasController.cs",
+              "RelativeToolTip": "Controllers\\MesasController.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-23T17:56:35.686Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "AccountController.cs",
+              "DocumentMoniker": "N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\Controllers\\AccountController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AccountController.cs",
+              "ToolTip": "N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\Controllers\\AccountController.cs",
+              "RelativeToolTip": "Controllers\\AccountController.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAAAC4AAAAxAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-20T13:44:53.502Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Login.cshtml",
+              "DocumentMoniker": "N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\Views\\Account\\Login.cshtml",
+              "RelativeDocumentMoniker": "Views\\Account\\Login.cshtml",
+              "ToolTip": "N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\Views\\Account\\Login.cshtml",
+              "RelativeToolTip": "Views\\Account\\Login.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-20T13:44:27.97Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Web.Debug.config",
+              "DocumentMoniker": "N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\Web.Debug.config",
+              "RelativeDocumentMoniker": "Web.Debug.config",
+              "ToolTip": "N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\Web.Debug.config",
+              "RelativeToolTip": "Web.Debug.config",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2025-07-20T13:39:08.619Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Web.config",
+              "DocumentMoniker": "N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\Web.config",
+              "RelativeDocumentMoniker": "Web.config",
+              "ToolTip": "N:\\src\\newsharp\\ProWaiter\\ProWaiter.Web\\Web.config",
+              "RelativeToolTip": "Web.config",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2025-07-20T13:39:02.558Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

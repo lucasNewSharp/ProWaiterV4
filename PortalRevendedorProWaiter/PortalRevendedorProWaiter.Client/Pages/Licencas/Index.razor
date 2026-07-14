@@ -1,0 +1,312 @@
+﻿@page "/Licencas/Index"
+@using PortalRevendedorProWaiter.Shared
+@using System.Linq.Expressions
+@inject IModalService  ModalService
+@inject HttpClient http;
+
+<div>
+    <h3>Licenças</h3>
+    <button type="button" class="btn btn-success" @onclick="CriarLicenca">Criar licença</button>
+</div>
+
+<AlertError Message="@msgException"></AlertError>
+
+@if (licencas == null)
+{
+    <text>Carregando licenças...</text>
+}
+
+<div>
+
+    <table class="table table-responsive table-hover">
+        <thead>
+            <tr style="background-color:#2d364d ; color:#FFFFFF ; border-color:#0A2464;">
+                <td @onclick="@(() => OrdenarLicencas(l => l.Nome))" style="cursor:pointer">
+                    <span class="@imageSortname" aria-hidden="true" />
+                    Nome
+                </td>
+                <td @onclick="@(() => OrdenarLicencas(l => l.Segredo))" style="cursor:pointer">
+                    <span class="@imageSortname" aria-hidden="true" />
+                    Segredo
+                </td>
+                <td @onclick="@(() => OrdenarLicencas(l => l.VersaoAPP))" style="cursor:pointer">
+                    <span class="@imageSortname" aria-hidden="true" />
+                    APP
+                </td>
+                <td @onclick="@(() => OrdenarLicencas(l => l.VersaoProWaiter))" style="cursor:pointer">
+                    <span class="@imageSortname" aria-hidden="true" />
+                    Sistema
+                </td>
+                <td @onclick="@(() => OrdenarLicencas(l => l.Ativo))" style="cursor:pointer">
+                    <span class="@imageSortname" aria-hidden="true" />
+                    Ativo
+                </td>
+                <AuthorizeView Roles="@AppRolesConstants.Administrador">
+                    <td @onclick="@(() => OrdenarLicencas(l => l.Revendedor))" style="cursor:pointer">
+                        <span class="@imageSortname" aria-hidden="true" />
+                        Revendedor
+                    </td>
+                </AuthorizeView>
+                <td>
+                </td>
+            </tr>
+            <tr style="height: 30px; background-color:#336699 ; color:#FFFFFF ;">
+                <td>
+                    <input class="form-control" @oninput="@((e) => OnFilterChanged(e, eColunaFiltro.Nome))" />
+                </td>
+                <td>
+                    <input class="form-control" @oninput="@((e) => OnFilterChanged(e, eColunaFiltro.Segredo))" />
+                </td>
+                <td>
+                    <input class="form-control" @oninput="@((e) => OnFilterChanged(e, eColunaFiltro.APP))" />
+                </td>
+                <td>
+                    <input class="form-control" @oninput="@((e) => OnFilterChanged(e, eColunaFiltro.Sistema))" />
+                </td>
+                <td>
+                    <select @oninput="@((e) => OnFilterChanged(e, eColunaFiltro.Ativo))">
+                        <option value="Todos">Todos</option>
+                        <option value="Ativo">Ativo</option>
+                        <option value="Inativo">Inativo</option>
+                    </select>
+                </td>
+                <AuthorizeView Roles="@AppRolesConstants.Administrador">
+                    <td>
+                        <input class="form-control" @oninput="@((e) => OnFilterChanged(e, eColunaFiltro.Revendedor))" />
+                    </td>
+                </AuthorizeView>
+                <td></td>
+            </tr>
+        </thead>
+
+        @if (licencas != null)
+        {
+            <tbody>
+                @foreach (var licenca in licencas)
+                {
+                    <tr>
+                        <td>@licenca.Nome</td>
+                        <td>@licenca.Segredo</td>
+                        <td>@licenca.VersaoAPP</td>
+                        <td>@licenca.VersaoProWaiter</td>
+                        <td><input type="checkbox" @bind="@licenca.Ativo" onclick="return false;" /></td>
+                        <AuthorizeView Roles="@AppRolesConstants.Administrador">
+                            <td>@licenca.Revendedor</td>
+                        </AuthorizeView>
+                        <td>
+                            <div class="btn-group">
+                                
+                                    <a class="btn btn-primary" href="Licencas/Details/@licenca.Codigo" title="Detalhes">
+                                        <i class="oi oi-document"></i>
+                                    </a>
+                                
+                                @if (string.IsNullOrEmpty(licenca.Nome))
+                                {
+                                        <button class="btn btn-danger" @onclick="@(() => ConfirmDelete(licenca.Codigo))" title="Excluir">
+                                            <i class="oi oi-trash"></i>
+                                        </button>
+                                }
+                            </div>
+                        </td>
+                        @*<td><a class="btn btn-primary" href="Revendedores/Edit/@revendedor.Codigo">Editar</a></td>
+                            <td><button class="btn btn-danger" @onclick="@(() => ConfirmDelete(revendedor.Codigo))">Excluir</button></td>*@
+                    </tr>
+                }
+
+            </tbody>
+        }
+    </table>
+
+</div>
+
+@code {
+
+    class Filtros
+    {
+        public string Nome { get; set; }
+        public string Segredo { get; set; }
+        public string APP { get; set; }
+        public string Sistema { get; set; }
+        public bool? Ativo { get; set; }
+        public string Revendedor { get; set; }
+    }
+
+
+    private enum eColunaFiltro { Nome, Segredo, APP, Sistema, Ativo, Revendedor }
+    private Filtros filtros = new Filtros();
+
+    private LicencaIndexViewModel[] licencasCache;
+    private LicencaIndexViewModel[] licencas;
+    private string imageSortname = "oi oi-caret-top";
+    private int flagSort = 0;
+    private string msgException;
+    private int codExclusaoAtual = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregarLicencas();
+    }
+
+    private async Task CarregarLicencas()
+    {
+        try
+        {
+            licencasCache = await http.GetJsonAsync<LicencaIndexViewModel[]>("api/Licencas");
+            licencas = new LicencaIndexViewModel[licencasCache.Length];
+            licencasCache.CopyTo(licencas, 0);
+        }
+        catch (Exception ex)
+        {
+            msgException = ex.ToString();
+        }
+    }
+
+    private void OrdenarLicencas(Expression<Func<LicencaIndexViewModel, object>> func)
+    {
+        if (flagSort == 0)
+        {
+            imageSortname = "oi oi-caret-bottom";
+            flagSort = 1;
+            licencasCache.OrderBy(func.Compile()).ToArray().CopyTo(licencas, 0);
+        }
+        else
+        {
+            imageSortname = "oi oi-caret-top";
+            flagSort = 0;
+            licencasCache.OrderByDescending(func.Compile()).ToArray().CopyTo(licencas, 0);
+        }
+    }
+
+    void OnFilterChanged(ChangeEventArgs args, eColunaFiltro coluna)
+    {
+        string valor = args.Value.ToString().ToUpper();
+
+        //atualizamos os valores dos filtros
+        switch (coluna)
+        {
+            case eColunaFiltro.Nome:
+                filtros.Nome = valor;
+                break;
+            case eColunaFiltro.Segredo:
+                filtros.Segredo = valor;
+                break;
+            case eColunaFiltro.APP:
+                filtros.APP = valor;
+                break;
+            case eColunaFiltro.Sistema:
+                filtros.Sistema = valor;
+                break;
+            case eColunaFiltro.Ativo:
+                bool? at = null;
+                if (valor == "ATIVO")
+                    at = true;
+                else if (valor == "INATIVO")
+                    at = false;
+                filtros.Ativo = at;
+                break;
+            case eColunaFiltro.Revendedor:
+                filtros.Revendedor = valor;
+                break;
+            default:
+                break;
+        }
+
+
+        LicencaIndexViewModel[] listaFiltrada = licencasCache;
+
+        if (!string.IsNullOrWhiteSpace(filtros.Nome))
+            listaFiltrada = listaFiltrada.Where(l => !string.IsNullOrWhiteSpace(l.Nome) && l.Nome.ToUpper().Contains(filtros.Nome)).ToArray();
+
+        if (!string.IsNullOrWhiteSpace(filtros.Segredo))
+            listaFiltrada = listaFiltrada.Where(l => !string.IsNullOrWhiteSpace(l.Segredo) && l.Segredo.ToUpper().Contains(filtros.Segredo)).ToArray();
+
+        if (!string.IsNullOrWhiteSpace(filtros.APP))
+            listaFiltrada = listaFiltrada.Where(l => !string.IsNullOrWhiteSpace(l.VersaoAPP) && l.VersaoAPP.ToUpper().Contains(filtros.APP)).ToArray();
+
+        if (!string.IsNullOrWhiteSpace(filtros.Sistema))
+            listaFiltrada = listaFiltrada.Where(l => !string.IsNullOrWhiteSpace(l.VersaoProWaiter) && l.VersaoProWaiter.ToUpper().Contains(filtros.Sistema)).ToArray();
+
+        if (filtros.Ativo.HasValue)
+            listaFiltrada = listaFiltrada.Where(l => l.Ativo == filtros.Ativo.Value).ToArray();
+
+        if (!string.IsNullOrWhiteSpace(filtros.Revendedor))
+            listaFiltrada = listaFiltrada.Where(l => !string.IsNullOrWhiteSpace(l.Revendedor) && l.Revendedor.ToUpper().Contains(filtros.Revendedor)).ToArray();
+
+        licencas = listaFiltrada;
+
+    }
+
+    private async void CriarLicenca()
+    {
+        try
+        {
+            var licenca = await http.PutJsonAsync<LicencaIndexViewModel>("api/Licencas/CriarLicenca/", null);
+
+            //Incluimos a licença criada no array que está visivel
+            LicencaIndexViewModel[] lic = new LicencaIndexViewModel[licencas.Length + 1];
+            lic[0] = licenca;
+            licencas.CopyTo(lic, 1);
+            licencas = lic;
+            StateHasChanged();
+
+            //Incluimos a licença criada no array de cache
+            lic = new LicencaIndexViewModel[licencasCache.Length + 1];
+            lic[0] = licenca;
+            licencasCache.CopyTo(lic, 1);
+            licencasCache = lic;
+        }
+        catch (Exception e)
+        {
+            msgException = e.ToString();
+        }
+    }
+
+    //Exclusão
+
+    private void ConfirmDelete(int codigo)
+    {
+        codExclusaoAtual = codigo;
+        ModalParameters mp = new ModalParameters();
+        mp.Add("Message", "Tem certeza que deseja deletar a licença??");
+        ModalService.OnClose += ModalClose;
+        ModalService.Show<DeleteConfirm>("Confirmação", mp);
+    }
+
+    private async void ModalClose(ModalResult result)
+    {
+        if (!result.Cancelled)
+        {
+            await Excluir(codExclusaoAtual);
+            StateHasChanged();
+        }
+        ModalService.OnClose -= ModalClose;
+    }
+
+    private async Task Excluir(int codigo)
+    {
+        try
+        {
+            await http.DeleteAsync($"api/Licencas/{codigo}");
+
+            List<LicencaIndexViewModel> temp = new List<LicencaIndexViewModel>();
+            foreach (var lic in licencasCache)
+                if (lic.Codigo != codigo)
+                    temp.Add(lic);
+
+            licencasCache = new LicencaIndexViewModel[temp.Count];
+            temp.CopyTo(licencasCache, 0);
+
+            List<LicencaIndexViewModel> tempL = new List<LicencaIndexViewModel>();
+            foreach (var lic in licencas)
+                if (lic.Codigo != codigo)
+                    tempL.Add(lic);
+
+            licencas = new LicencaIndexViewModel[tempL.Count];
+            tempL.CopyTo(licencas, 0);
+        }
+        catch (Exception ex)
+        {
+            msgException = ex.ToString();
+        }
+    }
+}

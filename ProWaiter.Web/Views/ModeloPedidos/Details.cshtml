@@ -1,0 +1,73 @@
+﻿@model ProWaiter.Web.Models.Entidades.ModeloPedido
+
+@{
+    ViewBag.Title = "Modelo de Pedido";
+}
+
+<h2>@AppResources.StringDetalhes</h2>
+
+<div>
+    <h4>@ViewBag.Title</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Nome)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Nome)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Desconto)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Desconto)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Acrescimo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Acrescimo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Observacoes)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Observacoes)
+        </dd>
+    </dl>
+    <hr />
+    <h4>Refeições</h4>
+    <ul class="list-group">
+
+        @{
+            foreach (var modRef in Model.ModelosRefeicaoPedidos)
+            {
+                <li class="list-group-item">@modRef.RefeicaoDoCardapio.Refeicao.Nome - @modRef.RefeicaoDoCardapio.TamanhoRefeicao.Nome</li>
+
+            }
+        }
+
+    </ul>
+    <h4>Bebidas</h4>
+    <ul class="list-group">
+        @{
+            foreach (var beb in Model.ModelosBebidaPedido)
+            {
+                <li class="list-group-item">@beb.Bebida.Nome</li>
+            }
+        }
+    </ul>
+</div>
+
+<hr />
+<p>
+    @Html.Partial("_botaoVoltarParaLista")
+    @Html.Partial("_botaoEditar", new { id = Model.Codigo })
+</p>

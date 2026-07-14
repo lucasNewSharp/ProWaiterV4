@@ -1,0 +1,72 @@
+@page "/Revendedores/Create"
+@inject NavigationManager NavigationManager
+@inject HttpClient http
+@using PortalRevendedorProWaiter.Shared
+
+
+<AlertError Message="@msgExErro"></AlertError>
+
+@if (showWaitComponent)
+{
+    <WaitComponent Texto=@textWaitComponent></WaitComponent>
+}
+else
+{
+    <h1>Cadastro de revendedor</h1>
+
+    @if (showErrors)
+    {
+        <div class="alert alert-danger" role="alert">
+            @foreach (var error in errors)
+            {
+                <p>@error</p>
+            }
+        </div>
+    }
+
+    <FormRevendedor Model="revendedorModel" SubmitText="Cadastrar" OnValidSubmit="HandleCreate" ></FormRevendedor>
+}
+
+@code {
+
+    private RevendedorCrudViewModel revendedorModel = new RevendedorCrudViewModel() { Ativo = true };
+
+
+    private bool showErrors;
+    private IEnumerable<string> errors;
+    private string textWaitComponent = string.Empty;
+    private bool showWaitComponent = false;
+    private string msgExErro = string.Empty;
+
+    private async Task HandleCreate()
+    {
+        try
+        {
+            textWaitComponent = "Efetuando cadastro...";
+            showErrors = false;
+            showWaitComponent = true;
+            msgExErro = string.Empty;
+
+            var result = await http.PostJsonAsync<DefaultRequestResult>("api/Revendedores", revendedorModel);
+
+
+            if (!result.Successful)
+            {
+                errors = result.Errors;
+                showErrors = true;
+            }
+            else
+            {
+                NavigationManager.NavigateTo("Revendedores/Index");
+            }
+        }
+        catch (Exception ex)
+        {
+            msgExErro = ex.ToString();
+        }
+        finally
+        {
+            showWaitComponent = false;
+        }
+    }
+}

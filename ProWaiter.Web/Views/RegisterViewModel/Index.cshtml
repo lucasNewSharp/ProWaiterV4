@@ -1,0 +1,55 @@
+﻿@model IEnumerable<ProWaiter.Web.Models.RegisterViewModel>    
+@using ProWaiter.Web.Util
+
+@{
+    ViewBag.Title = "Listar Usuários";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<p>
+    @Html.BotaoAcaoTexto("Register", "Account", "Criar Novo")    
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.UserName)
+        </th>        
+        <th>
+            @Html.DisplayNameFor(model => model.EhAdministrador)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EhCaixa)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EhGarcom)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>            
+            <td>
+                @Html.DisplayFor(modelItem => item.EhAdministrador)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EhCaixa)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EhGarcom)
+            </td>
+            <td>
+                @if (item.UserName != "administrador")
+                {
+                    @Html.Partial("_botoesAcaoIndex", new { userName = item.UserName })                    
+                    @Html.BotaoAcaoTexto("SetarSenha", "RegisterViewModel", "Setar Senha", new { userName = item.UserName })
+                }
+            </td>
+        </tr>
+    }
+
+</table>

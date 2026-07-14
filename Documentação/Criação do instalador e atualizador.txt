@@ -1,0 +1,43 @@
+Criando o Instalador e Atualizador do ProWaiter:
+
+Instalador:
+
+::ProWaiter.Web
+->Abrir o projeto ProWaiter.Web
+->Se o APK foi atualizado, copiar o mesmo para dentro da pasta "ProWaiterAPK" e atualizar o arquivo Versao.json
+ ->Verificar o Content e copy always do APK
+->Se o ProWaiter.Licenca foi atualizado compiar os arquivos para a pasta "ValidadorLicenca".
+ ->Verificar o Content e copy always para todos os arquivos.
+->Publicar o projeto ProWaiter Web em versão Release.
+
+::Banco de dados	
+->Rodar os SQLs no banco "ProWaiter-Zerado" caso necessário. (SQL 2014 e 2019), no instalador vai o 2019 apenas, mas o 2014 para windows 7 instalação manual.
+->Incrementar a versão na tabela "TBConfiguracoes" no banco de dados "ProWaiter-Zerado."
+->Criar um backup do banco de dados "ProWaiter-Zerado".
+
+::Projeto Setup
+->Abrir o projeto "Setup"
+->Apagar arquivos da pasta "Release" do projeto
+->No setup remover tudo exceto o primary output, que são referentes as custom activities e o ProWaiter.ico
+->Na seção "File System" apagar as pastas
+->Com o projeto aberto (não pode ser como administrador), arraste pelo windows explorer o conteudo da pasta "publish" do projeto ProWaiter.Web para a seção "File Sistem" do setup.
+->Realizar o Build em modo Release.
+
+::Projeto Instalador
+->Copiar o Setup Gerado para dentro da pasta "SetupProWaiter"
+->Caso houve mudança no banco de dados, copie o ProWaiter.bak para dentro da pasta "ConfigSQL"
+->Compilar em modo Release o projeto "Instalador".
+
+
+Atualizador:
+->Criar uma pasta com o número da versão dentro da pasta "Versões" separado por _ exemplo 1_2 para v1.2
+->Criar uma pasta "SQLs" dentro da pasta da versão, adicionar os arquivos SQL numerados de 01....0N.
+	->Lembrar do "Content" e "Copy always" para os arquivos
+->Adicionar o sistema compactado dentro da pasta da versão. O arquivo compactado deve conter uma pasta "ProWaiter" com todo o sistema dentro compactado.
+	->Lembrar do "Content" e "Copy always" para os arquivos
+->Adicionar a nova versão ao app.config separado por ";" exemplo: "1_1;2_0;2_1"
+->Compilar em modo release
+->Adicionar no arquivo "Notas da versão" o que foi feito.
+OBS: não esquecer de marcar os arquivos SQLe o .Zip para "Content" e Copy Always
+
+	

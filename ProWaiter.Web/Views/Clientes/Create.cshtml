@@ -1,0 +1,83 @@
+﻿@model ProWaiter.Web.Models.ClienteCreateViewModel
+
+@{
+    ViewBag.Title = "Cliente";
+    if (ViewBag.Modal != null && (bool)ViewBag.Modal)
+    {
+        Layout = null;
+    }
+}
+
+@if (ViewBag.Modal == null || !(bool)ViewBag.Modal) //não é modal
+{
+    <h2>@AppResources.StringCriar</h2>
+
+    using (Html.BeginForm(new { returnUrl = ViewBag.ReturnUrl }))
+    {
+        @Html.AntiForgeryToken();
+
+        <div class="form-horizontal">
+            <h4>@ViewBag.Title</h4>
+            <hr />
+            @Html.Partial("_CreateHelper", Model)
+
+            <div class="form-group">
+                <div class="col-md-offset-3 col-md-9">
+                    @Html.Partial("_botaoCadastrar")
+                </div>
+            </div>
+        </div>
+    }
+
+    <div>
+        @Html.Partial("_botaoVoltarParaLista")
+    </div>
+
+    @section scripts{
+        <script type="text/javascript">
+            $("#Nome").focus();
+
+            function PopularCidades() {
+                var stateId = $('#ddlEstados').val();
+                $.ajax({
+                    url: '@Url.Action("LoadCidades", "Clientes")',
+                    type: "POST",
+                    dataType: "JSON",
+                    data: { uf: stateId },
+                    success: function (cities) {
+                        $("#ddlCidades").html(""); // clear before appending new list
+                        $.each(cities, function (i, city) {
+                            $("#ddlCidades").append(
+                                $('<option></option>').val(city.Value).html(city.Text));
+                        });
+                    }
+                });
+            }
+        </script>
+    }
+}
+else //eh modal
+{
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">@ViewBag.Title</h4>
+            </div>
+            <div class="modal-body">
+                @using (Html.BeginForm("Create", "Clientes", new { returnUrl = ViewBag.ReturnUrl }, FormMethod.Post, htmlAttributes: new { @id="formCadastroCliente" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-horizontal">
+                        @Html.Partial("_CreateHelper", Model)
+                    </div>
+                    <div class="modal-footer">
+                        @Html.Partial("_botaoCadastrar")
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}

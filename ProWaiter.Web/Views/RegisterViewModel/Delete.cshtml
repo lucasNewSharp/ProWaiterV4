@@ -1,0 +1,57 @@
+﻿@model ProWaiter.Web.Models.RegisterViewModel
+
+@{
+    ViewBag.Title = "Remover Usuário";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<h3>Você tem certeza que deseja excluir o seguinte usuário?</h3>
+<div>
+    <hr />
+    @Html.ValidationSummary(true, string.Empty, new { @class = "text-danger" })
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EhAdministrador)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EhAdministrador)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EhCaixa)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EhCaixa)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EhGarcom)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EhGarcom)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            @Html.Partial("_botaoVoltarParaLista")
+            @Html.Partial("_botaoExcluir")
+        </div>
+    }
+</div>

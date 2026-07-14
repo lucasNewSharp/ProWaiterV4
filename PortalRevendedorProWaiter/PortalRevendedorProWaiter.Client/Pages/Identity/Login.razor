@@ -1,0 +1,143 @@
+@page "/login"
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+<AlertError Message="@msgExErro"></AlertError>
+
+@if (showWaitComponent)
+{
+    <WaitComponent Texto=@textWaitComponent></WaitComponent>
+}
+else
+{
+    @if (showErrors)
+    {
+        @if (generalErrors != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @foreach (var error in generalErrors)
+                {
+                    <p>@error</p>
+                }
+            </div>
+        }
+        if (!string.IsNullOrWhiteSpace(loginError))
+        {
+            <div class="alert alert-danger" role="alert">
+                <p>@loginError</p>
+            </div>
+        }
+        @if (!emailConfirmed)
+        {
+            <div class="alert alert-warning" role="alert">
+                <p>Você ainda não confirmou o seu e-mail, para reenviar o e-mail de confirmação clique no botão reenviar e-mail</p>
+                <button class="btn btn-primary" @onclick="ReenviarEmailConfirmacao">Reenviar e-mail</button>
+            </div>
+        }
+    }
+
+
+    @if (!string.IsNullOrWhiteSpace(msgEmailResended))
+    {
+        <div class="alert alert-success" role="alert">
+            <div>@msgEmailResended</div>
+        </div>
+    }
+
+    <h1>Login</h1>
+    <div class="d-flex justify-content-center">
+        <div class="card col-md-6">
+            <div class="card-body">
+                <h5 class="card-title">Efetuar Login no portal do revendedor ProWaiter</h5>
+                <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <InputText Id="email" Class="form-control" @bind-Value="loginModel.Email" />
+                        <ValidationMessage For="@(() => loginModel.Email)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Senha</label>
+                        <InputText Id="password" type="password" Class="form-control" @bind-Value="loginModel.Password" />
+                        <ValidationMessage For="@(() => loginModel.Password)" />
+                    </div>                    
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </EditForm>
+                <div style="margin-top:10px;">
+                    <a href="javascript: void(0)" @onclick="HandleForgotPassword">Esqueci a senha</a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+
+    private LoginModel loginModel = new LoginModel();
+    private bool showErrors;
+    private string loginError;
+    private bool emailConfirmed = true;
+    private string msgEmailResended;
+    private IEnumerable<string> generalErrors;
+    private string textWaitComponent;
+    private bool showWaitComponent;
+    private string msgExErro;
+
+    private async Task HandleLogin()
+    {
+        try
+        {
+
+            textWaitComponent = "Efetuando login...";
+            showWaitComponent = true;
+            showErrors = false;
+            msgExErro = string.Empty;
+
+            var result = await AuthService.Login(loginModel);
+
+            if (result.Successful)
+            {
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                loginError = result.Error;
+                showErrors = true;
+                emailConfirmed = result.EmailConfirmed;
+            }
+        }
+        catch (Exception ex) { msgExErro = ex.Message + " - " + ex.ToString(); }
+        finally { showWaitComponent = false; }
+    }
+
+    private async Task ReenviarEmailConfirmacao()
+    {
+        try
+        {
+            textWaitComponent = "Reenviando email de confirmação...";
+            showWaitComponent = true;
+            msgExErro = string.Empty;
+
+            var result = await AuthService.ResendEmailConfirmation(loginModel);
+            if (result.Successful)
+            {
+                showErrors = false;
+                msgEmailResended = "Email reenviado! Verifique a sua caixa de email";
+            }
+            else
+            {
+                showErrors = true;
+                generalErrors = result.Errors;
+            }
+        }
+        catch (Exception ex) { msgExErro = ex.ToString(); }
+        finally { showWaitComponent = false; }
+    }
+
+    private void HandleForgotPassword()
+    {
+        NavigationManager.NavigateTo("/ForgotPassword");
+    }
+}

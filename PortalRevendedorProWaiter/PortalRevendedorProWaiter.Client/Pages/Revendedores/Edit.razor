@@ -1,0 +1,80 @@
+﻿@page "/Revendedores/Edit/{id:int}"
+@inject NavigationManager NavigationManager
+@inject HttpClient http
+@using PortalRevendedorProWaiter.Shared
+
+
+<AlertError Message="@msgExErro"></AlertError>
+
+@if (showWaitComponent)
+{
+    <WaitComponent Texto=@textWaitComponent></WaitComponent>
+}
+else
+{
+    <h1>Edição de revendedor</h1>
+
+    @if (showErrors)
+    {
+        <div class="alert alert-danger" role="alert">
+            @foreach (var error in errors)
+            {
+                <p>@error</p>
+            }
+        </div>
+    }
+
+    <FormRevendedor Model="revendedorModel" SubmitText="Salvar" OnValidSubmit="HandleEdit"></FormRevendedor>
+}
+
+@code {
+
+    [Parameter]
+    public int id { get; set; }
+
+    private RevendedorCrudViewModel revendedorModel = new RevendedorCrudViewModel() { Ativo = true };
+
+
+    private bool showErrors;
+    private IEnumerable<string> errors;
+    private string textWaitComponent = string.Empty;
+    private bool showWaitComponent = false;
+    private string msgExErro = string.Empty;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        revendedorModel = await http.GetJsonAsync<RevendedorCrudViewModel>($"api/revendedores/{id}");
+    }
+
+    private async Task HandleEdit()
+    {
+        try
+        {
+            textWaitComponent = "Salvando o cadastro...";
+            showErrors = false;
+            showWaitComponent = true;
+            msgExErro = string.Empty;
+
+            var result = await http.PutJsonAsync<DefaultRequestResult>("api/Revendedores", revendedorModel);
+
+
+            if (!result.Successful)
+            {
+                errors = result.Errors;
+                showErrors = true;
+            }
+            else
+            {
+                NavigationManager.NavigateTo("Revendedores/Index");
+            }
+        }
+        catch (Exception ex)
+        {
+            msgExErro = ex.ToString();
+        }
+        finally
+        {
+            showWaitComponent = false;
+        }
+    }
+}

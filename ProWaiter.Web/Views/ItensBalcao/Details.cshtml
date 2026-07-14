@@ -1,0 +1,58 @@
+﻿@model ProWaiter.Web.Models.Entidades.ItemBalcao
+
+@{
+    ViewBag.Title = "Item Balcão";
+}
+
+<h2>@AppResources.StringDetalhes</h2>
+
+<div>
+    <h4>@ViewBag.Title</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Nome)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Nome)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Valor)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Valor)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PercDesconto)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PercDesconto)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CodBarras)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CodBarras)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Ativo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Ativo)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.Partial("_botaoVoltarParaLista")
+    @Html.Partial("_botaoEditar", new { id = Model.Codigo })
+</p>

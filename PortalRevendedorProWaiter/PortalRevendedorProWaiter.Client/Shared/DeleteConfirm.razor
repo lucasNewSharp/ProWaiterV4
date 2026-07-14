@@ -1,0 +1,31 @@
+﻿@inject IModalService Modal
+
+<div class="confirm-model">
+    <div>
+        @Message
+    </div>
+    <div class="float-right">
+        <button class="btn btn-outline-danger" @onclick="Confirm">Confirmar</button>
+        <button class="btn btn-outline-primary" @onclick="Cancel">Cancelar</button>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter] ModalParameters Parameters { get; set; }
+    string Message { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        Message = Parameters.Get<string>("Message");
+    }
+
+    void Confirm()
+    {
+        Modal.Close(ModalResult.Ok<string>(""));
+    }
+
+    void Cancel()
+    {
+        Modal.Cancel();
+    }
+}

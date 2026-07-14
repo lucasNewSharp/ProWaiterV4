@@ -1,0 +1,130 @@
+@page "/Identity/register"
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+@inject HttpClient http;
+
+
+<AlertError Message="@msgExErro"></AlertError>
+
+@if (showWaitComponent)
+{
+    <WaitComponent Texto=@textWaitComponent></WaitComponent>
+}
+else
+{
+    <h1>Registro</h1>
+
+    @if (showErrors)
+    {
+        <div class="alert alert-danger" role="alert">
+            @foreach (var error in errors)
+            {
+                <p>@error</p>
+            }
+        </div>
+    }
+
+    @if (success)
+    {
+        <div class="alert alert-success" role="alert">
+            <p>Você irá receber uma email para confirmar o seu cadastro. Após a confirmação você terá acesso ao sistema.</p>
+        </div>
+    }
+    else
+    {
+        <div class="d-flex justify-content-center">
+            <div class="card col-md-6">
+                <div class="card-body">
+                    <h5 class="card-title">Dados do usuário</h5>
+                    <EditForm Model="registerModel" OnValidSubmit="HandleRegistration">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <InputText Id="email" class="form-control" @bind-Value="registerModel.Email" />
+                            <ValidationMessage For="@(() => registerModel.Email)" />
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Senha</label>
+                            <InputText Id="password" type="password" class="form-control" @bind-Value="registerModel.Password" />
+                            <ValidationMessage For="@(() => registerModel.Password)" />
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Confirme a Senha</label>
+                            <InputText Id="passwordConfirmation" type="password" class="form-control" @bind-Value="registerModel.ConfirmPassword" />
+                            <ValidationMessage For="@(() => registerModel.ConfirmPassword)" />
+                        </div>
+                        <div class="form-group">
+                            <label for="Revendedor">Revendedor</label>
+                            <InputSelect Id="CodRevendedor" class="form-control" @bind-Value="registerModel.CodRevendedor">
+                                <option value="">Selecione o revendedor ...</option>                                
+                                @foreach(var rev in Revendedores)
+                                {
+                                    <option value="@rev.Codigo">@rev.RazaoSocial</option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Cadastrar</button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    }
+}
+
+@code {
+
+    private RegisterModel registerModel = new RegisterModel();
+    private bool showErrors;
+    private IEnumerable<string> errors;
+    private string textWaitComponent = string.Empty;
+    private bool showWaitComponent = false;
+    private bool success = false;
+    private string msgExErro = string.Empty;
+
+    private List<Revendedor> Revendedores = new List<Revendedor>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            Revendedores = await http.GetJsonAsync<List<Revendedor>>("api/Revendedores/");
+        }
+        catch(Exception ex)
+        {
+            msgExErro = ex.ToString();
+        }
+    }
+
+    private async Task HandleRegistration()
+    {
+        try
+        {
+            textWaitComponent = "Efetuando cadastro...";
+            showErrors = false;
+            showWaitComponent = true;
+            msgExErro = string.Empty;
+
+            var result = await AuthService.Register(registerModel);
+
+            if (result.Successful)
+            {
+                success = true;
+            }
+            else
+            {
+                errors = result.Errors;
+                showErrors = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            msgExErro = ex.ToString();
+        }
+        finally
+        {
+            showWaitComponent = false;
+        }
+    }
+}

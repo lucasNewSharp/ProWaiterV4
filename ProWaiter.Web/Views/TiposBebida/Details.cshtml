@@ -1,0 +1,26 @@
+﻿@model ProWaiter.Web.Models.Entidades.TipoBebida
+
+@{
+    ViewBag.Title = "Tipo de Bebida";
+}
+
+<h2>@AppResources.StringDetalhes</h2>
+
+<div>
+    <h4>@ViewBag.Title</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Nome)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Nome)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.Partial("_botaoVoltarParaLista")
+    @Html.Partial("_botaoEditar", new { id = Model.Codigo })
+</p>

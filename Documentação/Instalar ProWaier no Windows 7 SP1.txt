@@ -1,0 +1,5 @@
+->Instalar o .net 4.8
+->Instalar o IIS com suporte para ASP NET
+->Rodar o comando: "C:\windows\Microsoft.Net\Framework64\v4.0.30319\aspnet_regiis.exe -i
+->Converter para aplicativo a pasta do ProWaiter e mudar o Pool para "Asp.Net v4"
+

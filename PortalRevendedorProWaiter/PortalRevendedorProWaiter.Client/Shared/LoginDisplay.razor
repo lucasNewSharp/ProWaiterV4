@@ -1,0 +1,9 @@
+<AuthorizeView>
+    <Authorized>
+        Olá, @context.User.Identity.Name
+        <a class="btn btn-primary" role="button" href="LogOut">Log out</a>
+    </Authorized>
+    <NotAuthorized>                
+        <a class="btn btn-primary" role="button" href="Login">Log in</a>
+    </NotAuthorized>
+</AuthorizeView>

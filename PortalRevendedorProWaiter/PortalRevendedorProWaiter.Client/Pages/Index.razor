@@ -1,0 +1,21 @@
+﻿@page "/"
+
+<h1>Bem-Vindo!</h1>
+
+<h4>Esse é o portal do revendedor ProWaiter</h4>
+
+<AuthorizeView>
+    <Authorized>
+        <div class="alert alert-secondary" role="alert">
+            Olá, @context.User.Identity.Name clique
+            <a href="LogOut">aqui</a>
+            par efetuar o log out.
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="alert alert-secondary" role="alert">
+            Clique <a href="/Login">aqui</a> para efetuar o login.
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+

@@ -1,0 +1,89 @@
+﻿@model ProWaiter.Web.Models.Entidades.Impressora
+
+@{
+    ViewBag.Title = "Impressora";
+}
+
+<h2>@AppResources.StringExcluir</h2>
+
+<h3>@AppResources.StringPerguntaExclusao</h3>
+<div>
+    <h4>@ViewBag.Title</h4>
+    <hr />
+    @Html.ValidationSummary(true, string.Empty, new { @class = "text-danger" })
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Nome)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Nome)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Local)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Local)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NomeExibicaoTipoImpressao)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NomeExibicaoTipoImpressao)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Ip)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Ip)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Porta)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Porta)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EhDoCaixa)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EhDoCaixa)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EhDeEntrega)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EhDeEntrega)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BuzinaAtivada)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BuzinaAtivada)
+        </dd>
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            @Html.Partial("_botaoVoltarParaLista")
+            @Html.Partial("_botaoExcluir")
+        </div>
+    }
+</div>

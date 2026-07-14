@@ -1,0 +1,163 @@
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using ProWaiter.Web.Models;
+using ProWaiter.Web.Models.GestoresBD;
+using ProWaiter.Web.Util;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.EnterpriseServices;
+using System.Linq;
+using System.Net;
+using System.Web;
+using System.Web.Mvc;
+
+namespace ProWaiter.Web.Controllers
+{
+    public class RegisterViewModelController : Controller
+    {
+        private ProWaiterContext db = new ProWaiterContext();
+
+        private ApplicationUserManager _userManager = null;
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
+
+
+        // GET: RegisterViewModel
+        [Authorize(Roles = Constantes.GrupoAdministradores)]
+        public ActionResult Index()
+        {
+            List<RegisterViewModel> usuariosVM = new List<Models.RegisterViewModel>();
+            foreach (ApplicationUser au in db.Usuarios)
+                usuariosVM.Add(new RegisterViewModel(au));
+            return View(usuariosVM);
+        }
+
+        // GET: RegisterViewModel/Details/userName=isaacrsjr@hotmail.com
+        public ActionResult Details(string userName)
+        {
+            if (string.IsNullOrEmpty(userName))
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            ApplicationUser au = db.Usuarios.Where(u => u.UserName == userName).FirstOrDefault();
+            if (au == null)
+                return HttpNotFound();
+
+            return View(new RegisterViewModel(au));
+        }
+
+        // GET: RegisterViewModel/Edit/5
+        [Authorize(Roles = Constantes.GrupoAdministradores)]
+        public ActionResult Edit(string userName)
+        {
+            if (string.IsNullOrEmpty(userName))
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            ApplicationUser au = db.Usuarios.Where(u => u.UserName == userName).FirstOrDefault();
+            if (au == null)
+                return HttpNotFound();
+
+            return View(new EditUserViewModel(au));
+        }
+
+        // POST: RegisterViewModel/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = Constantes.GrupoAdministradores)]
+        public ActionResult Edit(EditUserViewModel editViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                ApplicationUser user = db.Usuarios.Where(u => u.UserName == editViewModel.UserName).SingleOrDefault();
+
+                UserManager.RemoveFromRoles(user.Id, user.Roles.Select(g => g.RoleId).ToArray());
+                if (editViewModel.EhAdministrador) UserManager.AddToRole(user.Id, Constantes.GrupoAdministradores);
+                if (editViewModel.EhCaixa) UserManager.AddToRole(user.Id, Constantes.GrupoCaixas);
+                if (editViewModel.EhGarcom) UserManager.AddToRole(user.Id, Constantes.GrupoGarcons);
+
+                return RedirectToAction("Details", "RegisterViewModel", new { userName = editViewModel.UserName });
+            }
+            return View(editViewModel);
+        }
+
+        // GET: RegisterViewModel/Delete/5
+        [Authorize(Roles = Constantes.GrupoAdministradores)]
+        public ActionResult Delete(string userName)
+        {
+            if (string.IsNullOrEmpty(userName))
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            ApplicationUser au = db.Usuarios.Where(u => u.UserName == userName).FirstOrDefault();
+            if (au == null)
+                return HttpNotFound();
+
+            return View(new RegisterViewModel(au));
+        }
+
+        // POST: RegisterViewModel/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = Constantes.GrupoAdministradores)]
+        public ActionResult Delete(string userName, FormCollection collection)
+        {
+            if (string.IsNullOrEmpty(userName))
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            ApplicationUser au = UserManager.Users.Where(u => u.UserName == userName).FirstOrDefault();
+            if (au == null)
+                return HttpNotFound();
+
+            try
+            {
+                UserManager.Delete(au);
+                return RedirectToAction("Index", "RegisterViewModel");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+                ModelState.AddModelError(string.Empty, "Não foi possível excluir o usuário!");
+                return View(new RegisterViewModel(au));
+            }
+        }
+
+        [Authorize(Roles = Constantes.GrupoAdministradores)]
+        public ActionResult SetarSenha(string userName)
+        {
+            if (string.IsNullOrEmpty(userName))
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            ApplicationUser au = db.Usuarios.Where(u => u.UserName == userName).FirstOrDefault();
+            if (au == null)
+                return HttpNotFound();
+
+            return View(new RegisterViewModel(au));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = Constantes.GrupoAdministradores)]
+        public ActionResult SetarSenha(string userName, FormCollection collection)
+        {
+            ApplicationUser user = db.Usuarios.Where(u => u.UserName == userName).SingleOrDefault();
+            if (ModelState.IsValid)
+            {                
+                UserManager.RemovePassword(user.Id);
+                IdentityResult result = UserManager.AddPassword(user.Id, collection["Password"]);
+
+                if (result.Succeeded)
+                    return RedirectToAction("Details", "RegisterViewModel", new { userName = userName });
+                else
+                {
+                    foreach (var error in result.Errors)
+                        ModelState.AddModelError("", error);
+                }
+            }
+            return View(new RegisterViewModel(user));
+        }
+    }
+}

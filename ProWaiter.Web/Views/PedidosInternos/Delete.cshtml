@@ -1,0 +1,134 @@
+﻿@model ProWaiter.Web.Models.Entidades.PedidoInterno
+
+@{
+    ViewBag.Title = "Pedido Interno";
+}
+
+<h2>@AppResources.StringExcluir</h2>
+
+<h3>@AppResources.StringPerguntaExclusao</h3>
+<div>
+    <h4>@ViewBag.Title</h4>
+    <hr />
+    @Html.ValidationSummary(true, string.Empty, new { @class = "text-danger" })
+    <dl class="dl-horizontal">
+        @if (ProWaiter.Web.Util.Configuracoes.ObterInstancia().UtilizaComanda)
+        {
+            <dt>Comanda</dt>
+            <dd>@ViewBag.Mesa</dd>
+            <dt>Local</dt>
+            <dd>@Html.DisplayFor(model => model.LocalInterno.Nome)</dd>
+        }
+        else
+        {
+            <dt>Local</dt>
+            <dd>@ViewBag.Mesa</dd>
+        }
+        <dt>
+            @Html.DisplayNameFor(model => model.Observacoes)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Observacoes)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DataInicio)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DataInicio)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DataTermino)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DataTermino)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NomeUsuario)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NomeUsuario)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RefeicoesDoPedido)
+        </dt>
+
+        <dd>
+            <ul class="col-md-4 list-group">
+                @foreach (var refeicao in Model.RefeicoesDoPedido.GroupBy(r => r.RefeicaoDoCardapio.Refeicao.Nome, (key, g) => new { Nome = key, Qtd = g.Count() }))
+                {
+                    <li class="list-group-item">@refeicao.Nome<span class="badge">@refeicao.Qtd</span></li>
+                }
+            </ul>
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ValorRefeicoes)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ValorRefeicoes)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BebidasDoPedido)
+        </dt>
+
+        <dd>
+            <ul class="col-md-4 list-group">
+                @foreach (var bebida in Model.BebidasDoPedido.GroupBy(b => b.Bebida.Nome, (key, g) => new { Nome = key, Qtd = g.Count() }))
+                {
+                    <li class="list-group-item">@bebida.Nome <span class="badge">@bebida.Qtd</span></li>
+                }
+            </ul>
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ValorBebidas)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ValorBebidas)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Acrescimos)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Acrescimos)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Descontos)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Descontos)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ValorTotal)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ValorTotal)
+        </dd>
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            @Html.Partial("_botaoVoltarParaLista")
+            @Html.Partial("_botaoExcluir")
+        </div>
+    }
+</div>

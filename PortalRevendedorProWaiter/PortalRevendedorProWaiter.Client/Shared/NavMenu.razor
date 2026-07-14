@@ -1,0 +1,50 @@
+﻿@using PortalRevendedorProWaiter.Shared
+
+<div class="top-row pl-4 navbar navbar-dark">
+    <a class="navbar-brand" href="">ProWaiter</a>
+    <button class="navbar-toggler" @onclick="@ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="@ToggleNavMenu">
+    <ul class="nav flex-column">
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </li>
+        <AuthorizeView Roles="@AppRolesConstants.Administrador">
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="Revendedores/Index">
+                    <span class="oi oi-briefcase" aria-hidden="true"></span>Revendedores
+                </NavLink>
+            </li>
+        </AuthorizeView>
+        <AuthorizeView Roles="@AppRolesConstants.Administrador">
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="Identity/Index">
+                    <span class="oi oi-people" aria-hidden="true"></span>Usuários
+                </NavLink>
+            </li>
+        </AuthorizeView>
+        <AuthorizeView Roles="@AppRolesConstants.AdministradorRevendor">
+            <li class="nav-item px-3">
+                <NavLink class="nav-link" href="Licencas/Index">
+                    <span class="oi oi-document" aria-hidden="true"></span>Licencas
+                </NavLink>
+            </li>
+        </AuthorizeView>
+    </ul>
+</div>
+
+@code {
+    bool collapseNavMenu = true;
+
+    string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}
