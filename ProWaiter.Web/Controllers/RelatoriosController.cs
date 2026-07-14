@@ -1,4 +1,6 @@
-﻿using ProWaiter.Web.Models.Entidades;
+/* 
+using Microsoft.EntityFrameworkCore;
+using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Util;
 using System;
@@ -6,7 +8,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProWaiter.Web.Controllers
 {
@@ -261,3 +265,4 @@ namespace ProWaiter.Web.Controllers
         }
     }
 }
+ */

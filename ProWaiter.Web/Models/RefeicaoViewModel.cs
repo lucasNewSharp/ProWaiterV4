@@ -1,4 +1,4 @@
-﻿using ProWaiter.Web.Models.Entidades;
+using ProWaiter.Web.Models.Entidades;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;

@@ -1,44 +1,37 @@
-﻿using Microsoft.AspNet.Identity.Owin;
-using Microsoft.AspNet.Identity;
-using Microsoft.Owin.Security;
-using Microsoft.Owin;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using System.Web;
-using System.Web.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
+using ProWaiter.Web.Models;
 
 namespace ProWaiter.Web.APIs
 {
-    public class ValidarUsuarioController : ApiController
+    public class ValidarUsuarioController : ControllerBase
     {
         // GET: api/ValidarUsuario
         public async Task<bool> Get()
         {
-            if (Request.Headers.Authorization == null)
+            if (!Request.Headers.ContainsKey("Authorization"))
                 return false;
-            string parametros = Request.Headers.Authorization.Parameter.ToString();
+            
+            string parametros = Request.Headers["Authorization"].ToString().Replace("Basic ", "");
             var authHeaderValue = Encoding.GetEncoding("ISO-8859-1").GetString(Convert.FromBase64String(parametros));
             string[] valores = authHeaderValue.Split(':');
 
             valores[0] = RemoverCaracteresScape(valores[0]);
             valores[1] = RemoverCaracteresScape(valores[1]);
 
-            ApplicationSignInManager sm = HttpContext.Current.GetOwinContext().GetUserManager<ApplicationSignInManager>();            
+            Microsoft.AspNetCore.Identity.SignInManager<ApplicationUser> sm = null;            
 
-            var result = await sm.PasswordSignInAsync(valores[0], valores[1], true, shouldLockout: false);
-            switch (result)
-            {
-                case SignInStatus.Success:
-                    return true;                                
-                case SignInStatus.Failure:
-                    return false;                
-            }
-
+            var result = await sm.PasswordSignInAsync(valores[0], valores[1], true, lockoutOnFailure: false);
+            if (result.Succeeded) return true;
             return false;
         }     
 

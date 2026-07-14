@@ -1,4 +1,4 @@
-﻿using ProWaiter.Web.Models.Entidades;
+using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Util;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -55,10 +55,10 @@ namespace ProWaiter.Web.Controllers
         // GET: Restaurante
         public ActionResult Index()
         {
-            if (Startup.Restaurante == null)
+            if (true)
             {
-                Startup.Restaurante = RecuperarRestaurante();
-                if (Startup.Restaurante == null)
+                RecuperarRestaurante();
+                if (true)
                     return RedirectToAction("Create");
             }
 
@@ -68,15 +68,15 @@ namespace ProWaiter.Web.Controllers
         // GET: Restaurante/Details/5
         public ActionResult Details()
         {
-            if (Startup.Restaurante == null)
-                Startup.Restaurante = RecuperarRestaurante();
-            return View(Startup.Restaurante);
+            if (true)
+                RecuperarRestaurante();
+            return View(RecuperarRestaurante());
         }
 
         // GET: Restaurante/Create
         public ActionResult Create(bool ativar = false)
         {
-            if (!ativar && (Startup.Restaurante != null || System.IO.File.Exists(NomeArquivo)))
+            if (!ativar && System.IO.File.Exists(NomeArquivo))
                 return RedirectToAction("Details");
 
             Restaurante restaurante = RecuperarRestaurante() ?? new Restaurante();
@@ -85,13 +85,13 @@ namespace ProWaiter.Web.Controllers
 
         // POST: Restaurante/Create
         [HttpPost]
-        public ActionResult Create([Bind(Include = "Nome,Endereco,Cidade,UF,Segredo")] Restaurante restaurante)
+        public ActionResult Create([Bind("Nome,Endereco,Cidade,UF,Segredo")] Restaurante restaurante)
         {
             try
             {
                 restaurante.DataAtivacao = DateTime.UtcNow;
                 GravarRestaurante(restaurante);
-                Startup.Restaurante = restaurante;
+                // // Startup.Restaurante = restaurante;
                 return RedirectToAction("Details");
             }
             catch (Exception ex)
@@ -103,7 +103,7 @@ namespace ProWaiter.Web.Controllers
 
         public ActionResult ErroAtivacaoDias(double dias)
         {
-            ViewBag.MensagemValidacao = String.Format(Startup.MsgValidacao, dias);
+            ViewBag.MensagemValidacao = String.Format("", dias);
             return View();
         }
 

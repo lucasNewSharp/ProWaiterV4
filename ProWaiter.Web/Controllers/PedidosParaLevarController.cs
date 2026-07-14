@@ -1,11 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Net;
 using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Util;
@@ -28,12 +30,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             PedidoParaLevar pedidoParaLevar = db.PedidosParaLevar.Find(id);
             if (pedidoParaLevar == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             ViewBag.ErrosImpressao = TempData["ErrosImpressao"];
             return View(pedidoParaLevar);
@@ -59,12 +61,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             PedidoParaLevar pedidoParaLevar = db.PedidosParaLevar.Find(id);
             if (pedidoParaLevar == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(pedidoParaLevar);
         }
@@ -81,13 +83,13 @@ namespace ProWaiter.Web.Controllers
             return RedirectToAction("Index", "Pedidos");
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+//         // // protected void Dispose(bool disposing)
+//         {
+//             if (disposing)
+//             {
+//                 // // db.Dispose();
+//             }
+//             // base.Dispose(disposing);
+//         }
     }
 }

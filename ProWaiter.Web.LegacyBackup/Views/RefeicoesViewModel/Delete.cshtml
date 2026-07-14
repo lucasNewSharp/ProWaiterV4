@@ -1,0 +1,53 @@
+﻿@model ProWaiter.Web.Models.RefeicaoViewModel
+
+@{
+    ViewBag.Title = "Refeição";
+}
+
+<h2>@AppResources.StringExcluir</h2>
+
+<h3>@AppResources.StringPerguntaExclusao</h3>
+<div>
+    <h4>@ViewBag.Title</h4>
+    <hr />
+    @Html.ValidationSummary(true, string.Empty, new { @class = "text-danger" })
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Nome)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Nome)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NomeTipo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NomeTipo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Componentes)
+        </dt>
+        <dd>
+            <ul>
+                @foreach (KeyValuePair<string, string> item in Model.Componentes.ListaSelecionados)
+                {
+                    <li>@item.Value</li>
+                }
+            </ul>
+        </dd>
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            @Html.Partial("_botaoVoltarParaLista")
+            @Html.Partial("_botaoExcluir")
+        </div>
+    }
+</div>

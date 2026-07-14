@@ -1,18 +1,20 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
 using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 using ProWaiter.Web.Models;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Util;
 using System.Configuration;
-using System.Web.DynamicData;
+
 
 namespace ProWaiter.Web.Controllers
 {
@@ -31,12 +33,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             Cliente cliente = db.Clientes.Find(id);
             if (cliente == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(cliente);
         }
@@ -68,7 +70,7 @@ namespace ProWaiter.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Constantes.GrupoAdministradores + "," + Constantes.GrupoCaixas)]
-        public ActionResult Create([Bind(Include = "Nome,Endereco,Bairro,CodCidade,Telefone1,Telefone2,ValorEntregaPadrao,ObservacoesPadrao")] ClienteCreateViewModel cliente, string returnUrl = null)
+        public ActionResult Create([Bind("Nome,Endereco,Bairro,CodCidade,Telefone1,Telefone2,ValorEntregaPadrao,ObservacoesPadrao")] ClienteCreateViewModel cliente, string returnUrl = null)
         {
             if (ModelState.IsValid)
             {
@@ -120,12 +122,12 @@ namespace ProWaiter.Web.Controllers
             ViewBag.ReturnUrl = returnUrl;
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             Cliente cliente = db.Clientes.Find(id);
             if (cliente == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }            
             return View(cliente);
         }
@@ -135,7 +137,7 @@ namespace ProWaiter.Web.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]        
         [Authorize(Roles = Constantes.GrupoAdministradores + "," + Constantes.GrupoCaixas)]
-        public ActionResult Edit([Bind(Include = "Codigo,Nome,Telefone1,Telefone2")] Cliente cliente, string returnUrl = null)
+        public ActionResult Edit([Bind("Codigo,Nome,Telefone1,Telefone2")] Cliente cliente, string returnUrl = null)
         {
             if (ModelState.IsValid)
             {
@@ -165,12 +167,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             Cliente cliente = db.Clientes.Find(id);
             if (cliente == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(cliente);
         }
@@ -205,13 +207,13 @@ namespace ProWaiter.Web.Controllers
 
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+//         // // protected void Dispose(bool disposing)
+//         {
+//             if (disposing)
+//             {
+//                 // // db.Dispose();
+//             }
+//             // base.Dispose(disposing);
+//         }
     }
 }

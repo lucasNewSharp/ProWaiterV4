@@ -1,0 +1,179 @@
+﻿@using ProWaiter.Web.Models.Entidades;
+@model ProWaiter.Web.Models.Entidades.RefeicaoDoCardapio
+
+@{
+    ViewBag.Title = "Refeição do Cardápio";
+}
+
+<h2>@AppResources.StringDetalhes</h2>
+
+@{
+    string composicaoVisivel = string.Empty;
+    bool componentesVisiveis = false;
+    if (Model.DeComposicao)
+    {
+        composicaoVisivel = "visibility:visible";
+    }
+    else
+    {
+        composicaoVisivel = "visibility:collapse";
+        componentesVisiveis = true;
+    }
+}
+
+<div>
+    <h4>@ViewBag.Title</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Refeicao.Nome)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Refeicao.Nome)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TamanhoRefeicao.Nome)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TamanhoRefeicao.Nome)
+        </dd>
+
+        @{
+            if (componentesVisiveis)
+            {
+                <dt>
+                    @Html.DisplayNameFor(model => model.Refeicao.ComponentesRefeicao)
+                </dt>
+
+                <dd>
+                    <div class="col-md-4">
+                        <ul class="list-group">
+                            @foreach (var componente in Model.Refeicao.ComponentesRefeicao.OrderBy(c => c.Nome))
+                            {
+                                <li class="list-group-item">@componente.Nome</li>
+                            }
+                        </ul>
+                    </div>
+                </dd>
+            }
+        }
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Valor)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Valor)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Ativo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Ativo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Impressora)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Impressora.NomeExibicao)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PercDesconto)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PercDesconto)%
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CodBarras)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CodBarras)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DeComposicao)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.DeComposicao)
+        </dd>
+    </dl>
+
+    <div class="col-md-12" style="@composicaoVisivel" id="listaComponentes">
+        <table class="table table-hover table-condensed table-bordered">
+            <thead>
+                <tr>
+                    <th>Ativo</th>
+                    <th>Componente</th>
+                    <th>Valor inteiro</th>
+                    <th>Cálculo proporcional</th>
+                    <th>Unidade</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    List<ComponenteComposicaoRefeicaoCardapio> componentes = Model.ComponentesComposicaoRefeicao.OrderBy(c => c.ComponenteRefeicao.Nome).ToList();
+                    for (var i = 0; i < componentes.Count; i++)
+                    {
+                        <tr>
+                            <td style="text-align:center;">
+                                @{
+                                    if (@componentes[i].Ativo)
+                                    {
+                                        <input type="checkbox" checked disabled />
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" disabled />
+                                    }
+                                }
+                            </td>
+                            <td>
+                                @componentes[i].ComponenteRefeicao.Nome
+                            </td>
+                            <td>
+                                @componentes[i].Valor
+                            </td>
+                            <td style="text-align:center">
+                                @{
+                                    if (componentes[i].CalculoProporcional)
+                                    {
+                                        <input type="checkbox" checked disabled />
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" disabled />
+                                    }
+                                }
+                            </td>
+                            <td>
+                                @{ 
+                                    string unidade = "Sem unidade";
+                                    if(componentes[i].Unidade != null)
+                                    {
+                                        unidade = componentes[i].Unidade.Descricao;
+                                    }
+                                }
+                                @unidade
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<p>
+    @Html.Partial("_botaoVoltarParaLista")
+    @Html.Partial("_botaoEditar", new { codRefeicao = Model.CodRefeicao, codTamanho = Model.CodTamanho })
+</p>

@@ -1,28 +1,29 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Web.Http;
-using System.Web.Http.Description;
-using ProWaiter.Web.AutenticacaoAPI;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
+
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Util;
 
 namespace ProWaiter.Web.APIs
 {
-    [IdentityBasicAuthentication]
-    public class LocaisInternosController : ApiController
+    // [IdentityBasicAuthentication]
+    public class LocaisInternosController : ControllerBase
     {
         private readonly ProWaiterContext db = new ProWaiterContext();
 
-        [ResponseType(typeof(LocalInterno))]
+        [ProducesResponseType(typeof(LocalInterno), 200)]
         [Authorize(Roles = Constantes.GrupoGarcons)]
-        public IHttpActionResult GetLocaisInternos()
+        public IActionResult GetLocaisInternos()
         {
             try
             {
@@ -34,13 +35,13 @@ namespace ProWaiter.Web.APIs
             }
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+//         // // protected void Dispose(bool disposing)
+//         {
+//             if (disposing)
+//             {
+//                 // // db.Dispose();
+//             }
+//             // base.Dispose(disposing);
+//         }
     }
 }

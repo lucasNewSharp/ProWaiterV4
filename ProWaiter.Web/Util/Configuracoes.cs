@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using System.Text.Json;
 using ProWaiter.Web.Models;
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.Gestores;
@@ -11,7 +11,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Web;
-using System.Web.Hosting;
+using Microsoft.AspNetCore.Hosting;
 
 namespace ProWaiter.Web.Util
 {
@@ -106,18 +106,17 @@ namespace ProWaiter.Web.Util
 
         public void RecarregarConfiguracoes()
         {            
-            using(StreamReader sr = File.OpenText(HostingEnvironment.MapPath("~/ProWaiterAPK/Versao.json")))
+            using(StreamReader sr = File.OpenText(Path.Combine(AppContext.BaseDirectory, "ProWaiterAPK/Versao.json")))
             {
-                JsonSerializer serializer = new JsonSerializer();
-                VersaoAPP verApp = (VersaoAPP)serializer.Deserialize(sr, typeof(VersaoAPP));
-                VersaoAPP = verApp.VersionCode;
+                string json = sr.ReadToEnd();
+                VersaoAPP verApp = JsonSerializer.Deserialize<VersaoAPP>(json);
+                VersaoAPP = verApp?.VersionCode ?? "";
             }
 
-            GestoresEntidades gEnt = new GestoresEntidades(new ProWaiterContextBDProvider());
-            gEnt.ContextoBDProvider.IniciarContextoBD();
+            using (var db = new ProWaiterContext())
             try
             {
-                List<Configuracao> configs = gEnt.gConfiguracoes.ObterEntidades().ToList();
+                List<Configuracao> configs = db.Configuracoes.ToList();
                 foreach(var conf in configs)
                 {
                     switch (conf.Codigo)
@@ -182,7 +181,6 @@ namespace ProWaiter.Web.Util
             }
             finally
             {
-                gEnt.ContextoBDProvider.FinalizarContextoBD();
             }
         }
     

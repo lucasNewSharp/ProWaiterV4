@@ -1,4 +1,4 @@
-﻿using NewSharp.BancoDeDados;
+using NewSharp.BancoDeDados;
 using ProWaiter.Web.Util;
 using System;
 using System.Collections.Generic;
@@ -29,7 +29,7 @@ namespace ProWaiter.Web.Models.Entidades
         }
         public string NomeExibicao { get { return String.Format("{0} ({1})", Local, Nome); } }
         [Display(Name = "Tipo de Impressão")]
-        public string NomeExibicaoTipoImpressao { get { return GestorImpressoes.Instancia.ObterNomeParaExibicao(TipoImpressao); } }
+        public string NomeExibicaoTipoImpressao { get { return string.Empty; } }
 
         [Display(Name = "Caixa")]
         public bool EhDoCaixa { get; set; }

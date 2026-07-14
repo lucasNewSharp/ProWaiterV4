@@ -1,13 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Net;
 using System.Web;
-using System.Web.Mvc;
-using Microsoft.Ajax.Utilities;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
+
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Util;
@@ -37,7 +39,7 @@ namespace ProWaiter.Web.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]        
-        public ActionResult Create([Bind(Include = "CodCliente,Endereco,Bairro,CodCidade,ValorEntregaPadrao,ObservacoesPadrao")] EnderecoClienteViewModel enderecoCliente, string returnUrl = null)
+        public ActionResult Create([Bind("CodCliente,Endereco,Bairro,CodCidade,ValorEntregaPadrao,ObservacoesPadrao")] EnderecoClienteViewModel enderecoCliente, string returnUrl = null)
         {
             EnderecoCliente enderecoDB = new EnderecoCliente();
 
@@ -91,13 +93,13 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             ViewBag.ReturnUrl = returnUrl;
             EnderecoCliente enderecoCliente = db.EnderecosClientes.Find(id);
             if (enderecoCliente == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             if (enderecoCliente.CodCidade.HasValue)
@@ -120,7 +122,7 @@ namespace ProWaiter.Web.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Codigo,CodCliente,Endereco,Bairro,CodCidade,ValorEntregaPadrao,ObservacoesPadrao")] EnderecoCliente enderecoCliente, string returnUrl = null)
+        public ActionResult Edit([Bind("Codigo,CodCliente,Endereco,Bairro,CodCidade,ValorEntregaPadrao,ObservacoesPadrao")] EnderecoCliente enderecoCliente, string returnUrl = null)
         {
             if (ModelState.IsValid)
             {
@@ -163,12 +165,12 @@ namespace ProWaiter.Web.Controllers
         //{
         //    if (id == null)
         //    {
-        //        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        //        return BadRequest();
         //    }
         //    EnderecoCliente enderecoCliente = db.EnderecosClientes.Find(id);
         //    if (enderecoCliente == null)
         //    {
-        //        return HttpNotFound();
+        //        return NotFound();
         //    }
         //    return View(enderecoCliente);
         //}
@@ -199,14 +201,14 @@ namespace ProWaiter.Web.Controllers
             return Redirect(returnUrl);
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+//         // // protected void Dispose(bool disposing)
+//         {
+//             if (disposing)
+//             {
+//                 // // db.Dispose();
+//             }
+//             // base.Dispose(disposing);
+//         }
     }
 
     public class EnderecoClienteViewModel
@@ -258,12 +260,12 @@ public ActionResult Details(int? id)
 {
     if (id == null)
     {
-        return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+        return BadRequest();
     }
     EnderecoCliente enderecoCliente = db.EnderecosClientes.Find(id);
     if (enderecoCliente == null)
     {
-        return HttpNotFound();
+        return NotFound();
     }
     return View(enderecoCliente);
 }*/

@@ -1,4 +1,5 @@
-﻿using ProWaiter.Web.Models;
+using Microsoft.EntityFrameworkCore;
+using ProWaiter.Web.Models;
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Util;
@@ -7,7 +8,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProWaiter.Web.Controllers
 {
@@ -27,20 +30,7 @@ namespace ProWaiter.Web.Controllers
         // POST: Configuracoes/Edit
         [HttpPost]
         [Authorize(Roles = Constantes.GrupoAdministradores)]
-        public ActionResult Edit([Bind(Include = 
-            "UtilizaComanda, " +
-            "RequerObservacaoAoAbrirPedidoInterno, " +
-            "ImprimirNomeGarcomTicket, " +
-            "ImprimirLanchesPedidoExterno, " +
-            "CodCidade, " +
-            "TextoFinalCupomFechamento, " +
-            "ImprimirTextoCupomFechamentoInterno, " +
-            "ImprimirTextoCupomFechamentoTeleEntrega," +
-            "ImprimirCopiaFechamentoImpressoraEntrega, " +
-            "ImprimirSequencialFechamentoPedidoEntrega, " +
-            "ExibirAdicionaisMolhosPedidoEntrega, " +
-            "ImprimirHorarioGrandePedidoEntrega"
-            )] ConfiguracoesViewModel configuracoesDTO)
+        public ActionResult Edit(ConfiguracoesViewModel configuracoesDTO)
         {
             try
             {

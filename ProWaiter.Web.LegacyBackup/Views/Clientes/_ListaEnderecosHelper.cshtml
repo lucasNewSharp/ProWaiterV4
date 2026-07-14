@@ -1,0 +1,87 @@
+﻿@model ProWaiter.Web.Models.Entidades.Cliente
+@using ProWaiter.Web.Util
+
+
+@Html.Partial("_modalAlerta", "Você não pode excluir esse endereço pois o mesmo já foi utilizado em entregas.")
+
+<div class="col-md-12" style="margin-bottom:10px;">
+    <div>
+        <b><label style="font-size:18px;">Endereços:</label></b>
+        <div class="btn btn-default glyphicon glyphicon-plus btnCadastrarEndereco" onclick="ModalCadastroEndereco()" title="Cadastrar novo..." style="margin-left:10px;"></div>
+    </div>
+</div>
+
+<table class="table-sm table-condensed table-hover table-bordered" id="tabela">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Enderecos[0].Endereco)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Enderecos[0].Bairro)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Enderecos[0].Cidade)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Enderecos[0].ValorEntregaPadrao)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Enderecos[0].ObservacoesPadrao)
+        </th>
+        <th style="text-align:center;">Ações</th>
+    </tr>
+
+    @foreach (var item in Model.Enderecos.OrderBy(e => e.Endereco))
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Endereco)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Bairro)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cidade.Nome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ValorEntregaPadrao)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ObservacoesPadrao)
+            </td>
+            <td>
+                <div class="btn btn-warning glyphicon glyphicon-edit" onclick="ModalEditarEndereco(@item.Codigo)" title="Editar"></div>
+                <a class="btn btn-danger" onclick="javascript: PedirConfirmacao('@Url.Action("Delete", "EnderecosClientes", new { id = item.Codigo })?returnUrl=@Url.Encode(Request.RawUrl)', @item.Codigo)">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </a>
+
+            </td>
+        </tr>
+    }
+
+</table>
+@Html.Partial("_janelaConfirmaExclusao")
+
+<script type="text/javascript">
+    function PedirConfirmacao(href, codEndereco) {
+
+            $.ajax({
+                    url: '@Url.Action("PodeExcluirEnderecoCliente", "EnderecosClientes")',
+                    type: "POST",
+                    dataType: "JSON",
+                    data: { id: codEndereco },
+                    success: function (pode) {
+                        if (!pode) {                            
+                            $('#modalAlerta').modal();
+                        }
+                        else {
+                            $("#hrefJanelaConfirmarExclusao").attr('href', href);
+                            $("#confirm-delete").modal();
+                        }
+                    }
+                });
+        }
+</script>
+
+
+

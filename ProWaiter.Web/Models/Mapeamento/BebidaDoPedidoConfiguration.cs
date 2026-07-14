@@ -1,29 +1,29 @@
-﻿using ProWaiter.Web.Models;
+using ProWaiter.Web.Models;
 using ProWaiter.Web.Models.Entidades;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ProWaiter.Web.Models.Mapeamento
 {
-    internal class BebidaDoPedidoConfiguration : EntityTypeConfiguration<BebidaDoPedido>
+    internal class BebidaDoPedidoConfiguration : IEntityTypeConfiguration<BebidaDoPedido>
     {
-        public BebidaDoPedidoConfiguration()
+        public void Configure(EntityTypeBuilder<BebidaDoPedido> builder)
         {
-            ToTable("TBAtribBebidasPedido")
+            builder.ToTable("TBAtribBebidasPedido")
                 .HasKey(b => b.Codigo);
 
-            HasRequired(b => b.Bebida)
-                .WithMany()
+            builder.HasOne(b => b.Bebida).WithMany().IsRequired()
                 .HasForeignKey(b => b.CodBebida);
 
-            Property(b => b.Valor)
+            builder.Property(b => b.Valor)
                 .HasPrecision(5, 2);
 
-            Property(b => b.PercDesconto)
+            builder.Property(b => b.PercDesconto)
                 .HasPrecision(5, 2);
         }
     }

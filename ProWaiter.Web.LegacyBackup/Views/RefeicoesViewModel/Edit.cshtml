@@ -1,0 +1,118 @@
+﻿@model ProWaiter.Web.Models.RefeicaoViewModel
+
+@{
+    ViewBag.Title = "Refeição";
+}
+
+@section css{
+    @Styles.Render("~/Content/BootstrapDualList.css")
+}
+
+<h2>@AppResources.StringEditar</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>@ViewBag.Title</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            @Html.LabelFor(model => model.Nome, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Nome, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Nome, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.NomeTipo, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.CodTipo, (SelectList)ViewBag.Tipos, new { @class = "form-control" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-2 control-label">
+                @Html.LabelFor(model => model.Componentes)
+                <br />
+                <a href="#" class="label label-default" data-toggle="modal" data-target="#modalCriarComponente">Criar Novo</a>
+            </div>
+            <div class="col-md-10">
+                @Html.Partial("_bootstrapDualList", Model.Componentes)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                @Html.Partial("_botaoSalvar")
+            </div>
+        </div>
+    </div>
+}
+
+<div id="modalCriarComponente" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Criar Componente</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <label class="control-label col-md-3">Componente:</label>
+                    <input class="form-control text-box single-line col-md-9" data-val="true" data-val-required="O nome do componente é obrigatório." id="nomeComponente" maxlength="@ProWaiter.Web.Models.Entidades.ComponenteRefeicao.TamMaxNome">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnCriarComponente" class="btn btn-primary">Cadastrar</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div>
+    @Html.Partial("_botaoVoltarParaLista")
+</div>
+
+@section scripts{
+    <script type="text/javascript" src="~/Scripts/BootstrapDualList.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#Nome").focus();
+            $("#btnCriarComponente").click(CriarComponente);
+
+            $('#modalCriarComponente').on('shown.bs.modal', function () {
+                $('#nomeComponente').focus();
+            });
+        });
+
+        function CriarComponente() {
+            var nomeComponente = $("#nomeComponente").val();
+
+            $.ajax({
+                url: '@Url.Action("CriarComponenteRefeicao", "RefeicoesViewModel")',
+                type: "POST",
+                dataType: "JSON",
+                data: { nome: nomeComponente },
+                success: function (componente) {
+                    if (componente == null) {
+                        alert("Não foi possível adicionar este Componente!");
+                    }
+                    else {
+                        AdicionarNovoItemAListaDaDireita(componente.Codigo, componente.Nome);
+                        $('#nomeComponente').val("");
+                        $("#modalCriarComponente").modal("hide");
+                    }
+                },
+                error: function (erro) {
+                    alert(erro.statusText);
+                }
+            });
+        }
+
+    </script>
+}

@@ -1,22 +1,23 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Description;
-using ProWaiter.Web.AutenticacaoAPI;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
+
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 
 namespace ProWaiter.Web.APIs
 {
-    [IdentityBasicAuthentication]
-    public class PedidosInternosController : ApiController
+    // [IdentityBasicAuthentication]
+    public class PedidosInternosController : ControllerBase
     {
         private ProWaiterContext db = new ProWaiterContext();
 
@@ -27,8 +28,8 @@ namespace ProWaiter.Web.APIs
         }
 
         // GET: api/PedidosInternos/5
-        [ResponseType(typeof(PedidoInterno))]
-        public IHttpActionResult GetPedidoInterno(int id)
+        [ProducesResponseType(typeof(PedidoInterno), 200)]
+        public IActionResult GetPedidoInterno(int id)
         {
             PedidoInterno pedidoInterno = db.PedidosInternos.Find(id);
             if (pedidoInterno == null)
@@ -40,8 +41,8 @@ namespace ProWaiter.Web.APIs
         }
 
         // PUT: api/PedidosInternos/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutPedidoInterno(int id, PedidoInterno pedidoInterno)
+        [ProducesResponseType(typeof(void), 200)]
+        public IActionResult PutPedidoInterno(int id, PedidoInterno pedidoInterno)
         {
             if (!ModelState.IsValid)
             {
@@ -71,12 +72,12 @@ namespace ProWaiter.Web.APIs
                 }
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return StatusCode(204);
         }
 
         // POST: api/PedidosInternos
-        [ResponseType(typeof(PedidoInterno))]
-        public IHttpActionResult PostPedidoInterno(PedidoInterno pedidoInterno)
+        [ProducesResponseType(typeof(PedidoInterno), 200)]
+        public IActionResult PostPedidoInterno(PedidoInterno pedidoInterno)
         {
             if (!ModelState.IsValid)
             {
@@ -98,15 +99,15 @@ namespace ProWaiter.Web.APIs
         }
 
         // DELETE: api/PedidosInternos/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult DeletePedidoInterno(int id)
+        [ProducesResponseType(typeof(void), 200)]
+        public IActionResult DeletePedidoInterno(int id)
         {
             try
             {                
                 PedidoInterno pedidoInterno = db.PedidosInternos.Where(p => p.Codigo == id).SingleOrDefault();
                 if (pedidoInterno == null)
                 {
-                    return StatusCode(HttpStatusCode.OK); //Retornamos OK, pois o pedido pode já ter sido fechado, ou outro dispositivo o removeu.
+                    return StatusCode(200); //Retornamos OK, pois o pedido pode já ter sido fechado, ou outro dispositivo o removeu.
                 }
 
                 Mesa mesa = db.Mesas.Where(m => m.CodUltimoPedido == id).SingleOrDefault();
@@ -115,22 +116,22 @@ namespace ProWaiter.Web.APIs
 
                 db.PedidosInternos.Remove(pedidoInterno);
                 db.SaveChanges();
-                return StatusCode(HttpStatusCode.OK);
+                return StatusCode(200);
             }
             catch
             {
-                return StatusCode(HttpStatusCode.BadRequest);
+                return StatusCode(400);
             }
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+//         // // protected void Dispose(bool disposing)
+//         {
+//             if (disposing)
+//             {
+//                 // // db.Dispose();
+//             }
+//             // base.Dispose(disposing);
+//         }
 
         private bool PedidoInternoExists(int id)
         {

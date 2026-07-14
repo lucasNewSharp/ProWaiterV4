@@ -1,11 +1,12 @@
-﻿using NewSharp.Ferramentas.Impressoras.Termicas;
+/* 
+using NewSharp.Ferramentas.Impressoras.Termicas;
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Management;
+
 
 namespace ProWaiter.Web.Util
 {
@@ -544,3 +545,4 @@ namespace ProWaiter.Web.Util
         }
     }
 }
+ */

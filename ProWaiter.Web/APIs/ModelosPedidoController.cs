@@ -1,23 +1,24 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Description;
-using ProWaiter.Web.AutenticacaoAPI;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
+
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Util;
 
 namespace ProWaiter.Web.APIs
 {
-    [IdentityBasicAuthentication]
-    public class ModelosPedidoController : ApiController
+    // [IdentityBasicAuthentication]
+    public class ModelosPedidoController : ControllerBase
     {
         private ProWaiterContext db = new ProWaiterContext();
 
@@ -26,7 +27,7 @@ namespace ProWaiter.Web.APIs
         [Route("api/ModelosPedido/ExisteModelo")]
         [HttpGet]
         [Authorize(Roles = Constantes.GrupoGarcons)]
-        [ResponseType(typeof(bool))]
+        [ProducesResponseType(typeof(bool), 200)]
         public bool ExisteModelo()
         {
             return db.ModelosPedidos.Any();
@@ -38,13 +39,13 @@ namespace ProWaiter.Web.APIs
             return db.ModelosPedidos;
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+//         // // protected void Dispose(bool disposing)
+//         {
+//             if (disposing)
+//             {
+//                 // // db.Dispose();
+//             }
+//             // base.Dispose(disposing);
+//         }
     }
 }

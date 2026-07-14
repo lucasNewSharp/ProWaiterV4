@@ -1,15 +1,17 @@
-﻿using ProWaiter.Web.Models.Entidades;
+using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.Gestores;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Util;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProWaiter.Web.Controllers
 {
@@ -29,12 +31,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             PedidoInterno pedidoInterno = db.PedidosInternos.Find(id);
             if (pedidoInterno == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             Mesa mesa = db.Mesas.Where(m => m.CodUltimoPedido == id.Value).SingleOrDefault();
             ViewBag.Mesa = (mesa == null ? "Sem Mesa" : mesa.Descricao);
@@ -76,7 +78,7 @@ namespace ProWaiter.Web.Controllers
                 Mesa mesa = db.Mesas.Where(m => m.Codigo == codMesa).SingleOrDefault();
                 if (mesa == null)
                 {
-                    return HttpNotFound();
+                    return NotFound();
                 }
 
                 Configuracoes config = Configuracoes.ObterInstancia();
@@ -89,7 +91,7 @@ namespace ProWaiter.Web.Controllers
                         localInterno = db.LocaisInternos.SingleOrDefault(l => l.Codigo == codLocalInterno);
                         if (localInterno == null)
                         {
-                            return HttpNotFound();
+                            return NotFound();
                         }
                     }
                     else
@@ -130,12 +132,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             PedidoInterno pedidoInterno = db.PedidosInternos.Find(id);
             if (pedidoInterno == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             Mesa mesa = db.Mesas.Where(m => m.CodUltimoPedido == id.Value).SingleOrDefault();
             ViewBag.Mesa = (mesa == null ? "Sem Mesa" : mesa.Descricao);
@@ -149,7 +151,7 @@ namespace ProWaiter.Web.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             PedidoInterno pedidoInterno = null;
-            db.IniciarTransacao();
+            db.Database.BeginTransaction();
             try
             {
                 Mesa mesa = db.Mesas.Where(m => m.CodUltimoPedido == id).SingleOrDefault();
@@ -162,13 +164,13 @@ namespace ProWaiter.Web.Controllers
             }
             catch (Exception ex)
             {
-                db.SetarRollBack();
+                db.Database.CurrentTransaction?.Rollback();
                 ModelState.AddModelError(string.Empty, "Não foi possível excluir este Pedido!\r\n" + ex.Message);
                 return View(pedidoInterno);
             }
             finally
             {
-                db.FinalizarTransacao();
+                db.Database.CurrentTransaction?.Commit();
             }
         }
 
@@ -176,14 +178,14 @@ namespace ProWaiter.Web.Controllers
 
         #region Dispose
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+//         // // protected void Dispose(bool disposing)
+//         {
+//             if (disposing)
+//             {
+//                 // // db.Dispose();
+//             }
+//             // base.Dispose(disposing);
+//         }
 
         #endregion
     }

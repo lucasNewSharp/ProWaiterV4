@@ -1,35 +1,33 @@
-﻿using ProWaiter.Web.Models.Entidades;
+using ProWaiter.Web.Models.Entidades;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Linq;
 using System.Web;
 
 namespace ProWaiter.Web.Models.Mapeamento
 {
-    public class ComponenteComposicaoRefeicaoCardapioConfiguration : EntityTypeConfiguration<ComponenteComposicaoRefeicaoCardapio>
+    public class ComponenteComposicaoRefeicaoCardapioConfiguration : IEntityTypeConfiguration<ComponenteComposicaoRefeicaoCardapio>
     {
-        public ComponenteComposicaoRefeicaoCardapioConfiguration()
+        public void Configure(EntityTypeBuilder<ComponenteComposicaoRefeicaoCardapio> builder)
         {
-            ToTable("TBAtribComponentesComposicaoRefeicaoCardapio")
+            builder.ToTable("TBAtribComponentesComposicaoRefeicaoCardapio")
                 .HasKey(c => new { c.CodRefeicao, c.CodTamanho, c.CodComponente });
 
-            HasRequired(c => c.Refeicao)
-                .WithMany()
+            builder.HasOne(c => c.Refeicao).WithMany().IsRequired()
                 .HasForeignKey(c => c.CodRefeicao);
 
-            HasRequired(c => c.Tamanho)
-                .WithMany()
+            builder.HasOne(c => c.Tamanho).WithMany().IsRequired()
                 .HasForeignKey(c => c.CodTamanho);
 
-            HasRequired(c => c.ComponenteRefeicao)
-                .WithMany()
+            builder.HasOne(c => c.ComponenteRefeicao).WithMany().IsRequired()
                 .HasForeignKey(c => c.CodComponente);
 
-            Property(c => c.Valor)
+            builder.Property(c => c.Valor)
                 .HasPrecision(6, 2);
 
-            HasOptional(c => c.Unidade)
+            builder.HasOne(c => c.Unidade)
                 .WithMany()
                 .HasForeignKey(c => c.CodUnidade);
         }

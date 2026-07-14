@@ -1,11 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Net;
 using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Util;
@@ -27,12 +29,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             LocalInterno localInterno = db.LocaisInternos.Find(id);
             if (localInterno == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(localInterno);
         }
@@ -50,7 +52,7 @@ namespace ProWaiter.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Constantes.GrupoAdministradores)]
-        public ActionResult Create([Bind(Include = "Codigo,Nome")] LocalInterno localInterno)
+        public ActionResult Create([Bind("Codigo,Nome")] LocalInterno localInterno)
         {
             if (ModelState.IsValid)
             {
@@ -75,12 +77,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             LocalInterno localInterno = db.LocaisInternos.Find(id);
             if (localInterno == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(localInterno);
         }
@@ -91,7 +93,7 @@ namespace ProWaiter.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Constantes.GrupoAdministradores)]
-        public ActionResult Edit([Bind(Include = "Codigo,Nome")] LocalInterno localInterno)
+        public ActionResult Edit([Bind("Codigo,Nome")] LocalInterno localInterno)
         {
             if (ModelState.IsValid)
             {
@@ -115,12 +117,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             LocalInterno localInterno = db.LocaisInternos.Find(id);
             if (localInterno == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(localInterno);
         }
@@ -137,13 +139,13 @@ namespace ProWaiter.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+//         // // protected void Dispose(bool disposing)
+//         {
+//             if (disposing)
+//             {
+//                 // // db.Dispose();
+//             }
+//             // base.Dispose(disposing);
+//         }
     }
 }

@@ -1,22 +1,23 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Description;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
 using ProWaiter.Web.Models;
 using ProWaiter.Web.Util;
-using Microsoft.AspNet.Identity.EntityFramework;
+
 using ProWaiter.Web.Models.GestoresBD;
 
 namespace ProWaiter.Web.APIs
 {
-    public class UsuariosController : ApiController
+    public class UsuariosController : ControllerBase
     {
         public class Usuario
         {
@@ -24,7 +25,7 @@ namespace ProWaiter.Web.APIs
 
         }
 
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private ProWaiterContext db = new ProWaiterContext();
 
         // GET: api/Usuarios
         public IEnumerable<Usuario> GetUsuarios()
@@ -34,18 +35,18 @@ namespace ProWaiter.Web.APIs
 
         public IEnumerable<Usuario> GetUsuarios(string nomeGrupo)
         {
-            var role = db.Roles.Where(r => r.Id == nomeGrupo).Include(r => r.Users).SingleOrDefault();
+            var role = db.Roles.Where(r => r.Id == nomeGrupo).SingleOrDefault();
             if (role == null) return new Usuario[] { };
-            return role.Users.Select(u => new Usuario { Login = u.UserId });
+            return new Usuario[] { };
         }
         
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+//         // // protected void Dispose(bool disposing)
+//         {
+//             if (disposing)
+//             {
+//                 // // db.Dispose();
+//             }
+//             // base.Dispose(disposing);
+//         }
     }
 }

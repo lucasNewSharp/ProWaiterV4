@@ -1,0 +1,95 @@
+﻿@using ProWaiter.Web.Util
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @RenderSection("metas", required: false)
+    <title>@ViewBag.Title - ProWaiter</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @RenderSection("css", required: false)
+    
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("ProWaiter", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Pedidos", "Index", "Pedidos")</li>
+
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Cadastros<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Clientes", "Index", "Clientes")</li>
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.ActionLink("Tipos de Bebida", "Index", "TiposBebida")</li>
+                            <li>@Html.ActionLink("Bebidas", "Index", "Bebidas")</li>
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.ActionLink("Tamanhos Refeição", "Index", "TamanhosRefeicoes")</li>
+                            <li>@Html.ActionLink("Tipos de Refeição", "Index", "TiposRefeicao")</li>
+                            <li>@Html.ActionLink("Componentes de Refeição", "Index", "ComponentesRefeicoes")</li>
+                            <li>@Html.ActionLink("Refeições", "Index", "RefeicoesViewModel")</li>
+                            <li>@Html.ActionLink("Cardápio", "Index", "RefeicoesDoCardapio")</li>
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.ActionLink(Configuracoes.ObterInstancia().StringTipoLocalEntrega, "Index", "Mesas")</li>
+                            @if (Configuracoes.ObterInstancia().UtilizaComanda)
+                            {
+                                <li>@Html.ActionLink("Locais para entrega", "Index", "LocaisInternos")</li>
+                            }
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.ActionLink("Itens de balcão", "Index", "ItensBalcao")</li>
+                            <li role="separator" class="divider"></li>
+                            <li>@Html.ActionLink("Modelos", "Index", "ModeloPedidos")</li>
+                            <li>@Html.ActionLink("Configurações das Categorias", "Index", "ConfiguracoesCategorias")</li>
+                            <li>@Html.ActionLink("Configurações Descontos", "Index", "ConfiguracaoDescontos")</li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Relatórios<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Refeições Mais Vendidas", "RefeicoesMaisVendidas", "Relatorios")</li>
+                            <li>@Html.ActionLink("Bebidas Mais Vendidas", "BebidasMaisVendidas", "Relatorios")</li>
+                            <li>@Html.ActionLink("Faturamento por Data", "FaturamentoPorData", "Relatorios")</li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Configurações<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li>@Html.ActionLink("Impressoras", "Index", "Impressoras")</li>
+                            <li>@Html.ActionLink("Geral", "Edit", "Configuracoes")</li>
+                            @*<li>@Html.ActionLink("Restaurante", "Index", "Restaurante")</li>*@
+                            <li><a href="~/ProWaiterAPK/NewSharp.ProWaiter.apk">Download Aplicativo</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <div style="margin-right:15px;">@Html.Partial("_LoginPartial")</div>
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - ProWaiter by NewSharp - Versão @Configuracoes.ObterInstancia().Versao <b style="color: red">@Startup.MsgResultadoValidacao</b></p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/validacaoJQueryPortugues")
+    @Scripts.Render("~/bundles/diversos")
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

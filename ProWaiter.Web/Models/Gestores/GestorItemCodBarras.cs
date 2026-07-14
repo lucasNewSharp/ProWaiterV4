@@ -1,8 +1,9 @@
-﻿using ProWaiter.Web.Models.Entidades;
+using Microsoft.EntityFrameworkCore;
+using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
+
 using System.Linq;
 using System.Web;
 

@@ -1,4 +1,4 @@
-﻿using ProWaiter.Web.Models.DTOs;
+using ProWaiter.Web.Models.DTOs;
 using ProWaiter.Web.Models.Entidades;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Dynamic;
 using System.Linq;
 using System.Web;
-using System.Web.Compilation;
+
 
 namespace ProWaiter.Web.Models
 {

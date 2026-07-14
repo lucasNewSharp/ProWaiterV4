@@ -1,12 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
 using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Util;
@@ -28,12 +30,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             TipoBebida tipoBebida = db.TiposBebida.Find(id);
             if (tipoBebida == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(tipoBebida);
         }
@@ -51,7 +53,7 @@ namespace ProWaiter.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Constantes.GrupoAdministradores)]
-        public ActionResult Create([Bind(Include = "Codigo,Nome")] TipoBebida tipoBebida)
+        public ActionResult Create([Bind("Codigo,Nome")] TipoBebida tipoBebida)
         {
             if (ModelState.IsValid)
             {
@@ -69,12 +71,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             TipoBebida tipoBebida = db.TiposBebida.Find(id);
             if (tipoBebida == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(tipoBebida);
         }
@@ -85,7 +87,7 @@ namespace ProWaiter.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Constantes.GrupoAdministradores)]
-        public ActionResult Edit([Bind(Include = "Codigo,Nome")] TipoBebida tipoBebida)
+        public ActionResult Edit([Bind("Codigo,Nome")] TipoBebida tipoBebida)
         {
             if (ModelState.IsValid)
             {
@@ -102,12 +104,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             TipoBebida tipoBebida = db.TiposBebida.Find(id);
             if (tipoBebida == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(tipoBebida);
         }
@@ -132,13 +134,13 @@ namespace ProWaiter.Web.Controllers
             }
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+//         // // protected void Dispose(bool disposing)
+//         {
+//             if (disposing)
+//             {
+//                 // // db.Dispose();
+//             }
+//             // base.Dispose(disposing);
+//         }
     }
 }

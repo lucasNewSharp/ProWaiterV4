@@ -1,22 +1,23 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Description;
-using ProWaiter.Web.AutenticacaoAPI;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
+
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 
 namespace ProWaiter.Web.APIs
 {
-    [IdentityBasicAuthentication]
-    public class RefeicoesDoCardapioController : ApiController
+    // [IdentityBasicAuthentication]
+    public class RefeicoesDoCardapioController : ControllerBase
     {
         private readonly ProWaiterContext db = new ProWaiterContext();
 
@@ -34,7 +35,7 @@ namespace ProWaiter.Web.APIs
         }
 
         // GET: api/RefeicoesDoCardapio/5
-        [ResponseType(typeof(RefeicaoDoCardapio))]
+        [ProducesResponseType(typeof(RefeicaoDoCardapio), 200)]
         public RefeicaoDoCardapio GetRefeicaoDoCardapio(short codRefeicao, string codTamanho)
         {
             try
@@ -42,7 +43,7 @@ namespace ProWaiter.Web.APIs
                 RefeicaoDoCardapio refeicaoDoCardapio = db.RefeicoesDoCardapio.Where(r => r.CodRefeicao == codRefeicao && r.CodTamanho == codTamanho).SingleOrDefault();
                 if (refeicaoDoCardapio == null)
                 {
-                    throw new HttpResponseException(HttpStatusCode.BadRequest);
+                    throw new Exception("400 Bad Request");
                 }
 
                 return refeicaoDoCardapio;
@@ -73,11 +74,11 @@ namespace ProWaiter.Web.APIs
             }
         }
         
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-                db.Dispose();
-            base.Dispose(disposing);
-        }
+//         // // protected void Dispose(bool disposing)
+//         {
+//             if (disposing)
+//                 // // db.Dispose();
+//             // base.Dispose(disposing);
+//         }
     }
 }

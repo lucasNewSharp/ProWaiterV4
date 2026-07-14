@@ -1,15 +1,17 @@
-﻿using ProWaiter.Web.Models;
+using ProWaiter.Web.Models;
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Util;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProWaiter.Web.Controllers
 {
@@ -30,10 +32,10 @@ namespace ProWaiter.Web.Controllers
         {
             short numCodigo = 0;
             if (string.IsNullOrEmpty(id) || !short.TryParse(id, out numCodigo))
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             Refeicao refeicao = db.Refeicoes.Where(r => r.Codigo == numCodigo).FirstOrDefault();
             if (refeicao == null)
-                return HttpNotFound();
+                return NotFound();
 
             return View(new RefeicaoViewModel(refeicao, refeicao.ComponentesRefeicao));
         }
@@ -65,7 +67,7 @@ namespace ProWaiter.Web.Controllers
 
                 Refeicao refeicao = new Refeicao(collection["Nome"], tipo);
 
-                foreach (string strCodComponente in collection["ItensSelecionados"].Split(','))
+                foreach (string strCodComponente in collection["ItensSelecionados"].ToString().Split(','))
                 {
                     if (String.IsNullOrEmpty(strCodComponente)) continue;
                     short codComponente = short.Parse(strCodComponente);
@@ -87,7 +89,7 @@ namespace ProWaiter.Web.Controllers
         {
             Refeicao refeicao = db.Refeicoes.Where(r => r.Codigo == id).FirstOrDefault();
             if (refeicao == null)
-                return HttpNotFound();
+                return NotFound();
 
             ViewBag.Tipos = new SelectList(db.TiposRefeicao.OrderBy(t => t.Nome), "Codigo", "Nome", refeicao.Tipo);
             List<ComponenteRefeicao> componentes = db.ComponentesRefeicao.OrderBy(c => c.Nome).ToList();
@@ -101,7 +103,7 @@ namespace ProWaiter.Web.Controllers
         {
             Refeicao refeicao = db.Refeicoes.Where(r => r.Codigo == id).FirstOrDefault();
             if (refeicao == null)
-                return HttpNotFound();
+                return NotFound();
             if (ModelState.IsValid)
             {
                 AtualizarRefeicaoComFormulario(db, refeicao, collection);
@@ -121,7 +123,7 @@ namespace ProWaiter.Web.Controllers
             short codTipo = short.Parse(collection["CodTipo"]);
             refeicao.Tipo = db.TiposRefeicao.Where(t => t.Codigo == codTipo).Single();
             refeicao.ComponentesRefeicao.Clear();
-            foreach (string strCodComponente in collection["ItensSelecionados"].Split(','))
+            foreach (string strCodComponente in collection["ItensSelecionados"].ToString().Split(','))
             {
                 if (String.IsNullOrEmpty(strCodComponente)) continue;
                 short codComponente = short.Parse(strCodComponente);
@@ -136,12 +138,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             Refeicao refeicao = db.Refeicoes.SingleOrDefault(r => r.Codigo == id);
             if (refeicao == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(new RefeicaoViewModel(refeicao, refeicao.ComponentesRefeicao));
         }
@@ -156,7 +158,7 @@ namespace ProWaiter.Web.Controllers
             TipoRefeicao tipo = null;
             if (refeicao == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             try
             {
@@ -177,7 +179,7 @@ namespace ProWaiter.Web.Controllers
         public ActionResult CriarComponenteRefeicao(string nome)
         {
             if (db.ComponentesRefeicao.Any(c => c.Nome.Equals(nome, StringComparison.CurrentCultureIgnoreCase)))
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Já existe um componente com o nome \"" + nome +"\"!");
+                return StatusCode((int)400, "Já existe um componente com o nome \"" + nome +"\"!");
 
             ComponenteRefeicao componente = new ComponenteRefeicao(nome);
 

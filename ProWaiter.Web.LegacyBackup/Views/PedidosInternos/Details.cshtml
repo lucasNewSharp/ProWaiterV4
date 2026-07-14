@@ -1,0 +1,68 @@
+﻿@model ProWaiter.Web.Models.Entidades.PedidoInterno
+
+@{
+    ViewBag.Title = "Pedidos Internos";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@if (!string.IsNullOrWhiteSpace(ViewBag.ErrosImpressao))
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewBag.ErrosImpressao
+    </div>
+}
+
+<div>
+    <h4>Pedido Interno</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        @if (ProWaiter.Web.Util.Configuracoes.ObterInstancia().UtilizaComanda)
+        {
+            <dt>Comanda</dt>
+            <dd>@ViewBag.Mesa</dd>
+            <dt>Local</dt>
+            <dd>@Html.DisplayFor(model => model.LocalInterno.Nome)</dd>
+        }
+        else
+        {
+            <dt>Local</dt>
+            <dd>@ViewBag.Mesa</dd>
+        }
+
+        @Html.Partial("../Pedidos/_detalhesPedidoComum", Model)
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ValorTotal)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ValorTotal)
+        </dd>
+    </dl>
+</div>
+
+<p>
+    @Html.Partial("../Pedidos/_botoesAcaoDetalhesPedido", new ViewDataDictionary { { "id", Model.Codigo } })
+</p>
+
+@section scripts{
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $(".itemRefeicao").each(function (index) {
+                var id = $(this).attr("data-target")
+                var idBotao = "gi_" + id.replace('#', '');
+
+                $(id).on("hide.bs.collapse", function (f) {
+                    $('#' + idBotao).removeClass('glyphicon glyphicon-chevron-down').addClass('glyphicon glyphicon-chevron-right');
+                });
+                $(id).on("show.bs.collapse", function (f) {
+                    $('#' + idBotao).removeClass('glyphicon glyphicon-chevron-right').addClass('glyphicon glyphicon-chevron-down');
+                });
+            });
+        });
+    </script>
+}

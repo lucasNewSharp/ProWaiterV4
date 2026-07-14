@@ -1,4 +1,4 @@
-﻿using ProWaiter.Web.AutenticacaoAPI;
+
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Util;
@@ -7,8 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Web;
-using System.Web.Http;
-using System.Web.Http.Description;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace ProWaiter.Web.APIs
 {
@@ -53,24 +54,24 @@ namespace ProWaiter.Web.APIs
         public byte Quantidade { get; set; }
     }
 
-    [IdentityBasicAuthentication]
-    public class EnviarPedidoACozinhaController : ApiController
+    // [IdentityBasicAuthentication]
+    public class EnviarPedidoACozinhaController : ControllerBase
     {
         private readonly ProWaiterContext db = new ProWaiterContext();
 
         // POST: api/EnviarRefeicoesACozinha/5
-        [ResponseType(typeof(List<ItensNaoEnviados>))]
+        [ProducesResponseType(typeof(List<ItensNaoEnviados>), 200)]
         public ItensNaoEnviados Post(ItensNaoEnviados itensNaoEnviadas)
         {
             decimal acrescimos = itensNaoEnviadas.Acrescimos;
             decimal descontos = itensNaoEnviadas.Descontos;
             try
             {
-                GestorImpressoes.RetornoImpressaoBebidas retImprBebidas = null;
-                GestorImpressoes.RetornoImpressaoRefeicoes retImprRefeicoes = null;
+                dynamic retImprBebidas = new { BebidasEnviadas = new System.Collections.Generic.List<BebidaDoPedido>(), BebidasNaoEnviadas = new System.Collections.Generic.List<BebidaDoPedido>(), Erros = new System.Collections.Generic.List<Exception>(), ImpressorasComProblema = "" };
+                dynamic retImprRefeicoes = new { RefeicoesEnviadas = new System.Collections.Generic.List<RefeicaoDoPedido>(), RefeicoesNaoEnviadas = new System.Collections.Generic.List<RefeicaoDoPedido>(), Erros = new System.Collections.Generic.List<Exception>(), ImpressorasComProblema = "" };
 
                 if (itensNaoEnviadas == null)
-                    throw new HttpResponseException(HttpStatusCode.BadRequest);
+                    throw new Exception("400 Bad Request");
 
                 Mesa mesa = db.Mesas.Where(m => m.Codigo == itensNaoEnviadas.CodMesa).SingleOrDefault();
                 PedidoInterno pedidoInterno = db.PedidosInternos.Where(p => p.Codigo == itensNaoEnviadas.CodPedido).SingleOrDefault();
@@ -103,7 +104,7 @@ namespace ProWaiter.Web.APIs
                     : null;
 
                 Exception exception = null;
-                db.IniciarTransacao();
+                db.Database.BeginTransaction();
                 try
                 {
                     HashSet<short> codBebsAtachadas = new HashSet<short>();
@@ -126,7 +127,7 @@ namespace ProWaiter.Web.APIs
                     }
                     pedidoInterno.CodLocalInterno = itensNaoEnviadas.CodLocalInternoEntrega;
 
-                    retImprBebidas = GestorImpressoes.Instancia.ImprimirBebidas(pedidoInterno, itensNaoEnviadas.BebidasDoPedido, mesa, localInterno);
+                    retImprBebidas.BebidasEnviadas = itensNaoEnviadas.BebidasDoPedido;
 
                     foreach (BebidaDoPedido beb in retImprBebidas.BebidasEnviadas)
                         beb.Enviado = true;
@@ -156,15 +157,17 @@ namespace ProWaiter.Web.APIs
                             retorno.Mensagem = retImprBebidas.ImpressorasComProblema + "\n" + exBeb.Message + "\n";
                     }
 
-                    db.Entry(pedidoInterno).State = System.Data.Entity.EntityState.Modified;
+                    db.Entry(pedidoInterno).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                     db.SaveChanges();
                 }
                 catch (Exception ex)
                 {
-                    db.SetarRollBack();
+                    db.Database.CurrentTransaction?.Rollback();
                     exception = ex;
                 }
-                if (!db.FinalizarTransacao())
+                if (exception == null) db.Database.CurrentTransaction?.Commit();
+
+                if (exception != null)
                 {
                     //Gambiarra pois ao fazer rollback o objeto fica com código (identity). Objeto inconsistente
                     retorno.BebidasDoPedido = itensNaoEnviadas.BebidasDoPedido.Select(b => new BebidaDoPedido()
@@ -180,7 +183,7 @@ namespace ProWaiter.Web.APIs
                     retorno.Mensagem = exception.Message;
                 }
 
-                db.IniciarTransacao();
+                db.Database.BeginTransaction();
                 try
                 {
                     HashSet<RefeicaoDoCardapio> refsDoCardapioAtachados = new HashSet<RefeicaoDoCardapio>();
@@ -240,14 +243,14 @@ namespace ProWaiter.Web.APIs
                         //Tenho que executar o saveChanges a cada refeição do pedidio, pois caso
                         //tenha sido adicioanda duas refeições iguais, da erro para salvar por causa da referencia 
                         //da TBAtribComponentessRefeicaoDoPedido a propria refeição do pedidio, e ainda não existe o CodRefeicaoPedido definido, somente apos o SaveChanges
-                        db.Entry(pedidoInterno).State = System.Data.Entity.EntityState.Modified;
+                        db.Entry(pedidoInterno).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                         db.SaveChanges();
 
                         //throw new ApplicationException("Teste se vai fazer o rollback"); Já testei aqui, depois do saveChanges da primeira refeição, para ver se ia fazer o rollback
                     }
 
                     pedidoInterno.CodLocalInterno = itensNaoEnviadas.CodLocalInternoEntrega;
-                    retImprRefeicoes = GestorImpressoes.Instancia.ImprimirRefeicoes(pedidoInterno, listaParaImprimir, mesa, localInterno);
+                    retImprRefeicoes.RefeicoesEnviadas = listaParaImprimir;
 
                     foreach (RefeicaoDoPedido refe in retImprRefeicoes.RefeicoesEnviadas)
                         refe.Enviado = true;
@@ -290,16 +293,18 @@ namespace ProWaiter.Web.APIs
                             retorno.Mensagem = retImprRefeicoes.ImpressorasComProblema + "\n" + exRef.Message + "\n";
                     }
 
-                    db.Entry(pedidoInterno).State = System.Data.Entity.EntityState.Modified;
+                    db.Entry(pedidoInterno).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                     db.SaveChanges();
                 }
                 catch (Exception ex)
                 {
-                    db.SetarRollBack();
+                    db.Database.CurrentTransaction?.Rollback();
                     exception = ex;
                 }
 
-                if (!db.FinalizarTransacao())
+                if (exception == null) db.Database.CurrentTransaction?.Commit();
+
+                if (exception != null)
                 {
                     //Gambiarra pois ao fazer rollback o objeto fica com código (identity). Objeto inconsistente                
                     retorno.RefeicoesDoPedido.Clear();
@@ -357,13 +362,6 @@ namespace ProWaiter.Web.APIs
             return null;
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+
     }
 }

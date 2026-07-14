@@ -1,21 +1,20 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Linq;
 using System.Web;
 
 namespace ProWaiter.Web.Models.Mapeamento
 {
-    internal class ApplicationUserConfiguration : EntityTypeConfiguration<ApplicationUser>
+    internal class ApplicationUserConfiguration : IEntityTypeConfiguration<ApplicationUser>
     {
-        public ApplicationUserConfiguration()
+        public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
-            ToTable("AspNetUsers")
+            builder.ToTable("AspNetUsers")
                 .HasKey(a => a.Id);
 
-            HasMany(u => u.Roles)
-              .WithRequired()
-              .HasForeignKey(u => u.UserId);
+            // builder.HasMany(u => u.Roles)...
         }
     }
 }

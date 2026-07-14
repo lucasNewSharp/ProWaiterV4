@@ -1,12 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
 using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Util;
@@ -35,7 +37,7 @@ namespace ProWaiter.Web.Controllers
         {
             RefeicaoDoCardapio refeicaoDoCardapio = db.RefeicoesDoCardapio.Find(new object[] { codRefeicao, codTamanho });
             if (refeicaoDoCardapio == null)
-                return HttpNotFound();
+                return NotFound();
             return View(refeicaoDoCardapio);
         }
 
@@ -87,7 +89,7 @@ namespace ProWaiter.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Constantes.GrupoAdministradores)]
-        public ActionResult Create([Bind(Include = "CodRefeicao,CodTamanho,Valor,Ativo,CodImpressora,DeComposicao,ComponentesDeComposicao,RefeicaoParaCargaSelecionada,PercDesconto,CodBarras")] RefeicaoDoCardapioViewModel refeicaoDoCardapio)
+        public ActionResult Create([Bind("CodRefeicao,CodTamanho,Valor,Ativo,CodImpressora,DeComposicao,ComponentesDeComposicao,RefeicaoParaCargaSelecionada,PercDesconto,CodBarras")] RefeicaoDoCardapioViewModel refeicaoDoCardapio)
         {
             if (refeicaoDoCardapio.RefeicaoParaCargaSelecionada != null)
             {
@@ -190,7 +192,7 @@ namespace ProWaiter.Web.Controllers
             RefeicaoDoCardapio refeicaoDoCardapio = db.RefeicoesDoCardapio.Find(new object[] { codRefeicao, codTamanho });
             if (refeicaoDoCardapio == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             RefeicaoDoCardapioViewModel refDoCardVM = new RefeicaoDoCardapioViewModel()
@@ -234,7 +236,7 @@ namespace ProWaiter.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Constantes.GrupoAdministradores)]
-        public ActionResult Edit([Bind(Include = "CodRefeicao,CodTamanho,Valor,Ativo,CodImpressora,DeComposicao,ComponentesDeComposicao,PercDesconto,CodBarras")] RefeicaoDoCardapioViewModel refeicaoDoCardapioVM)
+        public ActionResult Edit([Bind("CodRefeicao,CodTamanho,Valor,Ativo,CodImpressora,DeComposicao,ComponentesDeComposicao,PercDesconto,CodBarras")] RefeicaoDoCardapioViewModel refeicaoDoCardapioVM)
         {
             if (ModelState.IsValid)
             {
@@ -326,7 +328,7 @@ namespace ProWaiter.Web.Controllers
             RefeicaoDoCardapio refeicaoDoCardapio = db.RefeicoesDoCardapio.Find(new object[] { codRefeicao, codTamanho });
             if (refeicaoDoCardapio == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(refeicaoDoCardapio);
         }
@@ -351,13 +353,13 @@ namespace ProWaiter.Web.Controllers
             }
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+//         // // protected void Dispose(bool disposing)
+//         {
+//             if (disposing)
+//             {
+//                 // // db.Dispose();
+//             }
+//             // base.Dispose(disposing);
+//         }
     }
 }

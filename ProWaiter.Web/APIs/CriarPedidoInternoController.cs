@@ -1,22 +1,23 @@
-﻿using ProWaiter.Web.AutenticacaoAPI;
+
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.Gestores;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Util;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Description;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace ProWaiter.Web.APIs
 {
-    [IdentityBasicAuthentication]
-    public class CriarPedidoInternoController : ApiController
+    // [IdentityBasicAuthentication]
+    public class CriarPedidoInternoController : ControllerBase
     {
         public class MesaDTO
         {
@@ -30,9 +31,9 @@ namespace ProWaiter.Web.APIs
         private ProWaiterContext db = new ProWaiterContext();
 
         // POST: api/CriarPedidoInterno
-        [ResponseType(typeof(MesaDTO))]
+        [ProducesResponseType(typeof(MesaDTO), 200)]
         [Authorize(Roles = Constantes.GrupoGarcons)]
-        public IHttpActionResult Post(MesaDTO mesaDTO)
+        public IActionResult Post(MesaDTO mesaDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -56,13 +57,13 @@ namespace ProWaiter.Web.APIs
             return Ok(mesaDTO);
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+//         // // protected void Dispose(bool disposing)
+//         {
+//             if (disposing)
+//             {
+//                 // // db.Dispose();
+//             }
+//             // base.Dispose(disposing);
+//         }
     }
 }

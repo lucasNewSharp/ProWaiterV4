@@ -1,11 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Net;
 using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Util;
@@ -30,12 +32,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             TamanhoRefeicao tamanhoRefeicao = db.TamanhosRefeicao.Find(id);
             if (tamanhoRefeicao == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(tamanhoRefeicao);
         }
@@ -53,7 +55,7 @@ namespace ProWaiter.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Constantes.GrupoAdministradores)]
-        public ActionResult Create([Bind(Include = "Codigo,Nome")] TamanhoRefeicao tamanhoRefeicao)
+        public ActionResult Create([Bind("Codigo,Nome")] TamanhoRefeicao tamanhoRefeicao)
         {
             if (ModelState.IsValid)
             {
@@ -74,12 +76,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             TamanhoRefeicao tamanhoRefeicao = db.TamanhosRefeicao.Find(id);
             if (tamanhoRefeicao == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(tamanhoRefeicao);
         }
@@ -90,7 +92,7 @@ namespace ProWaiter.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Constantes.GrupoAdministradores)]
-        public ActionResult Edit([Bind(Include = "Codigo,Nome")] TamanhoRefeicao tamanhoRefeicao)
+        public ActionResult Edit([Bind("Codigo,Nome")] TamanhoRefeicao tamanhoRefeicao)
         {
             if (ModelState.IsValid)
             {
@@ -107,12 +109,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             TamanhoRefeicao tamanhoRefeicao = db.TamanhosRefeicao.Find(id);
             if (tamanhoRefeicao == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(tamanhoRefeicao);
         }
@@ -144,7 +146,7 @@ namespace ProWaiter.Web.Controllers
         {
             try
             {
-                var ids = collection["ids"].Split(',');
+                var ids = collection["ids"].ToString().Split(',');
                 byte pos = 0;
                 foreach (string id in ids)
                 {                    
@@ -162,13 +164,13 @@ namespace ProWaiter.Web.Controllers
             }
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+//         // // protected void Dispose(bool disposing)
+//         {
+//             if (disposing)
+//             {
+//                 // // db.Dispose();
+//             }
+//             // base.Dispose(disposing);
+//         }
     }
 }

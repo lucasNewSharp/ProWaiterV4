@@ -1,0 +1,26 @@
+﻿@model ViewDataDictionary
+@using ProWaiter.Web.Util
+
+<p>
+    
+        @Html.Partial("_botaoVoltarParaLista")
+        @Html.BotaoAcaoImagem(eTipoBotao.Editar, "Edit", "Pedidos", new { id = ViewData["id"] }, "Editar")
+
+        @{
+            var podeReimprimir = ViewData["imprimirPedidoExterno"];
+            bool exibir = true;
+        }
+
+        @if (podeReimprimir != null)
+        {
+            exibir = bool.Parse(podeReimprimir.ToString());
+        }
+
+        @if (exibir)
+        {
+
+            @Html.BotaoAcaoTexto("ReimprimirRefeicoes", "Pedidos", "Reimprimir Refeições", new { id = ViewData["id"] }, "margin-right:4px;")
+            @Html.BotaoAcaoTexto("ReimprimirBebidas", "Pedidos", "Reimprimir Bebidas", new { id = ViewData["id"] })
+        }
+    
+</p>

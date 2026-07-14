@@ -1,22 +1,22 @@
-﻿using ProWaiter.Web.Models;
+using ProWaiter.Web.Models;
 using ProWaiter.Web.Models.Entidades;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 
 namespace ProWaiter.Web.Models.Mapeamento
 {
-    internal class CidadeConfiguration : EntityTypeConfiguration<Cidade>
+    internal class CidadeConfiguration : IEntityTypeConfiguration<Cidade>
     {
-        public CidadeConfiguration()
+        public void Configure(EntityTypeBuilder<Cidade> builder)
         {
-            ToTable("TBCidades");
-            HasKey(c => c.Codigo);
+            builder.ToTable("TBCidades");
+            builder.HasKey(c => c.Codigo);
             
-            HasRequired(c => c.UF)
-                .WithMany()
+            builder.HasOne(c => c.UF).WithMany().IsRequired()
                 .HasForeignKey(c => c.CodUF);
 
-            Property(c => c.Nome)
+            builder.Property(c => c.Nome)
                 .HasMaxLength(Cidade.TamMaxNome)
                 .IsRequired();
         }

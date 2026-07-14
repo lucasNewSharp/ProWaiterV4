@@ -1,17 +1,18 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Linq;
 using System.Web;
 
 namespace ProWaiter.Web.Models.Mapeamento
 {
-    internal class IdentityUserRoleConfiguration : EntityTypeConfiguration<IdentityUserRole>
+    internal class IdentityUserRoleConfiguration : IEntityTypeConfiguration<IdentityUserRole<string>>
     {
-        public IdentityUserRoleConfiguration()
+        public void Configure(EntityTypeBuilder<IdentityUserRole<string>> builder)
         {
-            ToTable("AspNetUserRoles")
+            builder.ToTable("AspNetUserRoles")
                 .HasKey(i => new { i.UserId, i.RoleId });
         }
     }

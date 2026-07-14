@@ -1,34 +1,33 @@
-﻿using ProWaiter.Web.Models;
+using ProWaiter.Web.Models;
 using ProWaiter.Web.Models.Entidades;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ProWaiter.Web.Models.Mapeamento
 {
-    internal class BebidaConfiguration : EntityTypeConfiguration<Bebida>
+    internal class BebidaConfiguration : IEntityTypeConfiguration<Bebida>
     {
-        public BebidaConfiguration()
+        public void Configure(EntityTypeBuilder<Bebida> builder)
         {
-            ToTable("TBBebidas")
+            builder.ToTable("TBBebidas")
                 .HasKey(b => b.Codigo);
 
-            HasRequired(b => b.Tipo)
-                .WithMany()
+            builder.HasOne(b => b.Tipo).WithMany().IsRequired()
                 .HasForeignKey(b => b.CodTipo);
 
-            HasRequired(b => b.Impressora)
-                .WithMany()
+            builder.HasOne(b => b.Impressora).WithMany().IsRequired()
                 .HasForeignKey(b => b.CodImpressora);
 
-            Property(b => b.PercDesconto)
+            builder.Property(b => b.PercDesconto)
                 .HasPrecision(5, 2);
 
-            Property(b => b.CodBarras)
-                .IsOptional()
+            builder.Property(b => b.CodBarras)
+                .IsRequired(false)
                 .HasMaxLength(Bebida.TamMaxCodBarras);
         }
     }

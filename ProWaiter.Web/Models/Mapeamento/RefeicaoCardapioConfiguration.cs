@@ -1,42 +1,40 @@
-﻿using ProWaiter.Web.Models;
+using ProWaiter.Web.Models;
 using ProWaiter.Web.Models.Entidades;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ProWaiter.Web.Models.Mapeamento
 {
-    public class RefeicaoCardapioConfiguration : EntityTypeConfiguration<RefeicaoDoCardapio>
+    public class RefeicaoCardapioConfiguration : IEntityTypeConfiguration<RefeicaoDoCardapio>
     {
-        public RefeicaoCardapioConfiguration()
+        public void Configure(EntityTypeBuilder<RefeicaoDoCardapio> builder)
         {
-            ToTable("TBRefeicoesCardapio")
+            builder.ToTable("TBRefeicoesCardapio")
                 .HasKey(r => new { r.CodRefeicao, r.CodTamanho });
             
-            HasRequired(r => r.Refeicao)
-                .WithMany()
+            builder.HasOne(r => r.Refeicao).WithMany().IsRequired()
                 .HasForeignKey(r => r.CodRefeicao);
 
-            HasRequired(r => r.TamanhoRefeicao)
-                .WithMany()
+            builder.HasOne(r => r.TamanhoRefeicao).WithMany().IsRequired()
                 .HasForeignKey(r => r.CodTamanho);
 
-            HasRequired(r => r.Impressora)
-                .WithMany()
+            builder.HasOne(r => r.Impressora).WithMany().IsRequired()
                 .HasForeignKey(r => r.CodImpressora);
 
-            HasMany(r => r.ComponentesComposicaoRefeicao)
-                .WithRequired()
+            builder.HasMany(r => r.ComponentesComposicaoRefeicao)
+                .WithOne().IsRequired()
                 .HasForeignKey(c => new { c.CodRefeicao, c.CodTamanho });
 
-            Property(r => r.PercDesconto)
+            builder.Property(r => r.PercDesconto)
                .HasPrecision(5, 2);
 
-            Property(r => r.CodBarras)
-                .IsOptional()
+            builder.Property(r => r.CodBarras)
+                .IsRequired(false)
                 .HasMaxLength(RefeicaoDoCardapio.TamMaxCodBarras);
         }
     }

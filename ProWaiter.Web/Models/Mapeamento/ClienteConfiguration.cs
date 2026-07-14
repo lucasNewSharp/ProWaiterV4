@@ -1,26 +1,27 @@
-﻿using ProWaiter.Web.Models;
+using ProWaiter.Web.Models;
 using ProWaiter.Web.Models.Entidades;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ProWaiter.Web.Models.Mapeamento
 {
-    internal class ClienteConfiguration : EntityTypeConfiguration<Cliente>
+    internal class ClienteConfiguration : IEntityTypeConfiguration<Cliente>
     {
-        public ClienteConfiguration()
+        public void Configure(EntityTypeBuilder<Cliente> builder)
         {
-            ToTable("TBClientes")
+            builder.ToTable("TBClientes")
                 .HasKey(c => c.Codigo);
 
-            Property(c => c.Nome)
+            builder.Property(c => c.Nome)
                 .HasMaxLength(Cliente.TamMaxNome);
 
-            HasMany(c => c.Enderecos)
-                 .WithRequired()
+            builder.HasMany(c => c.Enderecos)
+                 .WithOne().IsRequired()
                  .HasForeignKey(e => e.CodCliente);
         }
     }

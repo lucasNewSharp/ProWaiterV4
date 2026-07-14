@@ -1,40 +1,40 @@
-﻿using ProWaiter.Web.Models.Entidades;
+using ProWaiter.Web.Models.Entidades;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Linq;
 using System.Web;
 
 namespace ProWaiter.Web.Models.Mapeamento
 {
-    public class EnderecoClienteConfiguration : EntityTypeConfiguration<EnderecoCliente>
+    public class EnderecoClienteConfiguration : IEntityTypeConfiguration<EnderecoCliente>
     {
-        public EnderecoClienteConfiguration()
+        public void Configure(EntityTypeBuilder<EnderecoCliente> builder)
         {
-            ToTable("TBEnderecosClientes")
+            builder.ToTable("TBEnderecosClientes")
                 .HasKey(e => e.Codigo);
 
-            Property(e => e.Codigo)
-                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+            builder.Property(e => e.Codigo)
+                .ValueGeneratedOnAdd();
 
-            HasRequired(e => e.Cliente)
-                .WithMany()
+            builder.HasOne(e => e.Cliente).WithMany().IsRequired()
                 .HasForeignKey(e => e.CodCliente);
 
-            HasOptional(c => c.Cidade)
+            builder.HasOne(c => c.Cidade)
                 .WithMany()
                 .HasForeignKey(c => c.CodCidade);
 
-            Property(c => c.ValorEntregaPadrao)
+            builder.Property(c => c.ValorEntregaPadrao)
                .HasPrecision(6, 2);
 
-            Property(c => c.Endereco)
-                .IsOptional()
+            builder.Property(c => c.Endereco)
+                .IsRequired(false)
                 .HasMaxLength(EnderecoCliente.TamMaxEndereco);
 
-            Property(c => c.Bairro)
-                .IsOptional()
+            builder.Property(c => c.Bairro)
+                .IsRequired(false)
                 .HasMaxLength(EnderecoCliente.TamMaxBairro);
         }
     }

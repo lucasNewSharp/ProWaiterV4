@@ -1,10 +1,10 @@
-﻿using ProWaiter.Web.Models.Entidades;
+using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Util;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.IO.Ports;
 using System.Linq;
@@ -12,7 +12,9 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProWaiter.Web.Controllers
 {
@@ -32,12 +34,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             PedidoExterno pedidoExterno = db.PedidosExternos.Find(id);
             if (pedidoExterno == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             ViewBag.ErrosImpressao = TempData["ErrosImpressao"];
             return View(pedidoExterno);
@@ -199,7 +201,7 @@ namespace ProWaiter.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Constantes.GrupoAdministradores + "," + Constantes.GrupoCaixas)]
-        public ActionResult Create([Bind(Include = "CodCliente, ValorEntrega, Observacoes,CodEnderecoEntrega")] PedidoExterno pedidoExterno)
+        public ActionResult Create([Bind("CodCliente, ValorEntrega, Observacoes,CodEnderecoEntrega")] PedidoExterno pedidoExterno)
         {
             return CreateHelper(pedidoExterno);            
         }
@@ -208,7 +210,7 @@ namespace ProWaiter.Web.Controllers
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Constantes.GrupoAdministradores + "," + Constantes.GrupoCaixas)]
         [ActionName("CreatePeloTelefone")]
-        public ActionResult CreatePeloTelefone([Bind(Include = "CodCliente, ValorEntrega, Observacoes,CodEnderecoEntrega")] PedidoExterno pedidoExterno)
+        public ActionResult CreatePeloTelefone([Bind("CodCliente, ValorEntrega, Observacoes,CodEnderecoEntrega")] PedidoExterno pedidoExterno)
         {
             return CreateHelper(pedidoExterno);
         }
@@ -240,12 +242,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             PedidoExterno pedidoExterno = db.PedidosExternos.Find(id);
             if (pedidoExterno == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(pedidoExterno);
         }
@@ -266,14 +268,14 @@ namespace ProWaiter.Web.Controllers
 
         #region Dispose
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+//         // // protected void Dispose(bool disposing)
+//         {
+//             if (disposing)
+//             {
+//                 // // db.Dispose();
+//             }
+//             // base.Dispose(disposing);
+//         }
 
         #endregion
 

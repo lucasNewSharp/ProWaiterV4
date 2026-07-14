@@ -1,31 +1,31 @@
-﻿using ProWaiter.Web.Models.Entidades;
+using ProWaiter.Web.Models.Entidades;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Linq;
 using System.Web;
 
 namespace ProWaiter.Web.Models.Mapeamento
 {
-    public class ItemBalcaoDoPedidoConfiguration : EntityTypeConfiguration<ItemBalcaoDoPedido>
+    public class ItemBalcaoDoPedidoConfiguration : IEntityTypeConfiguration<ItemBalcaoDoPedido>
     {
-        public ItemBalcaoDoPedidoConfiguration()
+        public void Configure(EntityTypeBuilder<ItemBalcaoDoPedido> builder)
         {
-            ToTable("TBAtribItensBalcaoPedido")
+            builder.ToTable("TBAtribItensBalcaoPedido")
                 .HasKey(i => i.Codigo);
 
-            Property(i => i.Codigo)
-                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+            builder.Property(i => i.Codigo)
+                .ValueGeneratedOnAdd();
 
-            HasRequired(i => i.ItemBalcao)
-                .WithMany()
+            builder.HasOne(i => i.ItemBalcao).WithMany().IsRequired()
                 .HasForeignKey(i => i.CodItemBalcao);
 
-            Property(i => i.Valor)
+            builder.Property(i => i.Valor)
                 .HasPrecision(10, 2);
 
-            Property(i => i.PercDesconto)
+            builder.Property(i => i.PercDesconto)
                 .HasPrecision(10, 2);
 
         }

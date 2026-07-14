@@ -1,4 +1,4 @@
-﻿using NewSharp.BancoDeDados;
+using NewSharp.BancoDeDados;
 using ProWaiter.Web.Util;
 using System;
 using System.Collections.Generic;

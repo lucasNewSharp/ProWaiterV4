@@ -1,21 +1,21 @@
-﻿using ProWaiter.Web.Models;
+using ProWaiter.Web.Models;
 using ProWaiter.Web.Models.Entidades;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ProWaiter.Web.Models.Mapeamento
 {
-    internal class MesaConfiguration : EntityTypeConfiguration<Mesa>
+    internal class MesaConfiguration : IEntityTypeConfiguration<Mesa>
     {
-        public MesaConfiguration()
+        public void Configure(EntityTypeBuilder<Mesa> builder)
         {
-            ToTable("TBMesas").
-                HasKey(m => m.Codigo);
+            builder.ToTable("TBMesas").HasKey(m => m.Codigo);
 
-            Property(m => m.Descricao)
+            builder.Property(m => m.Descricao)
                 .HasMaxLength(Mesa.TamMaxDescricao)
                 .IsRequired();
 
-            HasOptional(m => m.UltimoPedido)
+            builder.HasOne(m => m.UltimoPedido)
                 .WithMany()
                 .HasForeignKey(m => m.CodUltimoPedido);
         }

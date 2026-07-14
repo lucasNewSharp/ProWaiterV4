@@ -1,23 +1,24 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Description;
-using ProWaiter.Web.AutenticacaoAPI;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
+
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Util;
 
 namespace ProWaiter.Web.APIs
 {
-    [IdentityBasicAuthentication]
-    public class MesasController : ApiController
+    // [IdentityBasicAuthentication]
+    public class MesasController : ControllerBase
     {
         private readonly ProWaiterContext db = new ProWaiterContext();
 
@@ -37,8 +38,8 @@ namespace ProWaiter.Web.APIs
         
         // GET: api/Mesas/5
         [Authorize(Roles = Constantes.GrupoGarcons)]
-        [ResponseType(typeof(Mesa))]
-        public IHttpActionResult GetMesa(short id)
+        [ProducesResponseType(typeof(Mesa), 200)]
+        public IActionResult GetMesa(short id)
         {
             try
             {
@@ -55,13 +56,13 @@ namespace ProWaiter.Web.APIs
             }
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+//         // // protected void Dispose(bool disposing)
+//         {
+//             if (disposing)
+//             {
+//                 // // db.Dispose();
+//             }
+//             // base.Dispose(disposing);
+//         }
     }
 }

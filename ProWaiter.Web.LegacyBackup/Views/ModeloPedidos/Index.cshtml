@@ -1,0 +1,49 @@
+﻿@model IEnumerable<ProWaiter.Web.Models.Entidades.ModeloPedido>
+
+@{
+    ViewBag.Title = "Modelos de pedido";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<p>
+    <div class="alert alert-info">A criação de um novo modelo é feita a partir de um pedido, na tela de fechamento de pedido.</div>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Nome)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Desconto)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Acrescimo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Observacoes)
+        </th>
+        <th style="text-align:center;">Ações</th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Nome)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Desconto)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Acrescimo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Observacoes)
+        </td>
+        <td width="150px">
+            @Html.Partial("_botoesAcaoIndex", new { id = item.Codigo })            
+        </td>
+    </tr>
+}
+
+</table>

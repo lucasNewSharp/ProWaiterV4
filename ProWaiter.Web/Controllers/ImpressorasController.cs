@@ -1,12 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
 using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Util;
@@ -29,12 +31,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             Impressora impressora = db.Impressoras.Find(id);
             if (impressora == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(impressora);
         }
@@ -43,8 +45,8 @@ namespace ProWaiter.Web.Controllers
         [Authorize(Roles = Constantes.GrupoAdministradores)]
         public ActionResult Create()
         {
-            ViewBag.NomesImpressoras = GestorImpressoes.Instancia.ObterNomesImpressorasInstaladas();
-            ViewBag.NomesTipoImpressao = new SelectList(GestorImpressoes.Instancia.ObterTiposImpressoras(), "Valor", "Nome");
+            ViewBag.NomesImpressoras = new List<string>();
+            ViewBag.NomesTipoImpressao = new SelectList(new List<dynamic>(), "Valor", "Nome");
             return View();
         }
 
@@ -54,7 +56,7 @@ namespace ProWaiter.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Constantes.GrupoAdministradores)]
-        public ActionResult Create([Bind(Include = "Codigo,Nome,Local,NomeTipoImpressao,EhDoCaixa,EhDeEntrega,BuzinaAtivada,Ip,Porta")] Impressora impressora)
+        public ActionResult Create([Bind("Codigo,Nome,Local,NomeTipoImpressao,EhDoCaixa,EhDeEntrega,BuzinaAtivada,Ip,Porta")] Impressora impressora)
         {
             if (ModelState.IsValid)
             {
@@ -72,15 +74,15 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             Impressora impressora = db.Impressoras.Find(id);
             if (impressora == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
-            ViewBag.NomesImpressoras = GestorImpressoes.Instancia.ObterNomesImpressorasInstaladas();
-            ViewBag.NomesTipoImpressao = new SelectList(GestorImpressoes.Instancia.ObterTiposImpressoras(), "Valor", "Nome", impressora.NomeTipoImpressao);
+            ViewBag.NomesImpressoras = new List<string>();
+            ViewBag.NomesTipoImpressao = new SelectList(new List<dynamic>(), "Valor", "Nome", impressora.NomeTipoImpressao);
             return View(impressora);
         }
 
@@ -90,7 +92,7 @@ namespace ProWaiter.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Constantes.GrupoAdministradores)]
-        public ActionResult Edit([Bind(Include = "Codigo,Nome,Local,NomeTipoImpressao,EhDoCaixa,EhDeEntrega,BuzinaAtivada,Ip,Porta")] Impressora impressora)
+        public ActionResult Edit([Bind("Codigo,Nome,Local,NomeTipoImpressao,EhDoCaixa,EhDeEntrega,BuzinaAtivada,Ip,Porta")] Impressora impressora)
         {
             if (ModelState.IsValid)
             {
@@ -98,8 +100,8 @@ namespace ProWaiter.Web.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.NomesImpressoras = GestorImpressoes.Instancia.ObterNomesImpressorasInstaladas();
-            ViewBag.NomesTipoImpressao = new SelectList(GestorImpressoes.Instancia.ObterTiposImpressoras(), "Valor", "Nome", impressora.NomeTipoImpressao);
+            ViewBag.NomesImpressoras = new List<string>();
+            ViewBag.NomesTipoImpressao = new SelectList(new List<dynamic>(), "Valor", "Nome", impressora.NomeTipoImpressao);
             return View(impressora);
         }
 
@@ -109,12 +111,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             Impressora impressora = db.Impressoras.Find(id);
             if (impressora == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(impressora);
         }

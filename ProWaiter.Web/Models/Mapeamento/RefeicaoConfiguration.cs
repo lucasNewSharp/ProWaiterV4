@@ -1,33 +1,28 @@
-﻿using ProWaiter.Web.Models;
+using ProWaiter.Web.Models;
 using ProWaiter.Web.Models.Entidades;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ProWaiter.Web.Models.Mapeamento
 {
-    internal class RefeicaoConfiguration : EntityTypeConfiguration<Refeicao>
+    internal class RefeicaoConfiguration : IEntityTypeConfiguration<Refeicao>
     {
-        public RefeicaoConfiguration()
+        public void Configure(EntityTypeBuilder<Refeicao> builder)
         {
-            ToTable("TBRefeicoes")
+            builder.ToTable("TBRefeicoes")
                 .HasKey(r => r.Codigo);
 
-            HasRequired(r => r.Tipo)
-                .WithMany()
+            builder.HasOne(r => r.Tipo).WithMany().IsRequired()
                 .HasForeignKey(r => r.CodTipo);
 
-            HasMany(r => r.ComponentesRefeicao)
+            builder.HasMany(r => r.ComponentesRefeicao)
                 .WithMany()
-                .Map(m =>
-                {
-                    m.MapLeftKey("CodRefeicao");
-                    m.MapRightKey("CodComponente");
-                    m.ToTable("TBAtribComponentesRefeicao");
-                });
+                .UsingEntity<Dictionary<string, object>>("TBAtribComponentesRefeicao", j => j.HasOne<ComponenteRefeicao>().WithMany().HasForeignKey("CodComponente"), j => j.HasOne<Refeicao>().WithMany().HasForeignKey("CodRefeicao"));
         }
     }
 }

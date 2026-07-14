@@ -1,4 +1,5 @@
-﻿using ProWaiter.Web.Models;
+using Microsoft.EntityFrameworkCore;
+using ProWaiter.Web.Models;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Util;
 using System;
@@ -6,12 +7,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Web.Http;
-using System.Web.Http.Description;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace ProWaiter.Web.APIs
 {
-    public class ConfiguracoesController : ApiController
+    public class ConfiguracoesController : ControllerBase
     {
         class ConfiguracoesDTO
         {
@@ -25,8 +27,8 @@ namespace ProWaiter.Web.APIs
             }
         }
 
-        [ResponseType(typeof(ConfiguracoesDTO))]        
-        public IHttpActionResult GetConfiguracoes()
+        [ProducesResponseType(typeof(ConfiguracoesDTO), 200)]        
+        public IActionResult GetConfiguracoes()
         {
             return Ok(new ConfiguracoesDTO(Configuracoes.ObterInstancia()));
         }

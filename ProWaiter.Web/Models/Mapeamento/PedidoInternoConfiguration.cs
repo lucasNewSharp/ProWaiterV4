@@ -1,26 +1,26 @@
-﻿using ProWaiter.Web.Models;
+using ProWaiter.Web.Models;
 using ProWaiter.Web.Models.Entidades;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ProWaiter.Web.Models.Mapeamento
 {
-    internal class PedidoInternoConfiguration : EntityTypeConfiguration<PedidoInterno>
+    internal class PedidoInternoConfiguration : IEntityTypeConfiguration<PedidoInterno>
     {
-        public PedidoInternoConfiguration()
+        public void Configure(EntityTypeBuilder<PedidoInterno> builder)
         {
-            ToTable("TBPedidosInternos").
-                HasKey(p => p.Codigo);
+            builder.ToTable("TBPedidosInternos").HasKey(p => p.Codigo);
 
-            HasOptional(p => p.LocalInterno)
+            builder.HasOne(p => p.LocalInterno)
                 .WithMany()
                 .HasForeignKey(p => p.CodLocalInterno);
 
-            HasOptional(p => p.Mesa)
+            builder.HasOne(p => p.Mesa)
                 .WithMany()
                 .HasForeignKey(p => p.CodMesa);
         }

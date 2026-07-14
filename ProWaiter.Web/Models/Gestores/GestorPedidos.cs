@@ -1,8 +1,8 @@
-﻿using ProWaiter.Web.Models.Entidades;
+using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Web;
 
@@ -32,7 +32,7 @@ namespace ProWaiter.Web.Models.Gestores
 
             try
             {
-                db.IniciarTransacao();
+                db.Database.BeginTransaction();
                 db.PedidosInternos.Add(pedido);
                 db.SaveChanges();
                 db.Mesas.Attach(mesa);  //Atachamos pois essa mesa pode vir de um HttpRequest e pode estar em outro contexto, então o nosso ProWaiterContext precisa saber que esta instância pertence ao seu dbset              
@@ -42,7 +42,7 @@ namespace ProWaiter.Web.Models.Gestores
             }
             finally
             {
-                db.FinalizarTransacao();
+                if (db.Database.CurrentTransaction != null) db.Database.CurrentTransaction.Commit();
             }
 
             return pedido;
@@ -54,13 +54,13 @@ namespace ProWaiter.Web.Models.Gestores
 
             try
             {
-                db.IniciarTransacao();
+                db.Database.BeginTransaction();
                 db.PedidosParaLevar.Add(pedido);
                 db.SaveChanges();
             }
             finally
             {
-                db.FinalizarTransacao();
+                if (db.Database.CurrentTransaction != null) db.Database.CurrentTransaction.Commit();
             }
 
             return pedido;

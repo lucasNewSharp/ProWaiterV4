@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.Title = "Home";
+}
+
+<div class="jumbotron">
+    <h1>ProWaiter</h1>
+    <p class="lead">ProWaiter é uma solução de comanda eletrônica, que visa automatizar o processo de pedidos para garçons e encaminhá-los para a cozinha, para agilizar o processo e ter um controle preciso dos trabalhos do restaurante.</p>
+</div>
+
+<div class="row">
+    <div class="col-md-12"><p>Abaixo estão as principais funcionalidades do ProWaiter:</p></div>
+</div>
+
+@Html.ActionLink("Pedidos", "Index", "Pedidos", null, new { @class = "btn btn-primary btn-lg" })
+@Html.ActionLink("Clientes", "Index", "Clientes", null, new { @class = "btn btn-primary btn-lg" })
+@Html.ActionLink("Cardápio", "Index", "RefeicoesDoCardapio", null, new { @class = "btn btn-primary btn-lg" })

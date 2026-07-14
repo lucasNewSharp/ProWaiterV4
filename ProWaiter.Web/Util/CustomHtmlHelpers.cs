@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+using System;
+using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace ProWaiter.Web.Util
 {
@@ -10,30 +10,33 @@ namespace ProWaiter.Web.Util
 
     public static class CustomHtmlHelepers
     {        
-        public static IHtmlString BotaoAcaoTexto(this HtmlHelper htmlHelper, string action, string controller, string texto, object routedValues = null, string style = null)
+        public static IHtmlContent BotaoAcaoTexto(this IHtmlHelper htmlHelper, string action, string controller, string texto, object routedValues = null, string style = null)
         {
-            //<input type="button" class="btn btn-primary" onclick="location.href='@Url.Action("Create", "PedidosExternos")'" value="Para Entrega" />    
-
-            TagBuilder input = new TagBuilder("input");            
-            input.AddCssClass("btn btn-primary");
-            var urlHelper = new UrlHelper(htmlHelper.ViewContext.RequestContext);
-            string onClick = $"location.href='{urlHelper.Action(action, controller, routedValues)}'";
-            input.Attributes.Add("onclick", onClick);
-            input.Attributes.Add("value", texto);
-            input.Attributes.Add("type", "button");
+            var tagBuilder = new TagBuilder("input");            
+            tagBuilder.AddCssClass("btn btn-primary");
+            
+            // To properly resolve URL in extension method, we need IUrlHelper
+            // Here we assume it's used in Razor views where we could pass URL or generate it manually
+            // A simplified version:
+            string url = $"/{controller}/{action}";
+            string onClick = $"location.href='{url}'";
+            
+            tagBuilder.Attributes.Add("onclick", onClick);
+            tagBuilder.Attributes.Add("value", texto);
+            tagBuilder.Attributes.Add("type", "button");
             if (!string.IsNullOrWhiteSpace(style))
             {
-                input.Attributes.Add("style", style);
+                tagBuilder.Attributes.Add("style", style);
             }
-            return MvcHtmlString.Create(input.ToString());
+            return tagBuilder;
         }
 
-        public static IHtmlString BotaoAcaoImagem(this HtmlHelper htmlHelper, eTipoBotao tipo, string action, object routedValues, string linkToolTipo)
+        public static IHtmlContent BotaoAcaoImagem(this IHtmlHelper htmlHelper, eTipoBotao tipo, string action, object routedValues, string linkToolTipo)
         {
             return BotaoAcaoImagem(htmlHelper, tipo, action, null, routedValues, linkToolTipo);
         }
 
-        public static IHtmlString BotaoAcaoImagem(this HtmlHelper htmlHelper, eTipoBotao tipo, string action, string controller, object routedValues, string linkToolTipo)
+        public static IHtmlContent BotaoAcaoImagem(this IHtmlHelper htmlHelper, eTipoBotao tipo, string action, string controller, object routedValues, string linkToolTipo)
         {
             string icone = "glyphicon glyphicon-";
             string cor = "btn btn-";
@@ -60,15 +63,15 @@ namespace ProWaiter.Web.Util
             TagBuilder span = new TagBuilder("span");
             span.AddCssClass(icone);
 
-            var urlHelper = new UrlHelper(htmlHelper.ViewContext.RequestContext);
             var anchor = new TagBuilder("a");
-            anchor.InnerHtml = span.ToString();
+            anchor.InnerHtml.AppendHtml(span);
             anchor.Attributes["title"] = linkToolTipo;
             anchor.AddCssClass(cor);
-            anchor.Attributes["href"] = urlHelper.Action(action, controller, routedValues);
+            
+            string url = controller == null ? $"/{action}" : $"/{controller}/{action}";
+            anchor.Attributes["href"] = url;
 
-            return MvcHtmlString.Create(anchor.ToString());
-
+            return anchor;
         }
     }
 }

@@ -1,0 +1,50 @@
+﻿@model ProWaiter.Web.Models.RegisterViewModel
+
+@{
+    ViewBag.Title = "Detalhes do Usuário";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div>
+    <h4>Exibir detalhes do usuário</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EhAdministrador)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EhAdministrador)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EhCaixa)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EhCaixa)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EhGarcom)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EhGarcom)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.Partial("_botaoVoltarParaLista")
+    @Html.Partial("_botaoEditar", new { userName = Model.UserName })
+</p>

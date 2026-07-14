@@ -1,4 +1,4 @@
-﻿using NewSharp.BancoDeDados;
+using NewSharp.BancoDeDados;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;

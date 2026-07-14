@@ -1,11 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Net;
 using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 using ProWaiter.Web.Models.DTOs;
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
@@ -29,12 +31,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             ModeloPedido modeloPedido = db.ModelosPedidos.Find(id);
             if (modeloPedido == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(modeloPedido);
         }
@@ -45,12 +47,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             ModeloPedido modeloPedido = db.ModelosPedidos.Find(id);
             if (modeloPedido == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(modeloPedido);
         }
@@ -61,7 +63,7 @@ namespace ProWaiter.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Constantes.GrupoAdministradores)]
-        public ActionResult Edit([Bind(Include = "Codigo,Nome,Desconto,Acrescimo,Observacoes")] ModeloPedido modeloPedido)
+        public ActionResult Edit([Bind("Codigo,Nome,Desconto,Acrescimo,Observacoes")] ModeloPedido modeloPedido)
         {
             if (ModelState.IsValid)
             {
@@ -77,12 +79,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             ModeloPedido modeloPedido = db.ModelosPedidos.Find(id);
             if (modeloPedido == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(modeloPedido);
         }
@@ -99,13 +101,13 @@ namespace ProWaiter.Web.Controllers
             return RedirectToAction("Index");
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+//         // // protected void Dispose(bool disposing)
+//         {
+//             if (disposing)
+//             {
+//                 // // db.Dispose();
+//             }
+//             // base.Dispose(disposing);
+//         }
     }
 }

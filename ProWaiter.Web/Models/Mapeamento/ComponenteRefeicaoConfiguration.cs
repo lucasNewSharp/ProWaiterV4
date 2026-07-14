@@ -1,19 +1,20 @@
-﻿using ProWaiter.Web.Models;
+using ProWaiter.Web.Models;
 using ProWaiter.Web.Models.Entidades;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ProWaiter.Web.Models.Mapeamento
 {
-    internal class ComponenteRefeicaoConfiguration : EntityTypeConfiguration<ComponenteRefeicao>
+    internal class ComponenteRefeicaoConfiguration : IEntityTypeConfiguration<ComponenteRefeicao>
     {
-        public ComponenteRefeicaoConfiguration()
+        public void Configure(EntityTypeBuilder<ComponenteRefeicao> builder)
         {
-            ToTable("TBComponentesRefeicao")
+            builder.ToTable("TBComponentesRefeicao")
                 .HasKey(c => c.Codigo);
         }
     }

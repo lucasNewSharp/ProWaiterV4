@@ -1,15 +1,17 @@
-﻿using Microsoft.Ajax.Utilities;
+
 using ProWaiter.Web.Models;
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Util;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+
 using System.Linq;
 using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProWaiter.Web.Controllers
 {
@@ -23,13 +25,13 @@ namespace ProWaiter.Web.Controllers
             ConfiguracaoDescontosViewModel confDesc = new ConfiguracaoDescontosViewModel();
 
             db.Bebidas.Where(b => b.Ativo).OrderBy(b => b.Nome)
-                .ForEach(b => confDesc.Bebidas.Add(new ConfiguracaoDescontosViewModel.BebidaVM(b)));
+                .ToList().ForEach(b => confDesc.Bebidas.Add(new ConfiguracaoDescontosViewModel.BebidaVM(b)));
 
             db.RefeicoesDoCardapio.Where(r => r.Ativo).OrderBy(r => r.Refeicao.Nome)
-                .ForEach(r => confDesc.Refeicoes.Add(new ConfiguracaoDescontosViewModel.RefeicaoCardapioVM(r)));
+                .ToList().ForEach(r => confDesc.Refeicoes.Add(new ConfiguracaoDescontosViewModel.RefeicaoCardapioVM(r)));
 
             db.ItensBacao.Where(i => i.Ativo)
-                .ForEach(i => confDesc.ItensBalcao.Add(new ConfiguracaoDescontosViewModel.ItemBalcaoVM(i)));
+                .ToList().ForEach(i => confDesc.ItensBalcao.Add(new ConfiguracaoDescontosViewModel.ItemBalcaoVM(i)));
 
             return View(confDesc);
         }
@@ -88,20 +90,20 @@ namespace ProWaiter.Web.Controllers
             }
             catch(Exception ex)
             {
-                ModelState.AddModelError("", ex);
+                ModelState.AddModelError("", ex.Message);
             }
 
             return RedirectToAction("Index");
         }
 
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+//         // // protected void Dispose(bool disposing)
+//         {
+//             if (disposing)
+//             {
+//                 // // db.Dispose();
+//             }
+//             // base.Dispose(disposing);
+//         }
     }
 }

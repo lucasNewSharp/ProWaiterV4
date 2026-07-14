@@ -1,12 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
 using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 using ProWaiter.Web.Models;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Util;
@@ -29,12 +31,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             Mesa mesa = db.Mesas.Find(id);
             if (mesa == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(mesa);
         }
@@ -52,7 +54,7 @@ namespace ProWaiter.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Constantes.GrupoAdministradores)]
-        public ActionResult Create([Bind(Include = "Codigo,Descricao")] Mesa mesa)
+        public ActionResult Create([Bind("Codigo,Descricao")] Mesa mesa)
         {
             if (ModelState.IsValid)
             {
@@ -77,12 +79,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             Mesa mesa = db.Mesas.Find(id);
             if (mesa == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(mesa);
         }
@@ -93,7 +95,7 @@ namespace ProWaiter.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Constantes.GrupoAdministradores)]
-        public ActionResult Edit([Bind(Include = "Codigo,Descricao")] Mesa mesa)
+        public ActionResult Edit([Bind("Codigo,Descricao")] Mesa mesa)
         {
             if (ModelState.IsValid)
             {
@@ -118,12 +120,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             Mesa mesa = db.Mesas.Find(id);
             if (mesa == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
             return View(mesa);
         }
@@ -150,13 +152,13 @@ namespace ProWaiter.Web.Controllers
             }
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+//         // // protected void Dispose(bool disposing)
+//         {
+//             if (disposing)
+//             {
+//                 // // db.Dispose();
+//             }
+//             // base.Dispose(disposing);
+//         }
     }
 }

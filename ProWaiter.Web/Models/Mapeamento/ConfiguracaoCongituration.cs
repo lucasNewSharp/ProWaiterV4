@@ -1,20 +1,21 @@
-﻿using ProWaiter.Web.Models.Entidades;
+using ProWaiter.Web.Models.Entidades;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Linq;
 using System.Web;
 
 namespace ProWaiter.Web.Models.Mapeamento
 {
-    public class ConfiguracaoCongituration : EntityTypeConfiguration<Configuracao>
+    public class ConfiguracaoCongituration : IEntityTypeConfiguration<Configuracao>
     {
-        public ConfiguracaoCongituration()
+        public void Configure(EntityTypeBuilder<Configuracao> builder)
         {
-            ToTable("TBConfiguracoes")
+            builder.ToTable("TBConfiguracoes")
                 .HasKey(c => c.Codigo);
 
-            Property(c => c.Codigo)
+            builder.Property(c => c.Codigo)
                 .HasMaxLength(Configuracao.TamMaxCodigo);                
         }
     }

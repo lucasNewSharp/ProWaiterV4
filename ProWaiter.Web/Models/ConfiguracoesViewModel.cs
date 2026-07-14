@@ -1,10 +1,11 @@
-﻿using ProWaiter.Web.Util;
+using ProWaiter.Web.Util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ProWaiter.Web.Models
 {

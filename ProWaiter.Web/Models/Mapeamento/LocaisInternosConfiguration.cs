@@ -1,20 +1,21 @@
-﻿using ProWaiter.Web.Models.Entidades;
+using ProWaiter.Web.Models.Entidades;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Linq;
 using System.Web;
 
 namespace ProWaiter.Web.Models.Mapeamento
 {
-    internal class LocaisInternosConfiguration : EntityTypeConfiguration<LocalInterno>
+    internal class LocaisInternosConfiguration : IEntityTypeConfiguration<LocalInterno>
     {
-        public LocaisInternosConfiguration()
+        public void Configure(EntityTypeBuilder<LocalInterno> builder)
         {
-            ToTable("TBLocaisInternos")
+            builder.ToTable("TBLocaisInternos")
                 .HasKey(l => l.Codigo);
 
-            Property(l => l.Nome)
+            builder.Property(l => l.Nome)
                 .HasMaxLength(LocalInterno.TamMaxNome)
                 .IsRequired();
         }

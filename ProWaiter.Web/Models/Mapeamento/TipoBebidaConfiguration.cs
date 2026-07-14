@@ -1,18 +1,18 @@
-﻿using ProWaiter.Web.Models.Entidades;
+using ProWaiter.Web.Models.Entidades;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Linq;
 using System.Web;
 
 namespace ProWaiter.Web.Models.Mapeamento
 {
-    internal class TipoBebidaConfiguration : EntityTypeConfiguration<TipoBebida>
+    internal class TipoBebidaConfiguration : IEntityTypeConfiguration<TipoBebida>
     {
-        public TipoBebidaConfiguration()
+        public void Configure(EntityTypeBuilder<TipoBebida> builder)
         {
-            ToTable("TBTiposBebida").
-                    HasKey(r => r.Codigo);
+            builder.ToTable("TBTiposBebida").HasKey(r => r.Codigo);
         }
     }
 }

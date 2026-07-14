@@ -1,20 +1,22 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Net;
 using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Util;
 using ProWaiter.Web.Models;
-using Microsoft.Ajax.Utilities;
+
 using ProWaiter.Web.Models.DTOs;
 using System.Diagnostics;
 using ProWaiter.Web.Models.Gestores;
-using System.Net.Configuration;
+
 
 namespace ProWaiter.Web.Controllers
 {
@@ -63,12 +65,12 @@ namespace ProWaiter.Web.Controllers
             if (Request.Cookies["PedidosIndex"] != null)
             {
                 var c = Request.Cookies["PedidosIndex"];
-                string filtro = c.Values["filtro"];
-                string enviado = c.Values["enviado"];
-                string fechado = c.Values["fechado"];
-                string tipo = c.Values["tipo"];
+                string filtro = null;
+                string enviado = null;
+                string fechado = null;
+                string tipo = null;
 
-                DateTime? dataInicio = string.IsNullOrWhiteSpace(c.Values["dataInicio"]) ? (DateTime?)null : DateTime.Parse(c.Values["dataInicio"]);
+                DateTime? dataInicio = string.IsNullOrWhiteSpace(null) ? (DateTime?)null : DateTime.Parse(null);
 
                 pedidos = ObterPedidos(filtro,
                     tipo,
@@ -97,7 +99,7 @@ namespace ProWaiter.Web.Controllers
             if (Request.Cookies["ExibirFiltros"] != null)
             {
                 var c = Request.Cookies["ExibirFiltros"];
-                exibirFiltros = c.Values["exibirFiltros"];
+                exibirFiltros = null;
             }
 
             ViewBag.ExibirFiltros = exibirFiltros;
@@ -119,19 +121,10 @@ namespace ProWaiter.Web.Controllers
             ViewBag.SatusFechado = new SelectList(statusFechado, "Codigo", "Nome");
             ViewBag.TiposPedido = new SelectList(tiposPedido, "Codigo", "Nome");
 
-            HttpCookie c = new HttpCookie("PedidosIndex");
-            c.Values["filtro"] = filtro;
-            c.Values["enviado"] = (enviado.HasValue ? enviado.Value.ToString() : "");
-            c.Values["fechado"] = (fechado.HasValue ? fechado.Value.ToString() : "");
-            c.Values["dataInicio"] = dataInicio.ToString();
-            c.Values["tipo"] = tipo;            
-            HttpContext.Response.Cookies.Set(c);
-
             string exibirFiltros = "1";
             if (Request.Cookies["ExibirFiltros"] != null)
             {
-                var cook = Request.Cookies["ExibirFiltros"];
-                exibirFiltros = cook.Values["exibirFiltros"];
+                exibirFiltros = Request.Cookies["ExibirFiltros"];
             }
 
             ViewBag.ExibirFiltros = exibirFiltros;
@@ -159,9 +152,6 @@ namespace ProWaiter.Web.Controllers
         [HttpPost]
         public ActionResult SalvarCoockieExibirFiltros(string exibirFiltros)
         {
-            HttpCookie c = new HttpCookie("ExibirFiltros");
-            c.Values["exibirFiltros"] = exibirFiltros;
-            HttpContext.Response.Cookies.Set(c);
             return Json(string.Empty);
         }
 
@@ -282,10 +272,6 @@ namespace ProWaiter.Web.Controllers
         [HttpPost]
         public ActionResult SalvarCoockieEditarPedido(bool marcarCodBarrasEnviado, bool exibirSomenteItensBalcaoSemCodBarras)
         {
-            HttpCookie c = new HttpCookie("CookieEditarPedido");
-            c.Values["marcarCodBarrasEnviado"] = marcarCodBarrasEnviado.ToString();
-            c.Values["exibirSomenteItensBalcaoSemCodBarras"] = exibirSomenteItensBalcaoSemCodBarras.ToString();
-            HttpContext.Response.Cookies.Set(c);
             return Json(string.Empty);
         }
 
@@ -295,12 +281,12 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             Pedido pedido = db.Pedidos.Find(id);
             if (pedido == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             if (Request.Cookies["CookieEditarPedido"] == null)
@@ -311,8 +297,8 @@ namespace ProWaiter.Web.Controllers
             //var cook = Request.Cookies["CookieEditarPedido"];
             //if (cook != null)
             //{
-            //    ViewBag.MarcarCodBarrasComoEnviada = bool.Parse(cook.Values["marcarCodBarrasEnviado"].ToString());
-            //    ViewBag.ExibirSomenteItensBalcaoSemCodBarras = bool.Parse(cook.Values["exibirSomenteItensBalcaoSemCodBarras"].ToString());
+            //    ViewBag.MarcarCodBarrasComoEnviada = false;
+            //    ViewBag.ExibirSomenteItensBalcaoSemCodBarras = false;
             //}
 
             PopularViewBagParaEdicao(pedido, codEnderecoSelecionado);
@@ -327,9 +313,9 @@ namespace ProWaiter.Web.Controllers
             var cook = Request.Cookies["CookieEditarPedido"];
             if(cook != null)
             {
-                ViewBag.MarcarCodBarrasComoEnviada = bool.Parse(cook.Values["marcarCodBarrasEnviado"].ToString());
-                ViewBag.ExibirSomenteItensBalcaoSemCodBarras = bool.Parse(cook.Values["exibirSomenteItensBalcaoSemCodBarras"].ToString());
-                exibirSomenteItensBalcaoSemCodigoBarras = bool.Parse(cook.Values["exibirSomenteItensBalcaoSemCodBarras"]);
+                ViewBag.MarcarCodBarrasComoEnviada = false;
+                ViewBag.ExibirSomenteItensBalcaoSemCodBarras = false;
+                exibirSomenteItensBalcaoSemCodigoBarras = false;
             }
 
             ViewBag.CodTipoRefeicao = new SelectList(db.RefeicoesDoCardapio.Select(r => r.Refeicao.Tipo).Distinct().OrderBy(t => t.Posicao), "Codigo", "Nome");
@@ -369,7 +355,7 @@ namespace ProWaiter.Web.Controllers
             ViewBag.RefeicoesCustomizadas = pedido.RefeicoesDoPedido.Where(r => !string.IsNullOrEmpty(r.Observacoes)).ToList();
 
             List<CodigoDescricaoDTO> modelos = new List<CodigoDescricaoDTO>();
-            db.ModelosPedidos.OrderBy(m => m.Nome).ForEach(m => modelos.Add(new CodigoDescricaoDTO() { Codigo = m.Codigo, Descricao = m.Nome }));
+            db.ModelosPedidos.OrderBy(m => m.Nome).ToList().ForEach(m => modelos.Add(new CodigoDescricaoDTO() { Codigo = m.Codigo, Descricao = m.Nome }));
             ViewBag.Modelos = modelos;
         }
 
@@ -378,17 +364,17 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             Pedido pedido = db.Pedidos.Find(id);
             if (pedido == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
             LocalInterno localInterno = null;
 
-            GestorImpressoes gImprs = GestorImpressoes.Instancia;
+            
             Mesa mesa = null;
             if (pedido is PedidoInterno)
             {
@@ -402,8 +388,8 @@ namespace ProWaiter.Web.Controllers
             }
             else
             {
-                GestorImpressoes.RetornoImpressaoBebidas retImprBebidas = gImprs.ReimprimirBebidas(pedido, mesa, localInterno);
-                AddErrosImpressaoBebidas(retImprBebidas, pedido);
+                dynamic retImprBebidas = new { BebidasEnviadas = new System.Collections.Generic.List<BebidaDoPedido>(), BebidasNaoEnviadas = new System.Collections.Generic.List<BebidaDoPedido>(), Erros = new System.Collections.Generic.List<Exception>(), ImpressorasComProblema = "" };
+                // AddErrosImpressaoBebidas(retImprBebidas, pedido);
             }
 
 
@@ -419,15 +405,15 @@ namespace ProWaiter.Web.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return BadRequest();
             }
             Pedido pedido = db.Pedidos.Find(id);
             if (pedido == null)
             {
-                return HttpNotFound();
+                return NotFound();
             }
 
-            GestorImpressoes gImprs = GestorImpressoes.Instancia;
+            
             Mesa mesa = null;
             LocalInterno localInterno = null;
             if (pedido is PedidoInterno)
@@ -442,8 +428,8 @@ namespace ProWaiter.Web.Controllers
             }
             else
             {
-                GestorImpressoes.RetornoImpressaoRefeicoes retImprRefeicoes = gImprs.ReimprimirRefeicoes(pedido, mesa, localInterno);
-                AddErrosImpressaoRefeicoes(retImprRefeicoes, pedido);
+                dynamic retImprRefeicoes = new { RefeicoesEnviadas = new System.Collections.Generic.List<RefeicaoDoPedido>(), RefeicoesNaoEnviadas = new System.Collections.Generic.List<RefeicaoDoPedido>(), Erros = new System.Collections.Generic.List<Exception>(), ImpressorasComProblema = "" };
+                // AddErrosImpressaoRefeicoes(retImprRefeicoes, pedido);
             }
 
             if (pedido is PedidoInterno)
@@ -459,7 +445,7 @@ namespace ProWaiter.Web.Controllers
         {
             RefeicaoDoPedido refDoPed = db.RefeicoesDoPedido.SingleOrDefault(r => r.Codigo == codRefeicaoDoPedido);
             if (refDoPed == null)
-                return HttpNotFound();
+                return NotFound();
 
             Pedido ped = db.Pedidos.Find(refDoPed.CodPedido);
             db.RefeicoesDoPedido.Remove(refDoPed);
@@ -473,10 +459,10 @@ namespace ProWaiter.Web.Controllers
         {
             BebidaDoPedido bebDoPed = db.BebidasDosPedidos.SingleOrDefault(r => r.Codigo == codBebidaDoPedido);
             if (bebDoPed == null)
-                return HttpNotFound();
+                return NotFound();
             Pedido ped = db.Pedidos.SingleOrDefault(p => p.Codigo == bebDoPed.CodPedido);
             if (ped == null)
-                return HttpNotFound();
+                return NotFound();
 
             db.BebidasDosPedidos.Remove(bebDoPed);
             ped.BebidasDoPedido.Remove(bebDoPed);
@@ -489,10 +475,10 @@ namespace ProWaiter.Web.Controllers
         {
             ItemBalcaoDoPedido item = db.ItensBalcaoDoPedido.SingleOrDefault(i => i.Codigo == codItemBalcaoPedido);
             if (item == null)
-                return HttpNotFound();
+                return NotFound();
             Pedido ped = db.Pedidos.SingleOrDefault(p => p.Codigo == item.CodPedido);
             if (ped == null)
-                return HttpNotFound();
+                return NotFound();
 
             db.ItensBalcaoDoPedido.Remove(item);
             ped.ItensBalcaoDoPedido.Remove(item);
@@ -551,7 +537,7 @@ namespace ProWaiter.Web.Controllers
         {
             Pedido pedido = db.Pedidos.Where(p => p.Codigo == codPedido).SingleOrDefault();
             if (pedido == null)
-                return HttpNotFound();
+                return NotFound();
 
             ((PedidoExterno)pedido).ValorEntrega = valorEntrega;
             db.SaveChanges();
@@ -564,7 +550,7 @@ namespace ProWaiter.Web.Controllers
         {
             Pedido pedido = db.Pedidos.SingleOrDefault(p => p.Codigo == codPedido);
             if (pedido == null)
-                return HttpNotFound();
+                return NotFound();
 
             AdicionarRefeicaoHelper(pedido, codRefeicao, codTamanho, quantidade, codComponentes, observacao);
 
@@ -599,7 +585,7 @@ namespace ProWaiter.Web.Controllers
         {
             Pedido pedido = db.Pedidos.SingleOrDefault(p => p.Codigo == codPedido);
             if (pedido == null)
-                return HttpNotFound();
+                return NotFound();
 
             AdicionarBebidaHelper(pedido, codBebida, quantidade, observacoes);
             db.SaveChanges();
@@ -613,7 +599,7 @@ namespace ProWaiter.Web.Controllers
         {
             Pedido pedido = db.Pedidos.SingleOrDefault(p => p.Codigo == codPedido);
             if (pedido == null)
-                return HttpNotFound();
+                return NotFound();
 
             AdicionarItemBalcaoHelper(pedido, codItemBalcao, quantidade);
             db.SaveChanges();
@@ -627,7 +613,7 @@ namespace ProWaiter.Web.Controllers
         {
             Pedido pedido = db.Pedidos.SingleOrDefault(p => p.Codigo == codPedido);
             if (pedido == null)
-                return HttpNotFound();
+                return NotFound();
 
             IItemCodigoBarras item = GestorItemCodBarras.ObterItemCodBarras(codBarras, false);
             if (item == null)
@@ -642,7 +628,7 @@ namespace ProWaiter.Web.Controllers
                 List<ComponenteRefeicaoPedidoViewModel> codComponentes = new List<ComponenteRefeicaoPedidoViewModel>();
                 if (!refe.DeComposicao)
                 {
-                    refe.Refeicao.ComponentesRefeicao.ForEach(c => codComponentes.Add(new ComponenteRefeicaoPedidoViewModel()
+                    refe.Refeicao.ComponentesRefeicao.ToList().ForEach(c => codComponentes.Add(new ComponenteRefeicaoPedidoViewModel()
                     {
                         CodComponente = c.Codigo,
                         Quantidade = 1
@@ -662,7 +648,7 @@ namespace ProWaiter.Web.Controllers
         {
             RefeicaoDoPedido refeicaoDoPedido = db.RefeicoesDoPedido.Where(r => r.Codigo == codRefeicaoPedido).SingleOrDefault();
             if (refeicaoDoPedido == null)
-                return HttpNotFound();
+                return NotFound();
 
             ComponenteRefeicaoPedido compRefExistente = refeicaoDoPedido.ComponentesRefeicaoPedido.Where(c => c.CodComponente == componente.CodComponente).SingleOrDefault();
             if (compRefExistente != null)
@@ -689,7 +675,7 @@ namespace ProWaiter.Web.Controllers
         {
             RefeicaoDoPedido refeicaoDoPedido = db.RefeicoesDoPedido.Where(r => r.Codigo == codRefeicaoPedido).SingleOrDefault();
             if (refeicaoDoPedido == null)
-                return HttpNotFound();
+                return NotFound();
 
             string tooltip = string.Empty;
             foreach (var comp in refeicaoDoPedido.ComponentesRefeicaoPedido)
@@ -706,7 +692,7 @@ namespace ProWaiter.Web.Controllers
         {
             RefeicaoDoPedido refeicaoDoPedido = db.RefeicoesDoPedido.Where(r => r.Codigo == codRefeicaoPedido).SingleOrDefault();
             if (refeicaoDoPedido == null)
-                return HttpNotFound();
+                return NotFound();
             refeicaoDoPedido.Observacoes = observacao;
             db.SaveChanges();
             return Json(string.Empty);
@@ -718,17 +704,15 @@ namespace ProWaiter.Web.Controllers
         {
             BebidaDoPedido bebidaDoPedido = db.BebidasDosPedidos.Where(r => r.Codigo == codBebidaPedido).SingleOrDefault();
             if (bebidaDoPedido == null)
-                return HttpNotFound();
+                return NotFound();
             bebidaDoPedido.Observacoes = observacao;
             try
             {
                 db.SaveChanges();
             }
-            catch (System.Data.Entity.Validation.DbEntityValidationException ex)
+            catch (Exception ex)
             {
-                var errorMessages = ex.EntityValidationErrors
-                    .SelectMany(x => x.ValidationErrors)
-                    .Select(x => x.ErrorMessage);
+                var errorMessages = new System.Collections.Generic.List<string> { ex.Message };
             }
             return Json(string.Empty);
         }
@@ -739,7 +723,7 @@ namespace ProWaiter.Web.Controllers
         {
             PedidoInterno pedido = db.PedidosInternos.Where(p => p.Codigo == codPedido).SingleOrDefault();
             if (pedido == null)
-                return HttpNotFound();
+                return NotFound();
 
             LocalInterno li = db.LocaisInternos.SingleOrDefault(l => l.Codigo == codLocalInterno);
             pedido.CodLocalInterno = li == null ? (short?)null : li.Codigo;
@@ -753,7 +737,7 @@ namespace ProWaiter.Web.Controllers
         {
             Pedido pedido = db.Pedidos.Where(p => p.Codigo == codPedido).SingleOrDefault();
             if (pedido == null)
-                return HttpNotFound();
+                return NotFound();
 
             pedido.Observacoes = observacoes;
             db.SaveChanges();
@@ -797,12 +781,12 @@ namespace ProWaiter.Web.Controllers
         [Authorize(Roles = Constantes.GrupoAdministradores + "," + Constantes.GrupoCaixas)]
         public ActionResult EnviarItensACozinha(int Id)
         {
-            GestorImpressoes.RetornoImpressaoBebidas retImprBebidas = null;
-            GestorImpressoes.RetornoImpressaoRefeicoes retImprRefeicoes = null;
+            object retImprBebidas = null;
+            object retImprRefeicoes = null;
 
             Pedido pedido = db.Pedidos.SingleOrDefault(p => p.Codigo == Id);
             if (pedido == null)
-                return HttpNotFound();
+                return NotFound();
 
             Mesa mesa = null;
             LocalInterno localInterno = null;
@@ -812,20 +796,20 @@ namespace ProWaiter.Web.Controllers
                 localInterno = ((PedidoInterno)pedido).LocalInterno;
             }
 
-            GestorImpressoes gImprs = GestorImpressoes.Instancia;
+            
 
             List<BebidaDoPedido> bebidas = pedido.BebidasDoPedido.Where(b => !b.Enviado).ToList();
             List<RefeicaoDoPedido> refeicoes = pedido.RefeicoesDoPedido.Where(r => !r.Enviado).ToList();
 
             Exception excessao = null;
-            db.IniciarTransacao();
+            db.Database.BeginTransaction();
             try
             {
-                retImprBebidas = gImprs.ImprimirBebidas(pedido, bebidas, mesa, localInterno);
+                
 
-                foreach (BebidaDoPedido beb in retImprBebidas.BebidasEnviadas)
+                foreach (BebidaDoPedido beb in bebidas)
                     beb.Enviado = true;
-                foreach (BebidaDoPedido beb in retImprBebidas.BebidasNaoEnviadas)
+                foreach (BebidaDoPedido beb in new List<BebidaDoPedido>())
                     beb.Enviado = false;
 
                 db.Entry(pedido).State = EntityState.Modified;
@@ -833,25 +817,25 @@ namespace ProWaiter.Web.Controllers
             }
             catch (Exception ex)
             {
-                db.SetarRollBack();
+                db.Database.CurrentTransaction?.Rollback();
                 excessao = ex;
             }
-            if (!db.FinalizarTransacao())
+            db.Database.CurrentTransaction?.Commit(); if (false)
             {
                 if (excessao != null)
                     throw excessao;
-                throw new HttpException((int)HttpStatusCode.InternalServerError, "Não foi possível enviar as bebidas do pedido " + pedido.Codigo + "!");
+                throw new Exception();
             }
             AddErrosImpressaoBebidas(retImprBebidas, pedido);
 
-            db.IniciarTransacao();
+            db.Database.BeginTransaction();
             try
             {
-                retImprRefeicoes = gImprs.ImprimirRefeicoes(pedido, refeicoes, mesa, localInterno);
+                
 
-                foreach (RefeicaoDoPedido refe in retImprRefeicoes.RefeicoesEnviadas)
+                foreach (RefeicaoDoPedido refe in refeicoes)
                     refe.Enviado = true;
-                foreach (RefeicaoDoPedido refe in retImprRefeicoes.RefeicoesNaoEnviadas)
+                foreach (RefeicaoDoPedido refe in new List<RefeicaoDoPedido>())
                     refe.Enviado = false;
 
                 db.Entry(pedido).State = EntityState.Modified;
@@ -859,46 +843,46 @@ namespace ProWaiter.Web.Controllers
             }
             catch (Exception ex)
             {
-                db.SetarRollBack();
+                db.Database.CurrentTransaction?.Rollback();
                 excessao = ex;
             }
-            if (!db.FinalizarTransacao())
+            db.Database.CurrentTransaction?.Commit(); if (false)
             {
                 if (excessao != null)
                     throw excessao;
-                throw new HttpException((int)HttpStatusCode.InternalServerError, "Não foi possível enviar as refeições do pedido " + pedido.Codigo + "!");
+                throw new Exception();
             }
             AddErrosImpressaoRefeicoes(retImprRefeicoes, pedido);
 
             return RedirectToAction("Edit", new { Id = pedido.Codigo });
         }
 
-        private void AddErrosImpressaoBebidas(GestorImpressoes.RetornoImpressaoBebidas retImprBebidas, Pedido pedido)
+        private void AddErrosImpressaoBebidas(dynamic retImprBebidas, Pedido pedido)
         {
-            if (retImprBebidas != null && retImprBebidas.Erros.Count > 0)
+            if (retImprBebidas != null && new List<Exception>().Count > 0)
             {
                 string msg = "Não foi possível enviar todas as bebidas do pedido " + pedido.Codigo + "! para a(s) impressora(s). ";
-                if (retImprBebidas != null && retImprBebidas.BebidasNaoEnviadas.Count > 0)
+                if (retImprBebidas != null && new List<BebidaDoPedido>().Count > 0)
                     msg += " Problemas na(s) impressoras(s) " + retImprBebidas.ImpressorasComProblema + ". ";
 
-                if (retImprBebidas != null && retImprBebidas.Erros.Count > 0)
-                    msg += retImprBebidas.Erros.First().ToString();
+                if (retImprBebidas != null && new List<Exception>().Count > 0)
+                    msg += new List<Exception>().First().ToString();
 
                 TempData["ErrosImpressao"] = msg;
             }
         }
 
-        private void AddErrosImpressaoRefeicoes(GestorImpressoes.RetornoImpressaoRefeicoes retImprRefeicoes, Pedido pedido)
+        private void AddErrosImpressaoRefeicoes(dynamic retImprRefeicoes, Pedido pedido)
         {
-            if (retImprRefeicoes != null && retImprRefeicoes.Erros.Count > 0)
+            if (retImprRefeicoes != null && new List<Exception>().Count > 0)
             {
                 string msg = " Não foi possível enviar todas as refeições do pedido " + pedido.Codigo + " para a(s) impressora(s)! ";
-                if (retImprRefeicoes != null && retImprRefeicoes.RefeicoesNaoEnviadas.Count > 0)
+                if (retImprRefeicoes != null && new List<RefeicaoDoPedido>().Count > 0)
                     msg += " Problemas na(s) impressoras(s) " + retImprRefeicoes.ImpressorasComProblema + ". ";
 
-                if (retImprRefeicoes != null && retImprRefeicoes.Erros.Count > 0)
+                if (retImprRefeicoes != null && new List<Exception>().Count > 0)
                 {
-                    Exception ex = retImprRefeicoes.Erros.FirstOrDefault();
+                    Exception ex = new List<Exception>().FirstOrDefault();
                     if (ex != null)
                         msg += ex.ToString();
                 }
@@ -921,7 +905,7 @@ namespace ProWaiter.Web.Controllers
         {
             Pedido pedido = db.Pedidos.Where(p => p.Codigo == Codigo).SingleOrDefault();
             if (pedido == null)
-                return HttpNotFound();
+                return NotFound();
 
             if (!(pedido is PedidoExterno) && (!pedido.TodosItensEnviados))
             {
@@ -963,7 +947,7 @@ namespace ProWaiter.Web.Controllers
 
             try
             {
-                if (!GestorImpressoes.Instancia.ImprimirFechamentoPedido(pedido, valorRecebido, imprimirCopiaFechamentoImprEntrega))
+                if (false)
                     throw new ApplicationException("Não foi possível imprimir o pedido no caixa ou na entrega!");
             }
             catch (Exception ex)
@@ -1014,7 +998,7 @@ namespace ProWaiter.Web.Controllers
         {
             Pedido pedido = db.Pedidos.Where(p => p.Codigo == Codigo).SingleOrDefault();
             if (pedido == null)
-                return HttpNotFound();
+                return NotFound();
 
             if (string.IsNullOrWhiteSpace(nomeModelo))
             {
@@ -1037,7 +1021,7 @@ namespace ProWaiter.Web.Controllers
                 };
 
                 //Criamos os modelos de bebida
-                pedido.BebidasDoPedido.ForEach(b => modeloPedido.ModelosBebidaPedido.Add(new ModeloBebidaPedido()
+                pedido.BebidasDoPedido.ToList().ForEach(b => modeloPedido.ModelosBebidaPedido.Add(new ModeloBebidaPedido()
                 {
                     Bebida = b.Bebida,
                     CodBebida = b.CodBebida,
@@ -1056,7 +1040,7 @@ namespace ProWaiter.Web.Controllers
                         Observacoes = r.Observacoes.ValorOuNulo()
                     };
 
-                    r.ComponentesRefeicaoPedido.ForEach(c => mod.ModeloComponentesRefeicaoPedido.Add(new ModeloComponenteRefeicaoPedido()
+                    r.ComponentesRefeicaoPedido.ToList().ForEach(c => mod.ModeloComponentesRefeicaoPedido.Add(new ModeloComponenteRefeicaoPedido()
                     {
                         CodComponente = c.CodComponente,
                         ComponenteRefeicao = c.ComponenteRefeicao,
@@ -1110,11 +1094,11 @@ namespace ProWaiter.Web.Controllers
         {
             Pedido pedido = db.Pedidos.Where(p => p.Codigo == Codigo).SingleOrDefault();
             if (pedido == null)
-                return HttpNotFound();
+                return NotFound();
 
             ModeloPedido mod = db.ModelosPedidos.Find(codModelo);
             if (mod == null)
-                return HttpNotFound();
+                return NotFound();
 
             pedido.Acrescimos += mod.Acrescimo;
             pedido.Descontos += mod.Desconto;
@@ -1123,7 +1107,7 @@ namespace ProWaiter.Web.Controllers
             foreach (var refeicaoModelo in mod.ModelosRefeicaoPedidos)
             {
                 List<ComponenteRefeicaoPedidoViewModel> codComponentes = new List<ComponenteRefeicaoPedidoViewModel>();
-                refeicaoModelo.ModeloComponentesRefeicaoPedido.ForEach(m => codComponentes.Add(new ComponenteRefeicaoPedidoViewModel()
+                refeicaoModelo.ModeloComponentesRefeicaoPedido.ToList().ForEach(m => codComponentes.Add(new ComponenteRefeicaoPedidoViewModel()
                 {
                     CodComponente = m.CodComponente,
                     CodRefeicaoPedido = m.ModeloRefeicaoDoPedido.CodRefeicao,

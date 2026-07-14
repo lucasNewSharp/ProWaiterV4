@@ -1,29 +1,28 @@
-﻿using ProWaiter.Web.Models.Entidades;
+using ProWaiter.Web.Models.Entidades;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.ModelConfiguration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Linq;
 using System.Web;
 
 namespace ProWaiter.Web.Models.Mapeamento
 {
-    public class ModeloRefeicaoPedidoConfiguration : EntityTypeConfiguration<ModeloRefeicaoPedido>
+    public class ModeloRefeicaoPedidoConfiguration : IEntityTypeConfiguration<ModeloRefeicaoPedido>
     {
-        public ModeloRefeicaoPedidoConfiguration()
+        public void Configure(EntityTypeBuilder<ModeloRefeicaoPedido> builder)
         {
-            ToTable("TBModeloAtribRefeicoesPedido")
+            builder.ToTable("TBModeloAtribRefeicoesPedido")
                 .HasKey(m => m.Codigo);
 
-            HasRequired(r => r.RefeicaoDoCardapio)
-               .WithMany()
+            builder.HasOne(r => r.RefeicaoDoCardapio).WithMany().IsRequired()
                .HasForeignKey(r => new { r.CodRefeicao, r.CodTamanho });
 
-            HasMany(r => r.ModeloComponentesRefeicaoPedido)
-            .WithOptional()
+            builder.HasMany(r => r.ModeloComponentesRefeicaoPedido)
+            .WithOne()
             .HasForeignKey(c => c.CodModeloRefeicaoPedido);
 
-            HasRequired(r => r.Tamanho)
-                .WithMany()
+            builder.HasOne(r => r.Tamanho).WithMany().IsRequired()
                 .HasForeignKey(r => r.CodTamanho);
         }
     }

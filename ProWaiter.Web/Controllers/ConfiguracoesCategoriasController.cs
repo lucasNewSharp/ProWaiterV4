@@ -1,11 +1,14 @@
-﻿using ProWaiter.Web.Models.Entidades;
+using Microsoft.EntityFrameworkCore;
+using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
 using ProWaiter.Web.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using System.Web.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProWaiter.Web.Controllers
 {
@@ -60,7 +63,7 @@ namespace ProWaiter.Web.Controllers
         {
             try
             {
-                var ids = collection["ids"].Split(',');
+                var ids = collection["ids"].ToString().Split(',');
                 byte pos = 0;
                 foreach (string id in ids)
                 {
@@ -73,7 +76,7 @@ namespace ProWaiter.Web.Controllers
                         tipo.Posicao = ++pos;
                         tipo.CorFundo = corFundo;
                         tipo.CorFonte = corFonte;
-                        db.Entry(tipo).State = System.Data.Entity.EntityState.Modified;
+                        db.Entry(tipo).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                     }
                     else
                     {
@@ -81,7 +84,7 @@ namespace ProWaiter.Web.Controllers
                         tipo.Posicao = ++pos;
                         tipo.CorFundo = corFundo;
                         tipo.CorFonte = corFonte;
-                        db.Entry(tipo).State = System.Data.Entity.EntityState.Modified;
+                        db.Entry(tipo).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
                     }
                 }
                 db.SaveChanges();
@@ -94,13 +97,13 @@ namespace ProWaiter.Web.Controllers
             }
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+//         // // protected void Dispose(bool disposing)
+//         {
+//             if (disposing)
+//             {
+//                 // // db.Dispose();
+//             }
+//             // base.Dispose(disposing);
+//         }
     }
 }
