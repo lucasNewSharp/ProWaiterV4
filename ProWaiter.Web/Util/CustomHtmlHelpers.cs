@@ -15,10 +15,9 @@ namespace ProWaiter.Web.Util
             var tagBuilder = new TagBuilder("input");            
             tagBuilder.AddCssClass("btn btn-primary");
             
-            // To properly resolve URL in extension method, we need IUrlHelper
-            // Here we assume it's used in Razor views where we could pass URL or generate it manually
-            // A simplified version:
-            string url = $"/{controller}/{action}";
+            var urlHelperFactory = (IUrlHelperFactory)htmlHelper.ViewContext.HttpContext.RequestServices.GetService(typeof(IUrlHelperFactory));
+            var urlHelper = urlHelperFactory.GetUrlHelper(htmlHelper.ViewContext);
+            string url = urlHelper.Action(action, controller, routedValues);
             string onClick = $"location.href='{url}'";
             
             tagBuilder.Attributes.Add("onclick", onClick);
@@ -67,8 +66,10 @@ namespace ProWaiter.Web.Util
             anchor.InnerHtml.AppendHtml(span);
             anchor.Attributes["title"] = linkToolTipo;
             anchor.AddCssClass(cor);
+            var urlHelperFactory = (IUrlHelperFactory)htmlHelper.ViewContext.HttpContext.RequestServices.GetService(typeof(IUrlHelperFactory));
+            var urlHelper = urlHelperFactory.GetUrlHelper(htmlHelper.ViewContext);
+            string url = urlHelper.Action(action, controller, routedValues);
             
-            string url = controller == null ? $"/{action}" : $"/{controller}/{action}";
             anchor.Attributes["href"] = url;
 
             return anchor;

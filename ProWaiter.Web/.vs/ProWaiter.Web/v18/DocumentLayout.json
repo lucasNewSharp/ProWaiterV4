@@ -3,31 +3,12 @@
   "WorkspaceRootPath": "N:\\src\\particular\\ProWaiterV4\\ProWaiter.Web\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|n:\\src\\particular\\prowaiterv4\\prowaiter.web\\controllers\\configuracoescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|solutionrelative:controllers\\configuracoescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|n:\\src\\particular\\prowaiterv4\\prowaiter.web\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|solutionrelative:controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|n:\\src\\particular\\prowaiterv4\\prowaiter.web\\util\\configuracoes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|solutionrelative:util\\configuracoes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|n:\\src\\particular\\prowaiterv4\\prowaiter.web\\wwwroot\\scripts\\pesquisarnatabela.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}|",
-      "RelativeMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|solutionrelative:wwwroot\\scripts\\pesquisarnatabela.js||{14D17961-FE51-464D-9111-C4AF11D7D99A}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|n:\\src\\particular\\prowaiterv4\\prowaiter.web\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|n:\\src\\particular\\prowaiterv4\\prowaiter.web\\models\\gestoresbd\\prowaitercontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|solutionrelative:models\\gestoresbd\\prowaitercontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|n:\\src\\particular\\prowaiterv4\\prowaiter.web\\models\\mapeamento\\pedidoexternoconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A6EAE8B3-F53E-4C16-8148-A279F0311611}|ProWaiter.Web.csproj|solutionrelative:models\\mapeamento\\pedidoexternoconfiguration.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\lucas\\AppData\\Roaming\\Microsoft\\UserSecrets\\7c5d2bc3-7ceb-4049-b746-a2887272cf61\\secrets.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -50,91 +31,27 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "AccountController.cs",
-              "DocumentMoniker": "N:\\src\\particular\\ProWaiterV4\\ProWaiter.Web\\Controllers\\AccountController.cs",
-              "RelativeDocumentMoniker": "Controllers\\AccountController.cs",
-              "ToolTip": "N:\\src\\particular\\ProWaiterV4\\ProWaiter.Web\\Controllers\\AccountController.cs",
-              "RelativeToolTip": "Controllers\\AccountController.cs",
-              "ViewState": "AgIAABgAAAAAAAAAAAAYwCgAAAAMAAAAAAAAAA==",
+              "Title": "ConfiguracoesController.cs",
+              "DocumentMoniker": "N:\\src\\particular\\ProWaiterV4\\ProWaiter.Web\\Controllers\\ConfiguracoesController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ConfiguracoesController.cs",
+              "ToolTip": "N:\\src\\particular\\ProWaiterV4\\ProWaiter.Web\\Controllers\\ConfiguracoesController.cs",
+              "RelativeToolTip": "Controllers\\ConfiguracoesController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-15T16:35:14.019Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "PesquisarNaTabela.js",
-              "DocumentMoniker": "N:\\src\\particular\\ProWaiterV4\\ProWaiter.Web\\wwwroot\\Scripts\\PesquisarNaTabela.js",
-              "RelativeDocumentMoniker": "wwwroot\\Scripts\\PesquisarNaTabela.js",
-              "ToolTip": "N:\\src\\particular\\ProWaiterV4\\ProWaiter.Web\\wwwroot\\Scripts\\PesquisarNaTabela.js",
-              "RelativeToolTip": "wwwroot\\Scripts\\PesquisarNaTabela.js",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001646|",
-              "WhenOpened": "2026-07-15T12:30:49.483Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "ProWaiterContext.cs",
-              "DocumentMoniker": "N:\\src\\particular\\ProWaiterV4\\ProWaiter.Web\\Models\\GestoresBD\\ProWaiterContext.cs",
-              "RelativeDocumentMoniker": "Models\\GestoresBD\\ProWaiterContext.cs",
-              "ToolTip": "N:\\src\\particular\\ProWaiterV4\\ProWaiter.Web\\Models\\GestoresBD\\ProWaiterContext.cs",
-              "RelativeToolTip": "Models\\GestoresBD\\ProWaiterContext.cs",
-              "ViewState": "AgIAAB4AAAAAAAAAAAAAADgAAAANAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-15T12:05:36.073Z",
+              "WhenOpened": "2026-07-15T19:23:48.278Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Configuracoes.cs",
-              "DocumentMoniker": "N:\\src\\particular\\ProWaiterV4\\ProWaiter.Web\\Util\\Configuracoes.cs",
-              "RelativeDocumentMoniker": "Util\\Configuracoes.cs",
-              "ToolTip": "N:\\src\\particular\\ProWaiterV4\\ProWaiter.Web\\Util\\Configuracoes.cs",
-              "RelativeToolTip": "Util\\Configuracoes.cs",
-              "ViewState": "AgIAAGwAAAAAAAAAAAAYwHYAAAAQAAAAAAAAAA==",
+              "Title": "AccountController.cs",
+              "DocumentMoniker": "N:\\src\\particular\\ProWaiterV4\\ProWaiter.Web\\Controllers\\AccountController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AccountController.cs",
+              "ToolTip": "N:\\src\\particular\\ProWaiterV4\\ProWaiter.Web\\Controllers\\AccountController.cs",
+              "RelativeToolTip": "Controllers\\AccountController.cs",
+              "ViewState": "AgIAABcAAAAAAAAAAAAowCgAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-15T12:04:11.283Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "PedidoExternoConfiguration.cs",
-              "DocumentMoniker": "N:\\src\\particular\\ProWaiterV4\\ProWaiter.Web\\Models\\Mapeamento\\PedidoExternoConfiguration.cs",
-              "RelativeDocumentMoniker": "Models\\Mapeamento\\PedidoExternoConfiguration.cs",
-              "ToolTip": "N:\\src\\particular\\ProWaiterV4\\ProWaiter.Web\\Models\\Mapeamento\\PedidoExternoConfiguration.cs",
-              "RelativeToolTip": "Models\\Mapeamento\\PedidoExternoConfiguration.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAYwAQAAAAkAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-15T11:36:23.61Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "N:\\src\\particular\\ProWaiterV4\\ProWaiter.Web\\appsettings.json",
-              "RelativeDocumentMoniker": "appsettings.json",
-              "ToolTip": "N:\\src\\particular\\ProWaiterV4\\ProWaiter.Web\\appsettings.json",
-              "RelativeToolTip": "appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAACmAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-07-15T11:33:13.674Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "secrets.json",
-              "DocumentMoniker": "C:\\Users\\lucas\\AppData\\Roaming\\Microsoft\\UserSecrets\\7c5d2bc3-7ceb-4049-b746-a2887272cf61\\secrets.json",
-              "ToolTip": "C:\\Users\\lucas\\AppData\\Roaming\\Microsoft\\UserSecrets\\7c5d2bc3-7ceb-4049-b746-a2887272cf61\\secrets.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-07-15T11:32:58.176Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-07-15T19:08:36.935Z"
             }
           ]
         }

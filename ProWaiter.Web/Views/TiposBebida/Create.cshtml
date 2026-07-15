@@ -1,4 +1,4 @@
-﻿@model ProWaiter.Web.Models.Entidades.TipoBebida
+@model ProWaiter.Web.Models.Entidades.TipoBebida
 
 @{
     ViewBag.Title = "Tipo de Bebida";
@@ -25,14 +25,14 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                @Html.Partial("_botaoCadastrar")
+                <partial name="_botaoCadastrar" />
             </div>
         </div>
     </div>
 }
 
 <div>
-    @Html.Partial("_botaoVoltarParaLista")
+    <partial name="_botaoVoltarParaLista" />
 </div>
 
 @section Scripts {

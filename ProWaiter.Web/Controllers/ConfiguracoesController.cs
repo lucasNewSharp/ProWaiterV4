@@ -91,7 +91,7 @@ namespace ProWaiter.Web.Controllers
 
         private void CarregarListaCidades(ConfiguracoesViewModel config)
         {
-            Cidade cidadeSelecionada = db.Cidades.Where(c => c.Codigo == config.CodCidade).Single();
+            Cidade cidadeSelecionada = db.Cidades.Include(c => c.UF).Where(c => c.Codigo == config.CodCidade).Single();
             config.ListaEstados = new SelectList(db.UFs.OrderBy(u => u.Nome), "Codigo", "Nome", cidadeSelecionada.UF.Codigo);
             config.ListaCidade = new SelectList(db.Cidades.Where(c => c.CodUF == cidadeSelecionada.UF.Codigo).OrderBy(c => c.Nome).ToList(), "Codigo", "Nome", config.CodCidade);
         }

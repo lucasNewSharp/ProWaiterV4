@@ -1,4 +1,4 @@
-﻿@model ProWaiter.Web.Models.Entidades.TipoBebida
+@model ProWaiter.Web.Models.Entidades.TipoBebida
 
 @{
     ViewBag.Title = "Tipo de Bebida";
@@ -21,8 +21,8 @@
     </dl>
 </div>
 <p>
-    @Html.Partial("_botaoVoltarParaLista")
-    @Html.Partial("_botaoEditar", new { id = Model.Codigo })
+    <partial name="_botaoVoltarParaLista" />
+    <partial name="_botaoEditar" model="new { id = Model.Codigo }" />
 </p>
 
 

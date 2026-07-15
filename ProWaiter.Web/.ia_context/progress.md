@@ -19,3 +19,7 @@
   - Ajustes de paths estáticos (`~/Content` e `~/Scripts`) nas Views para o Bootstrap e jQuery funcionarem pós-bundling legado.
   - Refatoração completa do `AccountController.cs` (Autenticação) utilizando .NET Core Identity de forma assíncrona, e ajustes das Views relacionadas.
   - Build alcançando 100% de sucesso sem quebras. Testes de renderização iniciados.
+  - **Correção do Schema do Identity Core**: Criação de script SQL local (`ScriptsMigration/01_Migracao_Identity_Core.sql`) para adicionar colunas `NormalizedUserName`, `NormalizedEmail`, `ConcurrencyStamp`, e criar as tabelas `AspNetUserTokens` e `AspNetRoleClaims` no banco de dados, suprindo as exigências do EF Core Identity.
+  - **Correção de Lazy Loading**: Ajuste no `ConfiguracoesController` (e aplicável como padrão de projeto) para utilizar o `.Include()` (Eager Loading) nas propriedades de navegação (`cidadeSelecionada.UF`), evitando `NullReferenceException` visto que o EF Core desabilita Lazy Loading por padrão.
+  - **Correção de Tipagem de Chave (Unboxing)**: Ajuste nas chamadas `db.Entity.Find(id)` em controllers como `TiposBebidaController` para prever `id.Value` em chaves anuláveis, mitigando `ArgumentException` pela tipagem estrita de PKs no EF Core.
+  - **Correção de Deadlocks e Rotas de Helpers**: Substituição das renderizações síncronas legadas (`@Html.Partial()`) por `<partial name="..." />` nas views, e injeção do `IUrlHelperFactory` na nossa classe customizada `CustomHtmlHelpers.cs` garantindo que atributos `href` preservem e gerem o `id` da rota corretamente na grid.

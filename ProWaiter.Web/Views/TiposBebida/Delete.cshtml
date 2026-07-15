@@ -1,4 +1,4 @@
-﻿@model ProWaiter.Web.Models.Entidades.TipoBebida
+@model ProWaiter.Web.Models.Entidades.TipoBebida
 
 @{
     ViewBag.Title = "Tipo de Bebida";
@@ -27,8 +27,8 @@
         @Html.AntiForgeryToken()
 
         <div class="form-actions no-color">
-            @Html.Partial("_botaoVoltarParaLista")
-            @Html.Partial("_botaoExcluir")
+            <partial name="_botaoVoltarParaLista" />
+            <partial name="_botaoExcluir" />
         </div>
     }
 </div>

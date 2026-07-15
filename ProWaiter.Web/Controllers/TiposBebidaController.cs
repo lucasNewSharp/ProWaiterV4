@@ -32,7 +32,7 @@ namespace ProWaiter.Web.Controllers
             {
                 return BadRequest();
             }
-            TipoBebida tipoBebida = db.TiposBebida.Find(id);
+            TipoBebida tipoBebida = db.TiposBebida.Find(id.Value);
             if (tipoBebida == null)
             {
                 return NotFound();
@@ -73,7 +73,7 @@ namespace ProWaiter.Web.Controllers
             {
                 return BadRequest();
             }
-            TipoBebida tipoBebida = db.TiposBebida.Find(id);
+            TipoBebida tipoBebida = db.TiposBebida.Find(id.Value);
             if (tipoBebida == null)
             {
                 return NotFound();
@@ -106,7 +106,7 @@ namespace ProWaiter.Web.Controllers
             {
                 return BadRequest();
             }
-            TipoBebida tipoBebida = db.TiposBebida.Find(id);
+            TipoBebida tipoBebida = db.TiposBebida.Find(id.Value);
             if (tipoBebida == null)
             {
                 return NotFound();
