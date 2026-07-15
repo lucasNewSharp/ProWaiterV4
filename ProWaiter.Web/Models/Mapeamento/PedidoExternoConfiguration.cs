@@ -14,7 +14,7 @@ namespace ProWaiter.Web.Models.Mapeamento
     {
         public void Configure(EntityTypeBuilder<PedidoExterno> builder)
         {
-            builder.ToTable("TBPedidosExternos").HasKey(p => p.Codigo);
+            builder.ToTable("TBPedidosExternos");
 
             builder.HasOne(p => p.Cliente).WithMany().IsRequired()
                 .HasForeignKey(p => p.CodCliente);

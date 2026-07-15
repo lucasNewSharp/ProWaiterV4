@@ -1,4 +1,4 @@
-﻿@using ProWaiter.Web.Util
+@using ProWaiter.Web.Util
 <!DOCTYPE html>
 <html>
 <head>
@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @RenderSection("metas", required: false)
     <title>@ViewBag.Title - ProWaiter</title>
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Content/Site.css" />
+    <script src="~/Scripts/modernizr-2.8.3.js"></script>
     @RenderSection("css", required: false)
     
 </head>
@@ -80,16 +81,20 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - ProWaiter by NewSharp - Versão @Configuracoes.ObterInstancia().Versao <b style="color: red">@Startup.MsgResultadoValidacao</b></p>
+            <p>&copy; @DateTime.Now.Year - ProWaiter by NewSharp - Versão @Configuracoes.ObterInstancia().Versao</p>
         </footer>
     </div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/bundles/jqueryval")
-    @Scripts.Render("~/bundles/validacaoJQueryPortugues")
-    @Scripts.Render("~/bundles/diversos")
+    <script src="~/Scripts/jquery-3.5.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/ValidadorJQueryPortugues.js"></script>
+    <script src="~/Scripts/diversos.js"></script>
 
     @RenderSection("scripts", required: false)
 </body>
 </html>
+
+
+

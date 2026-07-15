@@ -3,7 +3,7 @@
 
 @{
     ViewBag.Title = "Pedido Interno";
-    ViewBag.ReturnUrl = Request.RawUrl;
+    ViewBag.ReturnUrl = (Context.Request.Path + Context.Request.QueryString.ToString());
 }
 
 <h2>@AppResources.StringCriar</h2>
@@ -67,3 +67,5 @@
         $("#CodMesa").focus();
     </script>
 }
+
+

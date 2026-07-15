@@ -20,7 +20,7 @@
     }
 }
 
-@using (Html.BeginForm("Create", "RefeicoesDoCardapio", null, FormMethod.Post, htmlAttributes: new { @Id = "frmCriarRefeicaoDoCardapio" }))
+@using (Html.BeginForm("Create", "RefeicoesDoCardapio", null, FormMethod.Post, true, new { id = "frmCriarRefeicaoDoCardapio" }))
 {
     @Html.AntiForgeryToken()
 
@@ -239,3 +239,5 @@
         }
     </script>
 }                        
+
+

@@ -1,7 +1,7 @@
-@model ProWaiter.Web.Controllers.EnderecoClienteViewModel
+﻿@model ProWaiter.Web.Controllers.EnderecoClienteViewModel
 
 @{
-    ViewBag.Title = "Endereço do cliente";
+    ViewBag.Title = "EndereÃ§o do cliente";
     Layout = null;
 }
 
@@ -12,7 +12,7 @@
             <h4 class="modal-title">@ViewBag.Title</h4>
         </div>
         <div class="modal-body">
-            @using (Html.BeginForm("Create", "EnderecosClientes", new { returnUrl = ViewBag.ReturnUrl }, FormMethod.Post, htmlAttributes: new { @id = "formCadastroEnderecoCliente" }))
+            @using (Html.BeginForm("Create", "EnderecosClientes", new { returnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { id = "formCadastroEnderecoCliente" }))
             {
 
 
@@ -36,7 +36,7 @@
                     </div>
 
                     <div class="form-group">
-                        @Html.Label("Estados", "Estados", new { @class = "control-label col-md-3" })
+                        <label class="control-label col-md-3">Estados</label>
                         <div class="col-md-9">
                             @Html.DropDownList("CodUF", null, new { @class = "form-control", @id = "ddlEstados", @onchange = "PopularCidades();" })
                         </div>
@@ -48,12 +48,14 @@
                             <select name="CodCidade" class="form-control" id="ddlCidades">
                                 @foreach (var cidade in (List<ProWaiter.Web.Models.Entidades.Cidade>)ViewBag.Cidades)
                                 {
-                                    string selected = "";
                                     if (cidade.Codigo == Model.CodCidade)
                                     {
-                                        selected = "selected";
+                                        <option value="@cidade.Codigo" selected>@cidade.Nome</option>
                                     }
-                                    <option value="@cidade.Codigo" @selected>@cidade.Nome</option>
+                                    else
+                                    {
+                                        <option value="@cidade.Codigo">@cidade.Nome</option>
+                                    }
                                 }
                             </select>
                             @Html.ValidationMessageFor(model => model.CodCidade, "", new { @class = "text-danger" })
@@ -103,4 +105,7 @@
                 });
         }
 </script>
+
+
+
 

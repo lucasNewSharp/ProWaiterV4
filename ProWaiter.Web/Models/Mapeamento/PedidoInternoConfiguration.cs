@@ -14,7 +14,7 @@ namespace ProWaiter.Web.Models.Mapeamento
     {
         public void Configure(EntityTypeBuilder<PedidoInterno> builder)
         {
-            builder.ToTable("TBPedidosInternos").HasKey(p => p.Codigo);
+            builder.ToTable("TBPedidosInternos");
 
             builder.HasOne(p => p.LocalInterno)
                 .WithMany()

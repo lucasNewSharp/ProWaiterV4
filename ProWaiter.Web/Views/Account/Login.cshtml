@@ -1,4 +1,4 @@
-﻿@using ProWaiter.Web.Models
+@using ProWaiter.Web.Models
 @model LoginViewModel
 @{
     ViewBag.Title = "Log in";
@@ -8,8 +8,7 @@
 <div class="row">
     <div class="col-md-12">
         <section id="loginForm">
-            @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-            {
+            <form asp-controller="Account" asp-action="Login" asp-route-returnurl="@ViewBag.ReturnUrl" method="post" class="form-horizontal" role="form">
                 @Html.AntiForgeryToken()
                 <h4>Entre com um usuário para fazer log in.</h4>
                 <hr />
@@ -41,11 +40,14 @@
                         <input type="submit" value="Log in" class="btn btn-default" />
                     </div>
                 </div>                
-            }
+            </form>
         </section>
     </div>
 </div>
 
 @section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/jquery.validate.min.js"></script><script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 }
+
+
+

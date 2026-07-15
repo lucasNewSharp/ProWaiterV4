@@ -1,4 +1,3 @@
-/* 
 using NewSharp.Ferramentas.Impressoras.Termicas;
 using ProWaiter.Web.Models.Entidades;
 using ProWaiter.Web.Models.GestoresBD;
@@ -95,31 +94,15 @@ namespace ProWaiter.Web.Util
         #endregion
 
         /// <summary>
-        /// Obtem os tipos de impressoras em um objeto anônimo contendo "Nome" e "Valor"
+        /// Obtem os tipos de impressoras em um objeto anÃ´nimo contendo "Nome" e "Valor"
         /// </summary>
-        /// <returns>Objeto anônimo contendo "Nome" e "Valor"</returns>
+        /// <returns>Objeto anÃ´nimo contendo "Nome" e "Valor"</returns>
         public object[] ObterTiposImpressoras()
         {
             return TiposImpressoras.Values.Select(t => new { Nome = t.NomeParaExibicao, Valor = t.GetType().FullName }).Distinct().OrderBy(t => t.Nome).ToArray();
         }
 
-        public string[] ObterNomesImpressorasInstaladas()
-        {
-            var searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_Printer");
-            var results = searcher.Get();
-
-            IList<string> printers = new List<string>();
-
-            foreach (var printer in results)
-            {
-                if ((bool)printer["Local"])
-                {
-                    printers.Add((string)printer["Name"]);
-                }
-            }
-
-            return printers.ToArray();
-        }
+        public string[] ObterNomesImpressorasInstaladas() { return new string[0]; }
 
         public string ObterNomeParaExibicao(Type tipoImpressora)
         {
@@ -155,7 +138,7 @@ namespace ProWaiter.Web.Util
             else
             {
                 if (mesa != null)
-                    return CriarRetornoRefeicoesComErro(refeicoesDoPedido, new ApplicationException("O Pedido para entrega não deve ter uma mesa ao gerar uma impressao!"));
+                    return CriarRetornoRefeicoesComErro(refeicoesDoPedido, new ApplicationException("O Pedido para entrega nÃ£o deve ter uma mesa ao gerar uma impressao!"));
                 return ImprimirRefeicoes(pedido, refeicoesDoPedido, reimpressao);
             }
         }
@@ -189,7 +172,7 @@ namespace ProWaiter.Web.Util
                         {
                             retorno.RefeicoesNaoEnviadas.AddRange(refeicoes);
                             retorno.ImpressorasComProblema += impressora.Local + "\n";
-                            retorno.Erros.Add(new ApplicationException("Não foi possível imprimir as refeições da mesa " + mesa.Descricao + "(pedido " + pedido.Codigo + ")!"));
+                            retorno.Erros.Add(new ApplicationException("NÃ£o foi possÃ­vel imprimir as refeiÃ§Ãµes da mesa " + mesa.Descricao + "(pedido " + pedido.Codigo + ")!"));
                         }
                         else
                             retorno.RefeicoesEnviadas.AddRange(refeicoes);
@@ -234,7 +217,7 @@ namespace ProWaiter.Web.Util
                         {
                             retorno.RefeicoesNaoEnviadas.AddRange(refeicoes);
                             retorno.ImpressorasComProblema += impressora.Local + "\n";
-                            retorno.Erros.Add(new ApplicationException("Não foi possível imprimir as refeições do pedido " + pedido.Codigo + "!"));
+                            retorno.Erros.Add(new ApplicationException("NÃ£o foi possÃ­vel imprimir as refeiÃ§Ãµes do pedido " + pedido.Codigo + "!"));
                         }
                         else
                             retorno.RefeicoesEnviadas.AddRange(refeicoes);
@@ -281,9 +264,9 @@ namespace ProWaiter.Web.Util
             else if (pedido is PedidoExterno)
             {
                 if (mesa != null)
-                    return CriarRetornoBebibasComErro(bebidas, new ApplicationException("O Pedido externo não deve ter uma mesa ou comanda ao gerar uma impressao!"));
+                    return CriarRetornoBebibasComErro(bebidas, new ApplicationException("O Pedido externo nÃ£o deve ter uma mesa ou comanda ao gerar uma impressao!"));
                 if (localInterno != null)
-                    return CriarRetornoBebibasComErro(bebidas, new ApplicationException("O Pedido externo não deve ter um local interno ao gerar uma impressao!"));
+                    return CriarRetornoBebibasComErro(bebidas, new ApplicationException("O Pedido externo nÃ£o deve ter um local interno ao gerar uma impressao!"));
                 return ImprimirBebidas((PedidoExterno)pedido, bebidas, reimpressao);
             }
             else
@@ -319,7 +302,7 @@ namespace ProWaiter.Web.Util
                         {
                             retorno.BebidasNaoEnviadas.AddRange(bebidas);
                             retorno.ImpressorasComProblema += impressora.Local + "\n";
-                            retorno.Erros.Add(new ApplicationException("Não foi possível imprimir as bebidas do pedido " + pedido.Codigo + "!"));
+                            retorno.Erros.Add(new ApplicationException("NÃ£o foi possÃ­vel imprimir as bebidas do pedido " + pedido.Codigo + "!"));
                         }
                         else
                             retorno.BebidasEnviadas.AddRange(bebidas);
@@ -363,7 +346,7 @@ namespace ProWaiter.Web.Util
                         {
                             retorno.BebidasNaoEnviadas.AddRange(bebidas);
                             retorno.ImpressorasComProblema += impressora.Local + "\n";
-                            retorno.Erros.Add(new ApplicationException("Não foi possível imprimir as bebidas do pedido " + pedido.Codigo + "!"));
+                            retorno.Erros.Add(new ApplicationException("NÃ£o foi possÃ­vel imprimir as bebidas do pedido " + pedido.Codigo + "!"));
                         }
                         else
                             retorno.BebidasEnviadas.AddRange(bebidas);
@@ -408,7 +391,7 @@ namespace ProWaiter.Web.Util
                             )
                         {
                             retorno.BebidasNaoEnviadas.AddRange(bebidas);
-                            retorno.Erros.Add(new ApplicationException("Não foi possível imprimir as bebidas da mesa " + mesa.Descricao + "(pedido " + pedido.Codigo + ")!"));
+                            retorno.Erros.Add(new ApplicationException("NÃ£o foi possÃ­vel imprimir as bebidas da mesa " + mesa.Descricao + "(pedido " + pedido.Codigo + ")!"));
                         }
                         else
                             retorno.BebidasEnviadas.AddRange(bebidas);
@@ -429,8 +412,8 @@ namespace ProWaiter.Web.Util
 
         private string GerarRodape(bool reimpressao, int numImpressoras)
         {
-            string rodape = DateTime.Now.ToString() + " - Impressão {0} de " + numImpressoras;
-            if (reimpressao) rodape += "\r\n************* REIMPRESSÃO *************";
+            string rodape = DateTime.Now.ToString() + " - ImpressÃ£o {0} de " + numImpressoras;
+            if (reimpressao) rodape += "\r\n************* REIMPRESSÃƒO *************";
             return rodape;
         }
 
@@ -459,7 +442,7 @@ namespace ProWaiter.Web.Util
                 ObterImpressoraDoCaixa()
             };
 
-            //Se for pedido externo verificamos se é necessário imprimir uma cópia do ticket de fechamento na impressora da entrega
+            //Se for pedido externo verificamos se Ã© necessÃ¡rio imprimir uma cÃ³pia do ticket de fechamento na impressora da entrega
             if (pedido is PedidoExterno && imprimirCopiaFechamentoImprEntrega)
             {
                 Impressora imprEntrega = ObterImpressoraDeEntrega();
@@ -509,7 +492,7 @@ namespace ProWaiter.Web.Util
             {
                 Impressora impDoCaixa = db.Impressoras.FirstOrDefault(i => i.EhDoCaixa);
                 if (impDoCaixa == null)
-                    throw new ApplicationException("Não foi encontrada uma impressora cadastrada no caixa!");
+                    throw new ApplicationException("NÃ£o foi encontrada uma impressora cadastrada no caixa!");
                 return impDoCaixa;
             }
         }
@@ -523,7 +506,7 @@ namespace ProWaiter.Web.Util
                 {
                     impDeEntrega = db.Impressoras.FirstOrDefault(i => i.EhDoCaixa);
                     if (impDeEntrega == null)
-                        throw new ApplicationException("Não foi encontrada uma impressora cadastrada na entrega e nem no caixa!");
+                        throw new ApplicationException("NÃ£o foi encontrada uma impressora cadastrada na entrega e nem no caixa!");
                 }
                 return impDeEntrega;
             }
@@ -535,14 +518,14 @@ namespace ProWaiter.Web.Util
             {
                 case eStatusImpressora.Normal: return true;
                 case eStatusImpressora.TampaAberta:
-                    throw new ApplicationException("A impressora " + tipoImpressora.ImpressoraConectada.Nome + " está com a tampa aberta!");
+                    throw new ApplicationException("A impressora " + tipoImpressora.ImpressoraConectada.Nome + " estÃ¡ com a tampa aberta!");
                 case eStatusImpressora.SemPapel:
-                    throw new ApplicationException("A impressora " + tipoImpressora.ImpressoraConectada.Nome + " está sem papel!");
+                    throw new ApplicationException("A impressora " + tipoImpressora.ImpressoraConectada.Nome + " estÃ¡ sem papel!");
                 case eStatusImpressora.Desconhecido:
-                    throw new ApplicationException("A impressora " + tipoImpressora.ImpressoraConectada.Nome + " está com um erro desconhecido!");
+                    throw new ApplicationException("A impressora " + tipoImpressora.ImpressoraConectada.Nome + " estÃ¡ com um erro desconhecido!");
             }
             return false;
         }
     }
 }
- */
+

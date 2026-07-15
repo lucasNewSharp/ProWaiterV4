@@ -1,5 +1,4 @@
-/* 
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -46,9 +45,9 @@ namespace ProWaiter.Web.Util
         private void ValidarImpressoraConectada()
         {
             if (ImprEscPos == null)
-                throw new ApplicationException("A ImpressoraEscPos do ProWaiter não foi conectada!");
+                throw new ApplicationException("A ImpressoraEscPos do ProWaiter nÃ£o foi conectada!");
             if (ImpressoraConectada == null)
-                throw new ApplicationException("A ImpressoraEscPos do ProWaiter não foi conectada");
+                throw new ApplicationException("A ImpressoraEscPos do ProWaiter nÃ£o foi conectada");
         }
 
         public bool CortarPapel()
@@ -115,11 +114,11 @@ namespace ProWaiter.Web.Util
                     impr.ImprimirTexto("Telefone 2: " + cliente.Telefone2 + "\r\n");
 
                 impr
-                    .ImprimirTexto("Endereço: " + pedExterno.EnderecoCliente?.Endereco + "\r\n")
+                    .ImprimirTexto("EndereÃ§o: " + pedExterno.EnderecoCliente?.Endereco + "\r\n")
                     .ImprimirTexto("Bairro: " + pedExterno.EnderecoCliente?.Bairro + "\t " + pedExterno.EnderecoCliente?.Cidade.ToString() + "\r\n");
 
                 if (!string.IsNullOrWhiteSpace(pedido.Observacoes))
-                    impr.ImprimirTexto("Observações: " + pedido.Observacoes + "\r\n");
+                    impr.ImprimirTexto("ObservaÃ§Ãµes: " + pedido.Observacoes + "\r\n");
 
                 impr.SelecionarFonte(eFonte.AlturaDupla);
             }
@@ -132,7 +131,7 @@ namespace ProWaiter.Web.Util
                 .SelecionarFonte(eFonte.AlturaDupla);
             }
             else
-                throw new ArgumentException("O pedido deve ser externo ou para levar na chamada do método GerarCabecalho!", "pedido");
+                throw new ArgumentException("O pedido deve ser externo ou para levar na chamada do mÃ©todo GerarCabecalho!", "pedido");
             return impr;
         }
 
@@ -345,7 +344,7 @@ namespace ProWaiter.Web.Util
             if (!_config.ExibirAdicionaisMolhosPedidoEntrega)
                 return true;
 
-            //Se não existe nada não imprimimos
+            //Se nÃ£o existe nada nÃ£o imprimimos
             if ((!pedidoExterno.Maionese.HasValue || !pedidoExterno.Maionese.Value) &&
                 (!pedidoExterno.Mostarda.HasValue || !pedidoExterno.Mostarda.Value) &&
                 (!pedidoExterno.Catchup.HasValue || !pedidoExterno.Catchup.Value))
@@ -433,7 +432,7 @@ namespace ProWaiter.Web.Util
         private bool ImprimirRestanteTodoPedido(RetornoImpressoraTermica impr, Pedido pedido, eTipoImpressao tipoImpressao, decimal? valorRecebido)
         {
             ImprimirLinhaSeparadora(impr, eFonte.Padrao)
-                .ImprimirTexto("*** REFEIÇÕES ***\r\n");
+                .ImprimirTexto("*** REFEIÃ‡Ã•ES ***\r\n");
 
             ImprimirRefeicoes(impr, pedido.RefeicoesDoPedido, tipoImpressao);
 
@@ -460,7 +459,7 @@ namespace ProWaiter.Web.Util
                 .ImprimirLinhasEmBranco();
 
             ImprimirLinhaSeparadora(impr, eFonte.Padrao)
-                .ImprimirTexto(String.Format("  ACRÉSCIMO {0:C}\r\n", pedido.Acrescimos))
+                .ImprimirTexto(String.Format("  ACRÃ‰SCIMO {0:C}\r\n", pedido.Acrescimos))
                 .ImprimirTexto(String.Format("   DESCONTO {0:C}\r\n", pedido.Descontos));
 
             if (valorRecebido.HasValue)
@@ -513,4 +512,3 @@ namespace ProWaiter.Web.Util
         }
     }
 }
- */

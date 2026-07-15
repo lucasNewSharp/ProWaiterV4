@@ -6,7 +6,7 @@
 
 <h2>@AppResources.StringEditar</h2>
 
-@using (Html.BeginForm("Edit", "Bebidas", null, FormMethod.Post, htmlAttributes: new { @Id = "frmEditarBebida" }))
+@using (Html.BeginForm("Edit", "Bebidas", null, FormMethod.Post, true, new { id = "frmEditarBebida" }))
 {
     @Html.AntiForgeryToken()
 
@@ -94,3 +94,6 @@
         })
     </script>
 }
+
+
+

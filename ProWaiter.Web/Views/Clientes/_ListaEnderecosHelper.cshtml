@@ -51,7 +51,7 @@
             </td>
             <td>
                 <div class="btn btn-warning glyphicon glyphicon-edit" onclick="ModalEditarEndereco(@item.Codigo)" title="Editar"></div>
-                <a class="btn btn-danger" onclick="javascript: PedirConfirmacao('@Url.Action("Delete", "EnderecosClientes", new { id = item.Codigo })?returnUrl=@Url.Encode(Request.RawUrl)', @item.Codigo)">
+                <a class="btn btn-danger" onclick="javascript: PedirConfirmacao('@Url.Action("Delete", "EnderecosClientes", new { id = item.Codigo })?returnUrl=@System.Net.WebUtility.UrlEncode(Context.Request.Path + Context.Request.QueryString.ToString())', @item.Codigo)">
                     <span class="glyphicon glyphicon-remove"></span>
                 </a>
 
@@ -82,6 +82,9 @@
                 });
         }
 </script>
+
+
+
 
 
 

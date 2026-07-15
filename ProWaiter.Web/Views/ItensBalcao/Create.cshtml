@@ -6,7 +6,7 @@
 
 <h2>@AppResources.StringCriar</h2>
 
-@using (Html.BeginForm("Create", "ItensBalcao", null, FormMethod.Post, htmlAttributes: new { @Id = "frmCriarItemBalcao" }))
+@using (Html.BeginForm("Create", "ItensBalcao", null, FormMethod.Post, true, new { id = "frmCriarItemBalcao" }))
 {
     @Html.AntiForgeryToken()
 
@@ -84,3 +84,6 @@
         })
     </script>
 }
+
+
+

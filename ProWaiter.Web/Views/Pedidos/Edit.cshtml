@@ -1471,7 +1471,7 @@
 
         function ModalCadastroEndereco() {
             var codCliente = $("#pedExterno_CodCliente").val()
-            $("#modalEndereco").load("@Url.Action("Create", "EnderecosClientes")?codCliente=" + codCliente + "&codCidade=0" + "&returnUrl=@Url.Encode(Request.RawUrl)", function () {
+            $("#modalEndereco").load("@Url.Action("Create", "EnderecosClientes")?codCliente=" + codCliente + "&codCidade=0" + "&returnUrl=@System.Net.WebUtility.UrlEncode(Context.Request.Path + Context.Request.QueryString.ToString())", function () {
                 $("#modalEndereco").modal();
                 $("#Endereco").focus();
                 $.validator.unobtrusive.parse("#formCadastroEnderecoCliente");
@@ -1480,7 +1480,7 @@
 
         function ModalEditarEndereco(codEndereco) {
             var codEndereco = $("#ddlEnderecos").val();
-            $("#modalEndereco").load("@Url.Action("Edit", "EnderecosClientes")?id=" + codEndereco + "&returnUrl=@Url.Encode(Request.RawUrl)", function () {
+            $("#modalEndereco").load("@Url.Action("Edit", "EnderecosClientes")?id=" + codEndereco + "&returnUrl=@System.Net.WebUtility.UrlEncode(Context.Request.Path + Context.Request.QueryString.ToString())", function () {
                 $("#modalEndereco").modal();
                 $("#Endereco").focus();
                 $.validator.unobtrusive.parse("#formEditarEnderecoCliente");
@@ -1600,3 +1600,5 @@
 
     </script>
 }
+
+

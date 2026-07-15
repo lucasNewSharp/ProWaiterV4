@@ -1,5 +1,4 @@
-/* 
-using NewSharp.Ferramentas.Impressoras.Termicas;
+﻿using NewSharp.Ferramentas.Impressoras.Termicas;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,8 +15,7 @@ namespace ProWaiter.Web.Util
 
         protected override IImpressoraTermica InstanciarImpressoraTermica()
         {
-            return new ElginI9();
+            return new TcpEscPosPrinter();
         }
     }
 }
- */

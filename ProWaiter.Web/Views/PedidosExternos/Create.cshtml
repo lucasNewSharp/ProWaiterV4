@@ -3,7 +3,7 @@
 
 @{
     ViewBag.Title = "Pedido Para Entrega";
-    ViewBag.ReturnUrl = Request.RawUrl;
+    ViewBag.ReturnUrl = (Context.Request.Path + Context.Request.QueryString.ToString());
 }
 
 <h2>@AppResources.StringCriar</h2>
@@ -142,7 +142,7 @@
             //Adicionar validação para o form de cadastro de clientes            
 
             $(".btnCadastrarCliente").click(function () {
-                $("#modal").load("@Url.Action("Create", "Clientes", new { Modal = true })&returnUrl=@Url.Encode(Request.RawUrl)", function () {
+                $("#modal").load("@Url.Action("Create", "Clientes", new { Modal = true })&returnUrl=@System.Net.WebUtility.UrlEncode(Context.Request.Path + Context.Request.QueryString.ToString())", function () {
                     $("#modal").modal();
                     $("#Nome").focus();
                     $.validator.unobtrusive.parse("#formCadastroCliente");
@@ -151,7 +151,7 @@
 
             $(".btnEditarCliente").click(function () {
                 var codCliente = $('#ddlClientes').val();
-                $("#modal").load("@Url.Action("Edit", "Clientes")?id=" + codCliente + "&modal=true&returnUrl=@Url.Encode(Request.RawUrl)", function () {
+                $("#modal").load("@Url.Action("Edit", "Clientes")?id=" + codCliente + "&modal=true&returnUrl=@System.Net.WebUtility.UrlEncode(Context.Request.Path + Context.Request.QueryString.ToString())", function () {
                     $("#modal").modal();
                     $("#Nome").focus();
                 });
@@ -163,7 +163,7 @@
 
             var novoCadastro = '@ViewBag.NovoTelefoneCadastro';
             if (novoCadastro != '') {
-                $("#modal").load("@Url.Action("Create", "Clientes", new { Modal = true })&returnUrl=@Url.Encode(Request.RawUrl)", function () {
+                $("#modal").load("@Url.Action("Create", "Clientes", new { Modal = true })&returnUrl=@System.Net.WebUtility.UrlEncode(Context.Request.Path + Context.Request.QueryString.ToString())", function () {
                     $("#modal").modal();
                     $("#Nome").focus();
                     $("#Telefone1").val(novoCadastro);
@@ -174,7 +174,7 @@
         function ModalCadastroEndereco() {
             var codCliente = $('#ddlClientes').val();
             var codCidade = $("#CodCidade").val();
-            $("#modal").load("@Url.Action("Create", "EnderecosClientes")?codCliente=" + codCliente + "&codCidade=" + codCidade + "&returnUrl=@Url.Encode(Request.RawUrl)", function () {
+            $("#modal").load("@Url.Action("Create", "EnderecosClientes")?codCliente=" + codCliente + "&codCidade=" + codCidade + "&returnUrl=@System.Net.WebUtility.UrlEncode(Context.Request.Path + Context.Request.QueryString.ToString())", function () {
                 $("#modal").modal();
                 $("#Endereco").focus();
                 $.validator.unobtrusive.parse("#formCadastroEnderecoCliente");
@@ -183,7 +183,7 @@
 
         function ModalEdicaoEndereco() {
             var id = $('#cmbEnderecos').val();
-            $("#modal").load("@Url.Action("Edit", "EnderecosClientes")?id=" + id + "&returnUrl=@Url.Encode(Request.RawUrl)", function () {
+            $("#modal").load("@Url.Action("Edit", "EnderecosClientes")?id=" + id + "&returnUrl=@System.Net.WebUtility.UrlEncode(Context.Request.Path + Context.Request.QueryString.ToString())", function () {
                 $("#modal").modal();
                 $("#Endereco").focus();
                 $.validator.unobtrusive.parse("#formEditarEnderecoCliente");                
@@ -300,3 +300,5 @@
         }
     </script>
 }
+
+

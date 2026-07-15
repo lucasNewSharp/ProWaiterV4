@@ -48,7 +48,7 @@
 @{
     bool imprimirLanchesPedidoExterno = Configuracoes.ObterInstancia().ImprimirLanchesPedidoExterno;
     <p>
-        @Html.Partial("../Pedidos/_botoesAcaoDetalhesPedido", new ViewDataDictionary { { "id", Model.Codigo }, { "imprimirPedidoExterno", imprimirLanchesPedidoExterno } })
+        @Html.Partial("../Pedidos/_botoesAcaoDetalhesPedido", new ViewDataDictionary(ViewData) { { "id", Model.Codigo }, { "imprimirPedidoExterno", imprimirLanchesPedidoExterno } })
     </p>
 }
 
@@ -71,3 +71,5 @@
         });
     </script>
 }
+
+

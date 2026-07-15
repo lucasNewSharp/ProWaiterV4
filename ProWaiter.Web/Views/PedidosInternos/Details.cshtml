@@ -43,7 +43,7 @@
 </div>
 
 <p>
-    @Html.Partial("../Pedidos/_botoesAcaoDetalhesPedido", new ViewDataDictionary { { "id", Model.Codigo } })
+    @Html.Partial("../Pedidos/_botoesAcaoDetalhesPedido", new ViewDataDictionary(ViewData) { { "id", Model.Codigo } })
 </p>
 
 @section scripts{
@@ -66,3 +66,5 @@
         });
     </script>
 }
+
+

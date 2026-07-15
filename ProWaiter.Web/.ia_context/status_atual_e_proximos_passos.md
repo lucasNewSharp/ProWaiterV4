@@ -15,18 +15,19 @@
   - Isolamento de componentes de baixo nível/desktop que não são suportados em .NET Core (como o legado `GestorImpressoes`).
 - **Resultado Final do Dia:** O código C# do backend foi totalmente validado e compila com **0 erros** no .NET 10.
 
+## Atualizações Recentes (15/07/2026):
+- **Nova Arquitetura de Impressão (Sockets/TCP):** A dependência legado do `NewSharp` foi completamente substituída por uma arquitetura nativa. Os comandos ESC/POS são enviados agora via Socket direto do Kestrel em .NET 10. A opção de desenvolvedor `ImpressoraArquivoTexto` foi mantida.
+- **Correção da Camada de Banco de Dados:** A configuração de herança do EF Core (TPT) foi ajustada removendo `.HasKey` duplicado nas classes filhas do `Pedido`. Além disso, foi implementado um *fallback* inteligente no `OnConfiguring` do Contexto para ler do `appsettings.json`, dispensando refatorar todos os `new ProWaiterContext()` do código legado.
+- **Resgate Visual (CSS/JS):** Os caminhos de empacotamento extintos do ASP.NET Framework (`~/css/css.css`) foram mapeados diretamente aos arquivos reais no `wwwroot/Content` e `wwwroot/Scripts`, consertando a quebra visual completa que estava impedindo o render do Bootstrap e jQuery.
+- **Refatoração da Autenticação:** A parte de segurança (`AccountController`) legada travava por usar OWIN. O componente foi integralmente recriado usando injeção asíncrona de `SignInManager<ApplicationUser>` e `UserManager<ApplicationUser>`, restabelecendo o formulário de Login e proteção `[Authorize]`.
+
 ## O que falta fazer (Próximos Passos):
 
-1. **Reativar e Refatorar o Frontend (Views Razor):**
-   - Remover a exclusão de compilação dos arquivos `.cshtml` no `ProWaiter.Web.csproj`.
-   - Substituir os `HtmlHelpers` legados (ex: `@Html.BeginForm()`) pelos modernos `TagHelpers` do ASP.NET Core (`<form asp-controller="...">`).
-   - Resolver quebras de sintaxe no Razor causadas pela mudança de framework.
+1. **Revisar e Limpar Avisos de Renderização Restantes:**
+   - O compilador acusa avisos (`MVC1000`) quanto ao uso de `@Html.Partial()` no Razor, alertando risco de *deadlocks*. Devemos refatorar esses pontos para `<partial name="..." />` nas Views de Pedidos e Cardápio para assegurar a máxima estabilidade sob tráfego.
 
-2. **Revisar Configuração e Injeção de Dependências (DI):**
-   - Garantir que `ProWaiterContext`, serviços do Identity e outras lógicas internalizadas estejam sendo registradas perfeitamente no pipeline do `Program.cs`.
+2. **Testes Extensivos da Regra de Negócios:**
+   - Uma vez autenticado e com as Views visíveis, é vital validar o fluxo core: a criação de um pedido, transição pelas tabelas filhas (Externo, Interno, etc), o envio para a cozinha, e certificar que as regras antigas fluem como esperado na engine nova do EF Core.
 
-3. **Arquitetar a Nova Solução de Impressão:**
-   - Desenhar um novo fluxo para substituir o `GestorImpressoes` (possivelmente uma API para comunicação com agentes de impressão locais ou websockets), visto que a aplicação web no Kestrel roda isolada do hardware do cliente.
-
-4. **Testes de Conectividade e Runtime:**
-   - Executar a aplicação e garantir que a nova engine do EF Core traduz perfeitamente as regras de negócio complexas do sistema antigo e que as transações no banco se mantêm íntegras.
+3. **Verificação de Integração Física:**
+   - Testar o envio de um pedido e verificar a saída para a "impressora de texto" ou para um IP de impressora na rede local para assegurar que os bytes ESC/POS gerados via Sockets pela nova biblioteca não sofrem corrupção.

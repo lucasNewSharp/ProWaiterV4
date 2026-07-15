@@ -1,11 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <MvcRazorCompileOnBuild>false</MvcRazorCompileOnBuild>
-    <MvcRazorCompileOnPublish>false</MvcRazorCompileOnPublish>
+    <MvcRazorCompileOnBuild>true</MvcRazorCompileOnBuild>
+    <MvcRazorCompileOnPublish>true</MvcRazorCompileOnPublish>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>7c5d2bc3-7ceb-4049-b746-a2887272cf61</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,14 +19,9 @@
     </PackageReference>
     <PackageReference Include="System.Management" Version="10.0.9" />
   </ItemGroup>
-
   <ItemGroup>
     <Content Remove="Views\**\*.legacy\**\*.cshtml" />
     <None Include="Views\**\*.legacy\**\*.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Remove="Views\**\*.cshtml" />
-    <None Remove="Views\**\*.cshtml" />
-    <Compile Remove="Views\**\*.cshtml" />
+    <Compile Remove="Views\**\*.legacy\**\*.cshtml" />
   </ItemGroup>
 </Project>

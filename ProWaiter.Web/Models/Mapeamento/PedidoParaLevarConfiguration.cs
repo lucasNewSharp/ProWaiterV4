@@ -14,7 +14,7 @@ namespace ProWaiter.Web.Models.Mapeamento
     {
         public void Configure(EntityTypeBuilder<PedidoParaLevar> builder)
         {
-            builder.ToTable("TBPedidosParaLevar").HasKey(p => p.Codigo);
+            builder.ToTable("TBPedidosParaLevar");
         }
     }
 }

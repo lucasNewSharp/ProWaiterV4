@@ -47,7 +47,13 @@ namespace ProWaiter.Web.Models.GestoresBD
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=ProWaiterV4;Trusted_Connection=True;MultipleActiveResultSets=true");
+                var configuration = new Microsoft.Extensions.Configuration.ConfigurationBuilder()
+                    .SetBasePath(System.IO.Directory.GetCurrentDirectory())
+                    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                    .Build();
+
+                var connectionString = configuration.GetConnectionString("ProWaiterContext");
+                optionsBuilder.UseSqlServer(connectionString);
             }
         }
 

@@ -1,5 +1,4 @@
-/* 
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -187,7 +186,7 @@ namespace ProWaiter.Web.Util
                 string arquivo = GerarNomeArquivo(pedido);
 
                 StringBuilder sb = GerarCabecalho(pedido, mesa, true, null);
-                sb.Append("*** REFEIÇÕES ***\r\n");
+                sb.Append("*** REFEIÃ‡Ã•ES ***\r\n");
                 ImprimirRefeicoes(pedido.RefeicoesDoPedido, sb);
                 sb.Append("**** BEBIDAS ****\r\n");
                 ImprimirBebidas(pedido.BebidasDoPedido, sb);
@@ -208,7 +207,7 @@ namespace ProWaiter.Web.Util
                 string arquivo = GerarNomeArquivo(pedido);
 
                 StringBuilder sb = GerarCabecalho(pedido);
-                sb.Append("*** REFEIÇÕES ***\r\n");
+                sb.Append("*** REFEIÃ‡Ã•ES ***\r\n");
                 ImprimirRefeicoes(pedido.RefeicoesDoPedido, sb);
                 sb.Append("**** BEBIDAS ****\r\n");
                 ImprimirBebidas(pedido.BebidasDoPedido, sb);
@@ -223,4 +222,3 @@ namespace ProWaiter.Web.Util
         }
     }
 }
- */

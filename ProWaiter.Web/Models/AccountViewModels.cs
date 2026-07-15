@@ -1,7 +1,8 @@
-using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNetCore.Identity;
 using ProWaiter.Web.Util;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
 
 namespace ProWaiter.Web.Models
@@ -21,7 +22,7 @@ namespace ProWaiter.Web.Models
     public class SendCodeViewModel
     {
         public string SelectedProvider { get; set; }
-        public ICollection<System.Web.Mvc.SelectListItem> Providers { get; set; }
+        public ICollection<SelectListItem> Providers { get; set; }
         public string ReturnUrl { get; set; }
         public bool RememberMe { get; set; }
     }
@@ -70,9 +71,7 @@ namespace ProWaiter.Web.Models
         public RegisterViewModel(ApplicationUser usuario)
         {
             UserName = usuario.UserName;
-            EhAdministrador = usuario.Roles.Any(r => r.RoleId == Constantes.GrupoAdministradores);
-            EhCaixa = usuario.Roles.Any(r => r.RoleId == Constantes.GrupoCaixas);
-            EhGarcom = usuario.Roles.Any(r => r.RoleId == Constantes.GrupoGarcons);
+            // Roles are populated in the controller in .NET Core
         }
 
         [Required]
@@ -107,9 +106,7 @@ namespace ProWaiter.Web.Models
         public EditUserViewModel(ApplicationUser usuario)
         {
             UserName = usuario.UserName;
-            EhAdministrador = usuario.Roles.Any(r => r.RoleId == Constantes.GrupoAdministradores);
-            EhCaixa = usuario.Roles.Any(r => r.RoleId == Constantes.GrupoCaixas);
-            EhGarcom = usuario.Roles.Any(r => r.RoleId == Constantes.GrupoGarcons);
+            // Roles are populated in the controller in .NET Core
         }
 
         [Required]

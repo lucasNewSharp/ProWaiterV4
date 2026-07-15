@@ -65,7 +65,7 @@ else //eh modal
                 <h4 class="modal-title">@ViewBag.Title</h4>
             </div>
             <div class="modal-body">
-                @using (Html.BeginForm("Create", "Clientes", new { returnUrl = ViewBag.ReturnUrl }, FormMethod.Post, htmlAttributes: new { @id="formCadastroCliente" }))
+                @using (Html.BeginForm("Create", "Clientes", new { returnUrl = ViewBag.ReturnUrl }, FormMethod.Post, true, new { id = "formCadastroCliente" }))
                 {
                     @Html.AntiForgeryToken()
 
@@ -81,3 +81,6 @@ else //eh modal
         </div>
     </div>
 }
+
+
+
